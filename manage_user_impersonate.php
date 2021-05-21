@@ -31,30 +31,30 @@
  * @uses html_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'access_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'form_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'html_api.php' );
+require_once('core.php');
+require_api('access_api.php');
+require_api('constant_inc.php');
+require_api('form_api.php');
+require_api('gpc_api.php');
+require_api('helper_api.php');
+require_api('html_api.php');
 
-form_security_validate( 'manage_user_impersonate' );
+form_security_validate('manage_user_impersonate');
 
 auth_reauthenticate();
 
-$f_user_id	= gpc_get_int( 'user_id' );
+$f_user_id	= gpc_get_int('user_id');
 
-auth_impersonate( $f_user_id );
+auth_impersonate($f_user_id);
 
-form_security_purge( 'manage_user_impersonate' );
+form_security_purge('manage_user_impersonate');
 
-$t_redirect_to = config_get_global( 'default_home_page' );
+$t_redirect_to = config_get_global('default_home_page');
 
 layout_page_header();
 
-layout_page_begin( null );
+layout_page_begin(null);
 
-html_operation_successful( $t_redirect_to );
+html_operation_successful($t_redirect_to);
 
 layout_page_end();

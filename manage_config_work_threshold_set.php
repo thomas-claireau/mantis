@@ -35,25 +35,25 @@
  * @uses print_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'authentication_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'current_user_api.php' );
-require_api( 'form_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'html_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'print_api.php' );
+require_once('core.php');
+require_api('authentication_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('current_user_api.php');
+require_api('form_api.php');
+require_api('gpc_api.php');
+require_api('helper_api.php');
+require_api('html_api.php');
+require_api('lang_api.php');
+require_api('print_api.php');
 
-form_security_validate( 'manage_config_work_threshold_set' );
+form_security_validate('manage_config_work_threshold_set');
 
 auth_reauthenticate();
 
 $t_redirect_url = 'manage_config_work_threshold_page.php';
 
-layout_page_header( lang_get( 'manage_threshold_config' ), $t_redirect_url );
+layout_page_header(lang_get('manage_threshold_config'), $t_redirect_url);
 
 layout_page_begin();
 
@@ -66,45 +66,49 @@ $g_project = helper_get_current_project();
  * @param boolean $p_all_projects_only All projects only.
  * @return void
  */
-function set_capability_row( $p_threshold, $p_all_projects_only = false ) {
+function set_capability_row($p_threshold, $p_all_projects_only = false)
+{
 	global $g_access, $g_project;
 
-	if( ( $g_access >= config_get_access( $p_threshold ) )
-			  && ( ( ALL_PROJECTS == $g_project ) || !$p_all_projects_only ) ) {
-		$f_threshold = gpc_get_int_array( 'flag_thres_' . $p_threshold, array() );
-		$f_access = gpc_get_int( 'access_' . $p_threshold );
+	if (($g_access >= config_get_access($p_threshold))
+		&& ((ALL_PROJECTS == $g_project) || !$p_all_projects_only)
+	) {
+		$f_threshold = gpc_get_int_array('flag_thres_' . $p_threshold, array());
+		$f_access = gpc_get_int('access_' . $p_threshold);
 		# @@debug @@ echo "<br />for $p_threshold "; var_dump($f_threshold, $f_access); echo '<br />';
-		$t_access_levels = MantisEnum::getAssocArrayIndexedByValues( config_get( 'access_levels_enum_string' ) );
-		ksort( $t_access_levels );
-		reset( $t_access_levels );
+		$t_access_levels = MantisEnum::getAssocArrayIndexedByValues(config_get('access_levels_enum_string'));
+		ksort($t_access_levels);
+		reset($t_access_levels);
 
 		$t_lower_threshold = NOBODY;
 		$t_array_threshold = array();
 
-		foreach( $t_access_levels as $t_access_level => $t_level_name ) {
-			if( in_array( $t_access_level, $f_threshold ) ) {
-				if( NOBODY == $t_lower_threshold ) {
+		foreach ($t_access_levels as $t_access_level => $t_level_name) {
+			if (in_array($t_access_level, $f_threshold)) {
+				if (NOBODY == $t_lower_threshold) {
 					$t_lower_threshold = $t_access_level;
 				}
 				$t_array_threshold[] = $t_access_level;
 			} else {
-				if( NOBODY <> $t_lower_threshold ) {
+				if (NOBODY <> $t_lower_threshold) {
 					$t_lower_threshold = -1;
 				}
 			}
-		# @@debug @@ var_dump($$t_access_level, $t_lower_threshold, $t_array_threshold); echo '<br />';
+			# @@debug @@ var_dump($$t_access_level, $t_lower_threshold, $t_array_threshold); echo '<br />';
 		}
-		$t_existing_threshold = config_get( $p_threshold );
-		$t_existing_access = config_get_access( $p_threshold );
-		if( -1 == $t_lower_threshold ) {
-			if( ( $t_existing_threshold != $t_array_threshold )
-					|| ( $t_existing_access != $f_access ) ) {
-				config_set( $p_threshold, $t_array_threshold, NO_USER, $g_project, $f_access );
+		$t_existing_threshold = config_get($p_threshold);
+		$t_existing_access = config_get_access($p_threshold);
+		if (-1 == $t_lower_threshold) {
+			if (($t_existing_threshold != $t_array_threshold)
+				|| ($t_existing_access != $f_access)
+			) {
+				config_set($p_threshold, $t_array_threshold, NO_USER, $g_project, $f_access);
 			}
 		} else {
-			if( ( $t_existing_threshold != $t_lower_threshold )
-					|| ( $t_existing_access != $f_access ) ) {
-				config_set( $p_threshold, $t_lower_threshold, NO_USER, $g_project, $f_access );
+			if (($t_existing_threshold != $t_lower_threshold)
+				|| ($t_existing_access != $f_access)
+			) {
+				config_set($p_threshold, $t_lower_threshold, NO_USER, $g_project, $f_access);
 			}
 		}
 	}
@@ -116,18 +120,20 @@ function set_capability_row( $p_threshold, $p_all_projects_only = false ) {
  * @param boolean $p_all_projects_only All projects only.
  * @return void
  */
-function set_capability_boolean( $p_threshold, $p_all_projects_only = false ) {
+function set_capability_boolean($p_threshold, $p_all_projects_only = false)
+{
 	global $g_access, $g_project;
 
-	if( ( $g_access >= config_get_access( $p_threshold ) )
-			  && ( ( ALL_PROJECTS == $g_project ) || !$p_all_projects_only ) ) {
-		$f_flag = gpc_get( 'flag_' . $p_threshold, OFF );
-		$f_access = gpc_get_int( 'access_' . $p_threshold );
-		$f_flag = ( OFF == $f_flag ) ? OFF : ON;
+	if (($g_access >= config_get_access($p_threshold))
+		&& ((ALL_PROJECTS == $g_project) || !$p_all_projects_only)
+	) {
+		$f_flag = gpc_get('flag_' . $p_threshold, OFF);
+		$f_access = gpc_get_int('access_' . $p_threshold);
+		$f_flag = (OFF == $f_flag) ? OFF : ON;
 		# @@debug @@ echo "<br />for $p_threshold "; var_dump($f_flag, $f_access); echo '<br />';
 
-		if( ( $f_flag != config_get( $p_threshold ) ) || ( $f_access != config_get_access( $p_threshold ) ) ) {
-			config_set( $p_threshold, $f_flag, NO_USER, $g_project, $f_access );
+		if (($f_flag != config_get($p_threshold)) || ($f_access != config_get_access($p_threshold))) {
+			config_set($p_threshold, $f_flag, NO_USER, $g_project, $f_access);
 		}
 	}
 }
@@ -138,16 +144,18 @@ function set_capability_boolean( $p_threshold, $p_all_projects_only = false ) {
  * @param boolean $p_all_projects_only All projects only.
  * @return void
  */
-function set_capability_enum( $p_threshold, $p_all_projects_only = false ) {
+function set_capability_enum($p_threshold, $p_all_projects_only = false)
+{
 	global $g_access, $g_project;
 
-	if( ( $g_access >= config_get_access( $p_threshold ) )
-			  && ( ( ALL_PROJECTS == $g_project ) || !$p_all_projects_only ) ) {
-		$f_flag = gpc_get( 'flag_' . $p_threshold );
-		$f_access = gpc_get_int( 'access_' . $p_threshold );
+	if (($g_access >= config_get_access($p_threshold))
+		&& ((ALL_PROJECTS == $g_project) || !$p_all_projects_only)
+	) {
+		$f_flag = gpc_get('flag_' . $p_threshold);
+		$f_access = gpc_get_int('access_' . $p_threshold);
 
-		if( ( $f_flag != config_get( $p_threshold ) ) || ( $f_access != config_get_access( $p_threshold ) ) ) {
-			config_set( $p_threshold, $f_flag, NO_USER, $g_project, $f_access );
+		if (($f_flag != config_get($p_threshold)) || ($f_access != config_get_access($p_threshold))) {
+			config_set($p_threshold, $f_flag, NO_USER, $g_project, $f_access);
 		}
 	}
 }
@@ -164,85 +172,86 @@ function set_capability_enum( $p_threshold, $p_all_projects_only = false ) {
  * @param string $p_name	Configuration option name
  * @return boolean			Whether the option was present in the form.
  */
-function capability_exists( $p_name ) {
+function capability_exists($p_name)
+{
 	$t_flag = 'flag_exists_' . $p_name;
-	return gpc_isset( $t_flag );
+	return gpc_isset($t_flag);
 }
 
 # Issues
-set_capability_row( 'report_bug_threshold' );
-set_capability_enum( 'bug_submit_status' );
-set_capability_row( 'update_bug_threshold' );
-set_capability_boolean( 'allow_reporter_close' );
-set_capability_row( 'monitor_bug_threshold' );
-set_capability_row( 'handle_bug_threshold' );
-set_capability_row( 'update_bug_assign_threshold' );
-set_capability_row( 'move_bug_threshold', true );
-set_capability_row( 'delete_bug_threshold' );
-set_capability_row( 'reopen_bug_threshold' );
-set_capability_boolean( 'allow_reporter_reopen' );
-set_capability_enum( 'bug_reopen_status' );
-set_capability_enum( 'bug_reopen_resolution' );
-set_capability_enum( 'bug_resolved_status_threshold' );
-set_capability_enum( 'bug_readonly_status_threshold' );
-set_capability_row( 'private_bug_threshold' );
-set_capability_row( 'update_readonly_bug_threshold' );
-set_capability_row( 'update_bug_status_threshold' );
-set_capability_row( 'set_view_status_threshold' );
-set_capability_row( 'change_view_status_threshold' );
-set_capability_row( 'bug_revision_view_threshold' );
-set_capability_row( 'bug_revision_drop_threshold' );
-set_capability_row( 'set_bug_sticky_threshold' );
-set_capability_row( 'show_monitor_list_threshold' );
-set_capability_row( 'monitor_add_others_bug_threshold' );
-set_capability_row( 'monitor_delete_others_bug_threshold' );
-set_capability_boolean( 'auto_set_status_to_assigned' );
-set_capability_enum( 'bug_assigned_status' );
-if( capability_exists( 'limit_reporters' ) ) {
-	set_capability_boolean( 'limit_reporters', true );
+set_capability_row('report_bug_threshold');
+set_capability_enum('bug_submit_status');
+set_capability_row('update_bug_threshold');
+set_capability_boolean('allow_reporter_close');
+set_capability_row('monitor_bug_threshold');
+set_capability_row('handle_bug_threshold');
+set_capability_row('update_bug_assign_threshold');
+set_capability_row('move_bug_threshold', true);
+set_capability_row('delete_bug_threshold');
+set_capability_row('reopen_bug_threshold');
+set_capability_boolean('allow_reporter_reopen');
+set_capability_enum('bug_reopen_status');
+set_capability_enum('bug_reopen_resolution');
+set_capability_enum('bug_resolved_status_threshold');
+set_capability_enum('bug_readonly_status_threshold');
+set_capability_row('private_bug_threshold');
+set_capability_row('update_readonly_bug_threshold');
+set_capability_row('update_bug_status_threshold');
+set_capability_row('set_view_status_threshold');
+set_capability_row('change_view_status_threshold');
+set_capability_row('bug_revision_view_threshold');
+set_capability_row('bug_revision_drop_threshold');
+set_capability_row('set_bug_sticky_threshold');
+set_capability_row('show_monitor_list_threshold');
+set_capability_row('monitor_add_others_bug_threshold');
+set_capability_row('monitor_delete_others_bug_threshold');
+set_capability_boolean('auto_set_status_to_assigned');
+set_capability_enum('bug_assigned_status');
+if (capability_exists('limit_reporters')) {
+	set_capability_boolean('limit_reporters', true);
 }
-if( capability_exists( 'limit_view_unless_threshold' ) ) {
-	set_capability_row( 'limit_view_unless_threshold' );
+if (capability_exists('limit_view_unless_threshold')) {
+	set_capability_row('limit_view_unless_threshold');
 }
 
 # Notes
-set_capability_row( 'add_bugnote_threshold' );
-set_capability_row( 'update_bugnote_threshold' );
-set_capability_row( 'bugnote_user_edit_threshold' );
-set_capability_row( 'delete_bugnote_threshold' );
-set_capability_row( 'bugnote_user_delete_threshold' );
-set_capability_row( 'private_bugnote_threshold' );
-set_capability_row( 'bugnote_user_change_view_state_threshold' );
+set_capability_row('add_bugnote_threshold');
+set_capability_row('update_bugnote_threshold');
+set_capability_row('bugnote_user_edit_threshold');
+set_capability_row('delete_bugnote_threshold');
+set_capability_row('bugnote_user_delete_threshold');
+set_capability_row('private_bugnote_threshold');
+set_capability_row('bugnote_user_change_view_state_threshold');
 
 # Tags
 
-set_capability_row( 'tag_view_threshold' );
-set_capability_row( 'tag_attach_threshold' );
-set_capability_row( 'tag_detach_threshold' );
-set_capability_row( 'tag_detach_own_threshold' );
-set_capability_row( 'tag_create_threshold' );
-set_capability_row( 'tag_edit_threshold' );
-set_capability_row( 'tag_edit_own_threshold' );
+set_capability_row('tag_view_threshold');
+set_capability_row('tag_attach_threshold');
+set_capability_row('tag_detach_threshold');
+set_capability_row('tag_detach_own_threshold');
+set_capability_row('tag_create_threshold');
+set_capability_row('tag_edit_threshold');
+set_capability_row('tag_edit_own_threshold');
 
 # Attachments
-if( config_get( 'allow_file_upload' ) == ON ) {
-	set_capability_row( 'view_attachments_threshold' );
-	set_capability_row( 'download_attachments_threshold' );
-	set_capability_row( 'delete_attachments_threshold' );
-	set_capability_row( 'upload_bug_file_threshold' );
+if (config_get('allow_file_upload') == ON) {
+	set_capability_row('view_attachments_threshold');
+	set_capability_row('download_attachments_threshold');
+	set_capability_row('delete_attachments_threshold');
+	set_capability_row('upload_bug_file_threshold');
 }
 
 # Others
-set_capability_row( 'view_changelog_threshold' );
-set_capability_row( 'roadmap_view_threshold' );
-set_capability_row( 'view_summary_threshold' );
-set_capability_row( 'view_handler_threshold' );
-set_capability_row( 'view_history_threshold' );
-set_capability_row( 'bug_reminder_threshold' );
-set_capability_row( 'reminder_receive_threshold' );
+set_capability_row('view_changelog_threshold');
+set_capability_row('roadmap_view_threshold');
+set_capability_row('view_summary_threshold');
+set_capability_row('view_handler_threshold');
+set_capability_row('view_history_threshold');
+set_capability_row('bug_reminder_threshold');
+set_capability_row('reminder_receive_threshold');
 
-form_security_purge( 'manage_config_work_threshold_set' );
+form_security_purge('manage_config_work_threshold_set');
 
-html_operation_successful( $t_redirect_url );
+html_operation_successful($t_redirect_url);
 
 layout_page_end();

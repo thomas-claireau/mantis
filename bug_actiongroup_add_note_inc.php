@@ -34,7 +34,7 @@
  * @uses utility_api.php
  */
 
-if( !defined( 'BUG_ACTIONGROUP_INC_ALLOW' ) ) {
+if (!defined('BUG_ACTIONGROUP_INC_ALLOW')) {
 	return;
 }
 
@@ -42,23 +42,24 @@ if( !defined( 'BUG_ACTIONGROUP_INC_ALLOW' ) ) {
 global $t_event_params;
 $t_event_params['has_bugnote'] = true;
 
-require_api( 'access_api.php' );
-require_api( 'bug_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'error_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'print_api.php' );
-require_api( 'utility_api.php' );
+require_api('access_api.php');
+require_api('bug_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('error_api.php');
+require_api('gpc_api.php');
+require_api('helper_api.php');
+require_api('lang_api.php');
+require_api('print_api.php');
+require_api('utility_api.php');
 
 /**
  * Prints the title for the custom action page.
  * @return void
  */
-function action_add_note_print_title() {
-	echo lang_get( 'add_bugnote_title' );
+function action_add_note_print_title()
+{
+	echo lang_get('add_bugnote_title');
 }
 
 /**
@@ -68,11 +69,12 @@ function action_add_note_print_title() {
  * A row has two columns.
  * @return void
  */
-function action_add_note_print_fields() {
+function action_add_note_print_fields()
+{
 ?>
 	<tr>
 		<th class="category">
-			<?php echo lang_get( 'add_bugnote_title' ); ?>
+			<?php echo lang_get('add_bugnote_title'); ?>
 		</th>
 		<td>
 			<textarea class="form-control" name="bugnote_text" id="bugnote_text" cols="80" rows="10"></textarea>
@@ -82,23 +84,23 @@ function action_add_note_print_fields() {
 	<!-- View Status -->
 	<tr>
 		<th class="category">
-			<?php echo lang_get( 'view_status' ) ?>
+			<?php echo lang_get('view_status') ?>
 		</th>
 		<td>
-<?php
-	$t_default_state = config_get( 'default_bugnote_view_status' );
-	if( access_has_project_level( config_get( 'set_view_status_threshold' ) ) ) { ?>
+			<?php
+			$t_default_state = config_get('default_bugnote_view_status');
+			if (access_has_project_level(config_get('set_view_status_threshold'))) { ?>
 				<select name="view_state" class="input-sm">
-					<?php print_enum_string_option_list( 'view_state', $t_default_state ) ?>
+					<?php print_enum_string_option_list('view_state', $t_default_state) ?>
 				</select>
-<?php
-	} else {
-		echo get_enum_element( 'view_state', $t_default_state );
-?>
+			<?php
+			} else {
+				echo get_enum_element('view_state', $t_default_state);
+			?>
 				<input type="hidden" name="view_state" value="<?php echo $t_default_state; ?>" />';
-<?php
-	}
-?>
+			<?php
+			}
+			?>
 		</td>
 	</tr>
 <?php
@@ -110,23 +112,24 @@ function action_add_note_print_fields() {
  * @param integer $p_bug_id A bug identifier.
  * @return string|null On failure: the reason why the action could not be validated. On success: null.
  */
-function action_add_note_validate( $p_bug_id ) {
-	$f_bugnote_text = gpc_get_string( 'bugnote_text' );
+function action_add_note_validate($p_bug_id)
+{
+	$f_bugnote_text = gpc_get_string('bugnote_text');
 
-	if( is_blank( $f_bugnote_text ) ) {
-		error_parameters( lang_get( 'bugnote' ) );
-		trigger_error( ERROR_EMPTY_FIELD, ERROR );
+	if (is_blank($f_bugnote_text)) {
+		error_parameters(lang_get('bugnote'));
+		trigger_error(ERROR_EMPTY_FIELD, ERROR);
 	}
 
-	$t_add_bugnote_threshold = config_get( 'add_bugnote_threshold' );
+	$t_add_bugnote_threshold = config_get('add_bugnote_threshold');
 	$t_bug_id = $p_bug_id;
 
-	if( bug_is_readonly( $t_bug_id ) ) {
-		return lang_get( 'actiongroup_error_issue_is_readonly' );
+	if (bug_is_readonly($t_bug_id)) {
+		return lang_get('actiongroup_error_issue_is_readonly');
 	}
 
-	if( !access_has_bug_level( $t_add_bugnote_threshold, $t_bug_id ) ) {
-		return lang_get( 'access_denied' );
+	if (!access_has_bug_level($t_add_bugnote_threshold, $t_bug_id)) {
+		return lang_get('access_denied');
 	}
 
 	return null;
@@ -138,10 +141,11 @@ function action_add_note_validate( $p_bug_id ) {
  * @param integer $p_bug_id The bug id to execute the custom action on.
  * @return null Previous validation ensures that this function doesn't fail. Therefore we can always return null to indicate no errors occurred.
  */
-function action_add_note_process( $p_bug_id ) {
-	$f_bugnote_text = gpc_get_string( 'bugnote_text' );
-	$f_view_state = gpc_get_int( 'view_state' );
-	$t_bugnote_id = bugnote_add( $p_bug_id, $f_bugnote_text, '0:00', $f_view_state != VS_PUBLIC );
-	bugnote_process_mentions( $p_bug_id, $t_bugnote_id, $f_bugnote_text );
+function action_add_note_process($p_bug_id)
+{
+	$f_bugnote_text = gpc_get_string('bugnote_text');
+	$f_view_state = gpc_get_int('view_state');
+	$t_bugnote_id = bugnote_add($p_bug_id, $f_bugnote_text, '0:00', $f_view_state != VS_PUBLIC);
+	bugnote_process_mentions($p_bug_id, $t_bugnote_id, $f_bugnote_text);
 	return null;
 }

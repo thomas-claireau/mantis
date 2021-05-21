@@ -35,57 +35,57 @@
  * @uses utility_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'authentication_api.php' );
-require_api( 'compress_api.php' );
-require_api( 'config_api.php' );
-require_api( 'filter_api.php' );
-require_api( 'form_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'print_api.php' );
-require_api( 'utility_api.php' );
+require_once('core.php');
+require_api('authentication_api.php');
+require_api('compress_api.php');
+require_api('config_api.php');
+require_api('filter_api.php');
+require_api('form_api.php');
+require_api('gpc_api.php');
+require_api('helper_api.php');
+require_api('lang_api.php');
+require_api('print_api.php');
+require_api('utility_api.php');
 
-form_security_validate( 'query_store' );
+form_security_validate('query_store');
 
 auth_ensure_user_authenticated();
 compress_enable();
 
-$f_query_name = strip_tags( gpc_get_string( 'query_name' ) );
-$f_is_public = gpc_get_bool( 'is_public' );
-$f_all_projects = gpc_get_bool( 'all_projects' );
+$f_query_name = strip_tags(gpc_get_string('query_name'));
+$f_is_public = gpc_get_bool('is_public');
+$f_all_projects = gpc_get_bool('all_projects');
 
 $t_query_redirect_url = 'query_store_page.php';
 
 # We can't have a blank name
-if( is_blank( $f_query_name ) ) {
+if (is_blank($f_query_name)) {
 	$t_query_redirect_url = $t_query_redirect_url . '?error_msg='
-		. urlencode( lang_get( 'query_blank_name' ) );
-	print_header_redirect( $t_query_redirect_url );
+		. urlencode(lang_get('query_blank_name'));
+	print_header_redirect($t_query_redirect_url);
 }
 
 # mantis_filters_table.name has a length of 64. Not allowing longer.
-if( !filter_name_valid_length( $f_query_name ) ) {
+if (!filter_name_valid_length($f_query_name)) {
 	$t_query_redirect_url = $t_query_redirect_url . '?error_msg='
-		. urlencode( lang_get( 'query_name_too_long' ) );
-	print_header_redirect( $t_query_redirect_url );
+		. urlencode(lang_get('query_name_too_long'));
+	print_header_redirect($t_query_redirect_url);
 }
 
 # Check and make sure they don't already have a
 # query with the same name
 $t_query_arr = filter_db_get_available_queries();
-foreach( $t_query_arr as $t_id => $t_name )	{
-	if( $f_query_name == $t_name ) {
+foreach ($t_query_arr as $t_id => $t_name) {
+	if ($f_query_name == $t_name) {
 		$t_query_redirect_url = $t_query_redirect_url . '?error_msg='
-			. urlencode( lang_get( 'query_dupe_name' ) );
-		print_header_redirect( $t_query_redirect_url );
+			. urlencode(lang_get('query_dupe_name'));
+		print_header_redirect($t_query_redirect_url);
 		exit;
 	}
 }
 
 $t_project_id = helper_get_current_project();
-if( $f_all_projects ) {
+if ($f_all_projects) {
 	$t_project_id = 0;
 }
 
@@ -93,29 +93,29 @@ if( $f_all_projects ) {
 $t_filter = current_user_get_bug_filter();
 
 # named filters must not reference source query id
-if( isset( $t_filter['_source_query_id'] ) ) {
-	unset( $t_filter['_source_query_id'] );
+if (isset($t_filter['_source_query_id'])) {
+	unset($t_filter['_source_query_id']);
 }
 
 # Check that the user has permission to create stored filters
-if( !access_has_project_level( config_get( 'stored_query_create_threshold' ) ) ) {
+if (!access_has_project_level(config_get('stored_query_create_threshold'))) {
 	access_denied();
 }
 
 # ensure that we're not making this filter public if we're not allowed
-if( $f_is_public && !access_has_project_level( config_get( 'stored_query_create_shared_threshold' ) ) ) {
+if ($f_is_public && !access_has_project_level(config_get('stored_query_create_shared_threshold'))) {
 	access_denied();
 }
 
-$t_filter_string = filter_serialize( $t_filter );
-$t_new_row_id = filter_db_create_filter( $t_filter_string, auth_get_current_user_id(), $t_project_id, $f_query_name , $f_is_public );
+$t_filter_string = filter_serialize($t_filter);
+$t_new_row_id = filter_db_create_filter($t_filter_string, auth_get_current_user_id(), $t_project_id, $f_query_name, $f_is_public);
 
-form_security_purge( 'query_store' );
+form_security_purge('query_store');
 
-if( $t_new_row_id == -1 ) {
+if ($t_new_row_id == -1) {
 	$t_query_redirect_url = $t_query_redirect_url . '?error_msg='
-		. urlencode( lang_get( 'query_store_error' ) );
-	print_header_redirect( $t_query_redirect_url );
+		. urlencode(lang_get('query_store_error'));
+	print_header_redirect($t_query_redirect_url);
 } else {
 	# Build a redirect to view_all_set to load the filter that was saved.
 	# This will make the filter name appear as selected in the filter selection box.
@@ -123,9 +123,9 @@ if( $t_new_row_id == -1 ) {
 		'type' => 3,
 		'source_query_id' => $t_new_row_id
 	);
-	if( filter_is_temporary( $t_filter ) ) {
-		$t_params['filter'] = filter_get_temporary_key( $t_filter );
+	if (filter_is_temporary($t_filter)) {
+		$t_params['filter'] = filter_get_temporary_key($t_filter);
 	}
-	$t_redirect = 'view_all_set.php?' . http_build_query( $t_params );
-	print_header_redirect( $t_redirect );
+	$t_redirect = 'view_all_set.php?' . http_build_query($t_params);
+	print_header_redirect($t_redirect);
 }

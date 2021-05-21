@@ -32,51 +32,51 @@
  * @uses print_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'access_api.php' );
-require_api( 'config_api.php' );
-require_api( 'form_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'html_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'news_api.php' );
-require_api( 'print_api.php' );
+require_once('core.php');
+require_api('access_api.php');
+require_api('config_api.php');
+require_api('form_api.php');
+require_api('gpc_api.php');
+require_api('html_api.php');
+require_api('lang_api.php');
+require_api('news_api.php');
+require_api('print_api.php');
 
 news_ensure_enabled();
 
-form_security_validate( 'news_update' );
+form_security_validate('news_update');
 
-$f_news_id		= gpc_get_int( 'news_id' );
-$f_project_id	= gpc_get_int( 'project_id' );
-$f_view_state	= gpc_get_int( 'view_state' );
-$f_headline		= gpc_get_string( 'headline' );
-$f_announcement	= gpc_get_bool( 'announcement' );
-$f_body			= gpc_get_string( 'body', '' );
+$f_news_id		= gpc_get_int('news_id');
+$f_project_id	= gpc_get_int('project_id');
+$f_view_state	= gpc_get_int('view_state');
+$f_headline		= gpc_get_string('headline');
+$f_announcement	= gpc_get_bool('announcement');
+$f_body			= gpc_get_string('body', '');
 
-$t_row = news_get_row( $f_news_id );
+$t_row = news_get_row($f_news_id);
 
 # Check both the old project and the new project
-access_ensure_project_level( config_get( 'manage_news_threshold' ), $t_row['project_id'] );
-access_ensure_project_level( config_get( 'manage_news_threshold' ), $f_project_id );
+access_ensure_project_level(config_get('manage_news_threshold'), $t_row['project_id']);
+access_ensure_project_level(config_get('manage_news_threshold'), $f_project_id);
 
-news_update( $f_news_id, $f_project_id, $f_view_state, $f_announcement, $f_headline, $f_body );
+news_update($f_news_id, $f_project_id, $f_view_state, $f_announcement, $f_headline, $f_body);
 
-form_security_purge( 'news_update' );
+form_security_purge('news_update');
 
 layout_page_header();
 
-layout_page_begin( 'main_page.php' );
+layout_page_begin('main_page.php');
 
 echo '<div class="space-20"></div>';
 
 $t_buttons = array(
-	array( 'news_menu_page.php' ),
-	array( 'news_edit_page.php?news_id=' . $f_news_id . '&action=edit', lang_get( 'edit' ) ),
+	array('news_menu_page.php'),
+	array('news_edit_page.php?news_id=' . $f_news_id . '&action=edit', lang_get('edit')),
 );
-html_operation_confirmation( $t_buttons, CONFIRMATION_TYPE_SUCCESS );
+html_operation_confirmation($t_buttons, CONFIRMATION_TYPE_SUCCESS);
 
 echo '<br />';
 
-print_news_entry( $f_headline, $f_body, $t_row['poster_id'], $f_view_state, $f_announcement, $t_row['date_posted'] );
+print_news_entry($f_headline, $f_body, $t_row['poster_id'], $f_view_state, $f_announcement, $t_row['date_posted']);
 
 layout_page_end();

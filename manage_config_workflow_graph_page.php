@@ -37,45 +37,45 @@
  * @uses workflow_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'access_api.php' );
-require_api( 'authentication_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'helper_api.php' );
-require_api( 'html_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'print_api.php' );
-require_api( 'project_api.php' );
-require_api( 'string_api.php' );
+require_once('core.php');
+require_api('access_api.php');
+require_api('authentication_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('helper_api.php');
+require_api('html_api.php');
+require_api('lang_api.php');
+require_api('print_api.php');
+require_api('project_api.php');
+require_api('string_api.php');
 
 auth_reauthenticate();
 
-if( !config_get( 'relationship_graph_enable' ) ) {
+if (!config_get('relationship_graph_enable')) {
 	access_denied();
 }
 
-layout_page_header( lang_get( 'manage_workflow_graph' ) );
+layout_page_header(lang_get('manage_workflow_graph'));
 
-layout_page_begin( 'manage_overview_page.php' );
+layout_page_begin('manage_overview_page.php');
 
-print_manage_menu( 'adm_permissions_report.php' );
-print_manage_config_menu( 'manage_config_workflow_graph_page.php' );
+print_manage_menu('adm_permissions_report.php');
+print_manage_config_menu('manage_config_workflow_graph_page.php');
 
 $t_project = helper_get_current_project();
 
-if( $t_project == ALL_PROJECTS ) {
-	$t_project_title = lang_get( 'config_all_projects' );
+if ($t_project == ALL_PROJECTS) {
+	$t_project_title = lang_get('config_all_projects');
 } else {
-	$t_project_title = sprintf( lang_get( 'config_project' ), string_display_line( project_get_name( $t_project ) ) );
+	$t_project_title = sprintf(lang_get('config_project'), string_display_line(project_get_name($t_project)));
 }
 ?>
+<br />
+<br />
+<div class="center">
+	<p class="bold"><?php echo $t_project_title ?></p>
 	<br />
-	<br />
-	<div class="center">
-		<p class="bold"><?php echo $t_project_title ?></p>
-		<br />
-		<img src="workflow_graph_img.php" />
-	</div>
+	<img src="workflow_graph_img.php" />
+</div>
 <?php
 layout_page_end();

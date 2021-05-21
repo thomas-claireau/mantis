@@ -32,35 +32,37 @@
  * @uses tag_api.php
  */
 
-if( !defined( 'BUG_ACTIONGROUP_INC_ALLOW' ) ) {
+if (!defined('BUG_ACTIONGROUP_INC_ALLOW')) {
 	return;
 }
 
-require_api( 'access_api.php' );
-require_api( 'authentication_api.php' );
-require_api( 'config_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'print_api.php' );
-require_api( 'tag_api.php' );
+require_api('access_api.php');
+require_api('authentication_api.php');
+require_api('config_api.php');
+require_api('gpc_api.php');
+require_api('helper_api.php');
+require_api('lang_api.php');
+require_api('print_api.php');
+require_api('tag_api.php');
 
 /**
  * Prints the title for the custom action page.
  * @return void
  */
-function action_attach_tags_print_title() {
-	echo lang_get( 'tag_attach_long' );
+function action_attach_tags_print_title()
+{
+	echo lang_get('tag_attach_long');
 }
 
 /**
  * Prints the table and form for the Attach Tags group action page.
  * @return void
  */
-function action_attach_tags_print_fields() {
-	echo '<tr><th class="category">', lang_get( 'tag_attach_long' ), '</th><td>';
+function action_attach_tags_print_fields()
+{
+	echo '<tr><th class="category">', lang_get('tag_attach_long'), '</th><td>';
 	print_tag_input();
-	echo '<input type="submit" class="btn btn-primary btn-white btn-round btn-sm" value="' . lang_get( 'tag_attach' ) . ' " /></td></tr>';
+	echo '<input type="submit" class="btn btn-primary btn-white btn-round btn-sm" value="' . lang_get('tag_attach') . ' " /></td></tr>';
 }
 
 /**
@@ -69,39 +71,42 @@ function action_attach_tags_print_fields() {
  * @param integer $p_bug_id A bug identifier.
  * @return string|null On failure: the reason for tags failing validation for the given bug. On success: null.
  */
-function action_attach_tags_validate( $p_bug_id ) {
+function action_attach_tags_validate($p_bug_id)
+{
 	global $g_action_attach_tags_tags;
 	global $g_action_attach_tags_attach;
 	global $g_action_attach_tags_create;
 
-	$t_can_attach = access_has_bug_level( config_get( 'tag_attach_threshold' ), $p_bug_id );
-	if( !$t_can_attach ) {
-		return lang_get( 'tag_attach_denied' );
+	$t_can_attach = access_has_bug_level(config_get('tag_attach_threshold'), $p_bug_id);
+	if (!$t_can_attach) {
+		return lang_get('tag_attach_denied');
 	}
 
-	if( !isset( $g_action_attach_tags_tags ) ) {
-		if( !isset( $g_action_attach_tags_attach ) ) {
+	if (!isset($g_action_attach_tags_tags)) {
+		if (!isset($g_action_attach_tags_attach)) {
 			$g_action_attach_tags_attach = array();
 			$g_action_attach_tags_create = array();
 		}
-		$g_action_attach_tags_tags = tag_parse_string( gpc_get_string( 'tag_string' ) );
-		foreach ( $g_action_attach_tags_tags as $t_tag_row ) {
-			if( $t_tag_row['id'] == -1 ) {
+		$g_action_attach_tags_tags = tag_parse_string(gpc_get_string('tag_string'));
+		foreach ($g_action_attach_tags_tags as $t_tag_row) {
+			if ($t_tag_row['id'] == -1) {
 				$g_action_attach_tags_create[$t_tag_row['name']] = $t_tag_row;
-			} else if( $t_tag_row['id'] >= 0 ) {
+			} else if ($t_tag_row['id'] >= 0) {
 				$g_action_attach_tags_attach[$t_tag_row['name']] = $t_tag_row;
 			}
 		}
 	}
 
-	$t_can_create = access_has_bug_level( config_get( 'tag_create_threshold' ), $p_bug_id );
-	if( count( $g_action_attach_tags_create ) > 0 && !$t_can_create ) {
-		return lang_get( 'tag_create_denied' );
+	$t_can_create = access_has_bug_level(config_get('tag_create_threshold'), $p_bug_id);
+	if (count($g_action_attach_tags_create) > 0 && !$t_can_create) {
+		return lang_get('tag_create_denied');
 	}
 
-	if( count( $g_action_attach_tags_create ) == 0 &&
-		count( $g_action_attach_tags_attach ) == 0 ) {
-		return lang_get( 'tag_none_attached' );
+	if (
+		count($g_action_attach_tags_create) == 0 &&
+		count($g_action_attach_tags_attach) == 0
+	) {
+		return lang_get('tag_none_attached');
 	}
 
 	return null;
@@ -112,23 +117,24 @@ function action_attach_tags_validate( $p_bug_id ) {
  * @param integer $p_bug_id A bug identifier.
  * @return null Previous validation ensures that this function doesn't fail. Therefore we can always return null to indicate no errors occurred.
  */
-function action_attach_tags_process( $p_bug_id ) {
+function action_attach_tags_process($p_bug_id)
+{
 	global $g_action_attach_tags_attach, $g_action_attach_tags_create;
 
-	foreach( $g_action_attach_tags_create as $t_tag_row ) {
-		$g_action_attach_tags_attach[] = array( 'name' => $t_tag_row['name'] );
+	foreach ($g_action_attach_tags_create as $t_tag_row) {
+		$g_action_attach_tags_attach[] = array('name' => $t_tag_row['name']);
 	}
 
 	$g_action_attach_tags_create = array();
 
 	$t_data = array(
-		'query' => array( 'issue_id' => $p_bug_id ),
+		'query' => array('issue_id' => $p_bug_id),
 		'payload' => array(
 			'tags' => $g_action_attach_tags_attach
 		)
 	);
 
-	$t_command = new TagAttachCommand( $t_data );
+	$t_command = new TagAttachCommand($t_data);
 	$t_command->execute();
 
 	return null;

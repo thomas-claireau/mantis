@@ -29,30 +29,30 @@
  * @uses print_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'file_api.php' );
-require_api( 'form_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'print_api.php' );
+require_once('core.php');
+require_api('file_api.php');
+require_api('form_api.php');
+require_api('gpc_api.php');
+require_api('print_api.php');
 
-form_security_validate( 'bugnote_add' );
+form_security_validate('bugnote_add');
 
-$f_bug_id = gpc_get_int( 'bug_id' );
-$f_text = gpc_get_string( 'bugnote_text', '' );
-$f_duration = gpc_get_string( 'time_tracking', '0:00' );
-$f_files = gpc_get_file( 'ufile', array() );
+$f_bug_id = gpc_get_int('bug_id');
+$f_text = gpc_get_string('bugnote_text', '');
+$f_duration = gpc_get_string('time_tracking', '0:00');
+$f_files = gpc_get_file('ufile', array());
 
-$t_query = array( 'issue_id' => $f_bug_id );
+$t_query = array('issue_id' => $f_bug_id);
 
 $t_payload = array(
 	'text' => $f_text,
 	'view_state' => array(
-		'id' => gpc_get_bool( 'private' ) ? VS_PRIVATE : VS_PUBLIC
+		'id' => gpc_get_bool('private') ? VS_PRIVATE : VS_PUBLIC
 	),
 	'time_tracking' => array(
 		'duration' => $f_duration
 	),
-	'files' => helper_array_transpose( $f_files )
+	'files' => helper_array_transpose($f_files)
 );
 
 $t_data = array(
@@ -60,9 +60,9 @@ $t_data = array(
 	'payload' => $t_payload,
 );
 
-$t_command = new IssueNoteAddCommand( $t_data );
+$t_command = new IssueNoteAddCommand($t_data);
 $t_command->execute();
 
-form_security_purge( 'bugnote_add' );
+form_security_purge('bugnote_add');
 
-print_successful_redirect_to_bug( $f_bug_id );
+print_successful_redirect_to_bug($f_bug_id);

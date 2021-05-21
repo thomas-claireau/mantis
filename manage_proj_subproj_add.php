@@ -34,24 +34,24 @@
  * @uses print_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'access_api.php' );
-require_api( 'authentication_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'form_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'html_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'print_api.php' );
+require_once('core.php');
+require_api('access_api.php');
+require_api('authentication_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('form_api.php');
+require_api('gpc_api.php');
+require_api('html_api.php');
+require_api('lang_api.php');
+require_api('print_api.php');
 
-form_security_validate( 'manage_proj_subproj_add' );
+form_security_validate('manage_proj_subproj_add');
 
 auth_reauthenticate();
 
-$f_project_id    = gpc_get_int( 'project_id' );
-$f_subproject_id = gpc_get_int( 'subproject_id' );
-$f_inherit_parent = gpc_get_bool( 'inherit_parent', true );
+$f_project_id    = gpc_get_int('project_id');
+$f_subproject_id = gpc_get_int('subproject_id');
+$f_inherit_parent = gpc_get_bool('inherit_parent', true);
 
 $t_data = array(
 	'query' => array(
@@ -60,22 +60,22 @@ $t_data = array(
 	'payload' => array(
 		'project' => array(
 			'id' => (int)$f_subproject_id
-		 ),
+		),
 		'inherit_parent' => (bool)$f_inherit_parent
 	)
 );
 
-$t_command = new ProjectHierarchyAddCommand( $t_data );
+$t_command = new ProjectHierarchyAddCommand($t_data);
 $t_command->execute();
 
-form_security_purge( 'manage_proj_subproj_add' );
+form_security_purge('manage_proj_subproj_add');
 
 $t_redirect_url = 'manage_proj_edit_page.php?project_id=' . $f_project_id;
 
-layout_page_header( null, $t_redirect_url );
+layout_page_header(null, $t_redirect_url);
 
-layout_page_begin( 'manage_overview_page.php' );
+layout_page_begin('manage_overview_page.php');
 
-html_operation_successful( $t_redirect_url );
+html_operation_successful($t_redirect_url);
 
 layout_page_end();

@@ -36,47 +36,47 @@
  * @uses utility_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'access_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'error_api.php' );
-require_api( 'file_api.php' );
-require_api( 'form_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'html_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'print_api.php' );
-require_api( 'utility_api.php' );
+require_once('core.php');
+require_api('access_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('error_api.php');
+require_api('file_api.php');
+require_api('form_api.php');
+require_api('gpc_api.php');
+require_api('html_api.php');
+require_api('lang_api.php');
+require_api('print_api.php');
+require_api('utility_api.php');
 
-form_security_validate( 'proj_doc_add' );
+form_security_validate('proj_doc_add');
 
 # Check if project documentation feature is enabled.
-if( OFF == config_get( 'enable_project_documentation' ) ) {
+if (OFF == config_get('enable_project_documentation')) {
 	access_denied();
 }
 
-access_ensure_project_level( config_get( 'upload_project_file_threshold' ) );
+access_ensure_project_level(config_get('upload_project_file_threshold'));
 
-$f_title = gpc_get_string( 'title' );
-$f_description = gpc_get_string( 'description' );
-$f_file = gpc_get_file( 'file' );
+$f_title = gpc_get_string('title');
+$f_description = gpc_get_string('description');
+$f_file = gpc_get_file('file');
 
-if( is_blank( $f_title ) ) {
-	error_parameters( lang_get( 'title' ) );
-	trigger_error( ERROR_EMPTY_FIELD, ERROR );
+if (is_blank($f_title)) {
+	error_parameters(lang_get('title'));
+	trigger_error(ERROR_EMPTY_FIELD, ERROR);
 }
 
-file_add( 0, $f_file, 'project', $f_title, $f_description );
+file_add(0, $f_file, 'project', $f_title, $f_description);
 
-form_security_purge( 'proj_doc_add' );
+form_security_purge('proj_doc_add');
 
 $t_redirect_url = 'proj_doc_page.php';
 
-layout_page_header( null, $t_redirect_url );
+layout_page_header(null, $t_redirect_url);
 
-layout_page_begin( 'proj_doc_page.php' );
+layout_page_begin('proj_doc_page.php');
 
-html_operation_successful( $t_redirect_url );
+html_operation_successful($t_redirect_url);
 
 layout_page_end();

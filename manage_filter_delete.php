@@ -34,44 +34,45 @@
  * @uses print_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'authentication_api.php' );
-require_api( 'compress_api.php' );
-require_api( 'filter_api.php' );
-require_api( 'form_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'html_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'print_api.php' );
+require_once('core.php');
+require_api('authentication_api.php');
+require_api('compress_api.php');
+require_api('filter_api.php');
+require_api('form_api.php');
+require_api('gpc_api.php');
+require_api('html_api.php');
+require_api('lang_api.php');
+require_api('print_api.php');
 
-form_security_validate( 'manage_filter_delete' );
+form_security_validate('manage_filter_delete');
 
 auth_ensure_user_authenticated();
 
-$f_filter_id = gpc_get_int( 'filter_id' );
+$f_filter_id = gpc_get_int('filter_id');
 $t_redirect_url = 'manage_filter_page.php';
 
-if( !filter_db_can_delete_filter( $f_filter_id ) ) {
-	print_header_redirect( $t_redirect_url );
+if (!filter_db_can_delete_filter($f_filter_id)) {
+	print_header_redirect($t_redirect_url);
 	exit;
 }
 
 helper_ensure_confirmed(
-	sprintf( lang_get( 'query_delete_msg' ),
-		string_attribute( filter_get_field( $f_filter_id, 'name' ) )
+	sprintf(
+		lang_get('query_delete_msg'),
+		string_attribute(filter_get_field($f_filter_id, 'name'))
 	),
-	lang_get( 'delete_query' )
+	lang_get('delete_query')
 );
 
-filter_db_delete_filter( $f_filter_id );
+filter_db_delete_filter($f_filter_id);
 
-form_security_purge( 'manage_filter_delete' );
+form_security_purge('manage_filter_delete');
 
 $t_redirect_page = 'manage_filter_page.php';
-layout_page_header( null, $t_redirect_url );
+layout_page_header(null, $t_redirect_url);
 
 layout_page_begin();
 
-html_operation_successful( $t_redirect_page );
+html_operation_successful($t_redirect_page);
 
 layout_page_end();

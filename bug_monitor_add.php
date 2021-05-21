@@ -31,39 +31,39 @@
  * @uses utility_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'error_api.php' );
-require_api( 'form_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'print_api.php' );
-require_api( 'utility_api.php' );
+require_once('core.php');
+require_api('error_api.php');
+require_api('form_api.php');
+require_api('gpc_api.php');
+require_api('helper_api.php');
+require_api('print_api.php');
+require_api('utility_api.php');
 
-form_security_validate( 'bug_monitor_add' );
+form_security_validate('bug_monitor_add');
 
-$f_bug_id = gpc_get_int( 'bug_id' );
-$f_usernames = trim( gpc_get_string( 'user_to_add', '' ) );
+$f_bug_id = gpc_get_int('bug_id');
+$f_usernames = trim(gpc_get_string('user_to_add', ''));
 
 $t_payload = array();
 
-if( !is_blank( $f_usernames ) ) {
-	$t_usernames = preg_split( '/[,|]/', $f_usernames, -1, PREG_SPLIT_NO_EMPTY );
+if (!is_blank($f_usernames)) {
+	$t_usernames = preg_split('/[,|]/', $f_usernames, -1, PREG_SPLIT_NO_EMPTY);
 	$t_users = array();
-	foreach( $t_usernames as $t_username ) {
-		$t_users[] = array( 'name_or_realname' => trim( $t_username ) );
+	foreach ($t_usernames as $t_username) {
+		$t_users[] = array('name_or_realname' => trim($t_username));
 	}
 
 	$t_payload['users'] = $t_users;
 }
 
 $t_data = array(
-	'query' => array( 'issue_id' => $f_bug_id ),
+	'query' => array('issue_id' => $f_bug_id),
 	'payload' => $t_payload,
 );
 
-$t_command = new MonitorAddCommand( $t_data );
+$t_command = new MonitorAddCommand($t_data);
 $t_command->execute();
 
-form_security_purge( 'bug_monitor_add' );
+form_security_purge('bug_monitor_add');
 
-print_successful_redirect_to_bug( $f_bug_id );
+print_successful_redirect_to_bug($f_bug_id);

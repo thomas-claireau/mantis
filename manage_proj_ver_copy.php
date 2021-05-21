@@ -35,49 +35,49 @@
  * @uses version_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'access_api.php' );
-require_api( 'authentication_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'event_api.php' );
-require_api( 'form_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'print_api.php' );
-require_api( 'project_api.php' );
-require_api( 'version_api.php' );
+require_once('core.php');
+require_api('access_api.php');
+require_api('authentication_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('event_api.php');
+require_api('form_api.php');
+require_api('gpc_api.php');
+require_api('print_api.php');
+require_api('project_api.php');
+require_api('version_api.php');
 
-form_security_validate( 'manage_proj_ver_copy' );
+form_security_validate('manage_proj_ver_copy');
 
 auth_reauthenticate();
 
-$f_project_id		= gpc_get_int( 'project_id' );
-$f_other_project_id	= gpc_get_int( 'other_project_id' );
-$f_copy_from		= gpc_get_bool( 'copy_from' );
-$f_copy_to			= gpc_get_bool( 'copy_to' );
+$f_project_id		= gpc_get_int('project_id');
+$f_other_project_id	= gpc_get_int('other_project_id');
+$f_copy_from		= gpc_get_bool('copy_from');
+$f_copy_to			= gpc_get_bool('copy_to');
 
-project_ensure_exists( $f_project_id );
-project_ensure_exists( $f_other_project_id );
+project_ensure_exists($f_project_id);
+project_ensure_exists($f_other_project_id);
 
-access_ensure_project_level( config_get( 'manage_project_threshold' ), $f_project_id );
-access_ensure_project_level( config_get( 'manage_project_threshold' ), $f_other_project_id );
+access_ensure_project_level(config_get('manage_project_threshold'), $f_project_id);
+access_ensure_project_level(config_get('manage_project_threshold'), $f_other_project_id);
 
-if( $f_copy_from ) {
+if ($f_copy_from) {
 	$t_src_project_id = $f_other_project_id;
 	$t_dst_project_id = $f_project_id;
-} else if( $f_copy_to ) {
+} else if ($f_copy_to) {
 	$t_src_project_id = $f_project_id;
 	$t_dst_project_id = $f_other_project_id;
 } else {
-	trigger_error( ERROR_VERSION_NO_ACTION, ERROR );
+	trigger_error(ERROR_VERSION_NO_ACTION, ERROR);
 }
 
 # Get all active versions (i.e. exclude obsolete ones)
-$t_rows = version_get_all_rows( $t_src_project_id );
+$t_rows = version_get_all_rows($t_src_project_id);
 
-foreach ( $t_rows as $t_row ) {
-	$t_dst_version_id = version_get_id( $t_row['version'], $t_dst_project_id );
-	if( $t_dst_version_id === false ) {
+foreach ($t_rows as $t_row) {
+	$t_dst_version_id = version_get_id($t_row['version'], $t_dst_project_id);
+	if ($t_dst_version_id === false) {
 		# Version does not exist in target project
 		version_add(
 			$t_dst_project_id,
@@ -91,14 +91,14 @@ foreach ( $t_rows as $t_row ) {
 		# Since we're ignoring obsolete versions, those marked as such in the
 		# source project after an earlier copy operation will not be updated
 		# in the target project.
-		$t_version_data = new VersionData( $t_row );
+		$t_version_data = new VersionData($t_row);
 		$t_version_data->id = $t_dst_version_id;
 		$t_version_data->project_id = $t_dst_project_id;
 
-		version_update( $t_version_data );
+		version_update($t_version_data);
 	}
 }
 
-form_security_purge( 'manage_proj_ver_copy' );
+form_security_purge('manage_proj_ver_copy');
 
-print_header_redirect( 'manage_proj_edit_page.php?project_id=' . $f_project_id );
+print_header_redirect('manage_proj_edit_page.php?project_id=' . $f_project_id);

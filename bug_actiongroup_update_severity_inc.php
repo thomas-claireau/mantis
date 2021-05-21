@@ -30,23 +30,24 @@
  * @uses print_api.php
  */
 
-if( !defined( 'BUG_ACTIONGROUP_INC_ALLOW' ) ) {
+if (!defined('BUG_ACTIONGROUP_INC_ALLOW')) {
 	return;
 }
 
-require_api( 'access_api.php' );
-require_api( 'bug_api.php' );
-require_api( 'config_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'print_api.php' );
+require_api('access_api.php');
+require_api('bug_api.php');
+require_api('config_api.php');
+require_api('gpc_api.php');
+require_api('lang_api.php');
+require_api('print_api.php');
 
 /**
  * Prints the title for the custom action page.
  * @return void
  */
-function action_update_severity_print_title() {
-	echo lang_get( 'update_severity_title' );
+function action_update_severity_print_title()
+{
+	echo lang_get('update_severity_title');
 }
 
 /**
@@ -56,15 +57,16 @@ function action_update_severity_print_title() {
  * A row has two columns.
  * @return void
  */
-function action_update_severity_print_fields() {
+function action_update_severity_print_fields()
+{
 ?>
 	<tr>
 		<th class="category">
-			<?php echo lang_get( 'update_severity_msg' ); ?>
+			<?php echo lang_get('update_severity_msg'); ?>
 		</th>
 		<td>
 			<select name="severity" class="input-sm">';
-				<?php print_enum_string_option_list( 'severity' ); ?>
+				<?php print_enum_string_option_list('severity'); ?>
 			</select>
 		</td>
 	</tr>
@@ -77,16 +79,17 @@ function action_update_severity_print_fields() {
  * @param integer $p_bug_id A bug identifier.
  * @return string|null On failure: the reason why the action could not be validated. On success: null.
  */
-function action_update_severity_validate( $p_bug_id ) {
-	$t_update_severity_threshold = config_get( 'update_bug_threshold' );
+function action_update_severity_validate($p_bug_id)
+{
+	$t_update_severity_threshold = config_get('update_bug_threshold');
 	$t_bug_id = $p_bug_id;
 
-	if( bug_is_readonly( $t_bug_id ) ) {
-		return lang_get( 'actiongroup_error_issue_is_readonly' );
+	if (bug_is_readonly($t_bug_id)) {
+		return lang_get('actiongroup_error_issue_is_readonly');
 	}
 
-	if( !access_has_bug_level( $t_update_severity_threshold, $t_bug_id ) ) {
-		return lang_get( 'access_denied' );
+	if (!access_has_bug_level($t_update_severity_threshold, $t_bug_id)) {
+		return lang_get('access_denied');
 	}
 
 	return null;
@@ -98,8 +101,9 @@ function action_update_severity_validate( $p_bug_id ) {
  * @param integer $p_bug_id The bug id to execute the custom action on.
  * @return null Previous validation ensures that this function doesn't fail. Therefore we can always return null to indicate no errors occurred.
  */
-function action_update_severity_process( $p_bug_id ) {
-	$f_severity = gpc_get_string( 'severity' );
-	bug_set_field( $p_bug_id, 'severity', $f_severity );
+function action_update_severity_process($p_bug_id)
+{
+	$f_severity = gpc_get_string('severity');
+	bug_set_field($p_bug_id, 'severity', $f_severity);
 	return null;
 }

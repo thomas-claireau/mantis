@@ -38,61 +38,63 @@
  */
 
 
-require_once( 'core.php' );
-require_api( 'access_api.php' );
-require_api( 'authentication_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'form_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'html_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'print_api.php' );
-require_api( 'project_api.php' );
-require_api( 'string_api.php' );
+require_once('core.php');
+require_api('access_api.php');
+require_api('authentication_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('form_api.php');
+require_api('gpc_api.php');
+require_api('helper_api.php');
+require_api('html_api.php');
+require_api('lang_api.php');
+require_api('print_api.php');
+require_api('project_api.php');
+require_api('string_api.php');
 
-form_security_validate( 'manage_config_revert' );
+form_security_validate('manage_config_revert');
 
 auth_reauthenticate();
 
-$f_project_id = gpc_get_int( 'project', 0 );
-$f_revert = gpc_get_string( 'revert', '' );
-$f_return = gpc_get_string( 'return' );
+$f_project_id = gpc_get_int('project', 0);
+$f_revert = gpc_get_string('revert', '');
+$f_return = gpc_get_string('return');
 
 $t_access = true;
-$t_revert_vars = explode( ',', $f_revert );
-array_walk( $t_revert_vars, 'trim' );
-foreach ( $t_revert_vars as $t_revert ) {
-	$t_access &= access_has_project_level( config_get_access( $t_revert ), $f_project_id );
+$t_revert_vars = explode(',', $f_revert);
+array_walk($t_revert_vars, 'trim');
+foreach ($t_revert_vars as $t_revert) {
+	$t_access &= access_has_project_level(config_get_access($t_revert), $f_project_id);
 }
 
-if( !$t_access ) {
+if (!$t_access) {
 	access_denied();
 }
 
-if( '' != $f_revert ) {
+if ('' != $f_revert) {
 	# Confirm with the user
 	helper_ensure_confirmed(
-		sprintf( lang_get( 'config_delete_sure' ),
-			string_html_specialchars( implode( ', ', $t_revert_vars ) ),
-			string_attribute( project_get_name( $f_project_id ) )
+		sprintf(
+			lang_get('config_delete_sure'),
+			string_html_specialchars(implode(', ', $t_revert_vars)),
+			string_attribute(project_get_name($f_project_id))
 		),
-		lang_get( 'delete_config_button' ) );
+		lang_get('delete_config_button')
+	);
 
-	foreach ( $t_revert_vars as $t_revert ) {
-		config_delete( $t_revert, ALL_USERS, $f_project_id );
+	foreach ($t_revert_vars as $t_revert) {
+		config_delete($t_revert, ALL_USERS, $f_project_id);
 	}
 }
 
-form_security_purge( 'manage_config_revert' );
+form_security_purge('manage_config_revert');
 
 $t_redirect_url = $f_return;
 
-layout_page_header( null, $t_redirect_url );
+layout_page_header(null, $t_redirect_url);
 
 layout_page_begin();
 
-html_operation_successful( $t_redirect_url );
+html_operation_successful($t_redirect_url);
 
 layout_page_end();

@@ -37,43 +37,43 @@
  * @uses version_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'access_api.php' );
-require_api( 'authentication_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'event_api.php' );
-require_api( 'form_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'html_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'print_api.php' );
-require_api( 'utility_api.php' );
-require_api( 'version_api.php' );
+require_once('core.php');
+require_api('access_api.php');
+require_api('authentication_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('event_api.php');
+require_api('form_api.php');
+require_api('gpc_api.php');
+require_api('html_api.php');
+require_api('lang_api.php');
+require_api('print_api.php');
+require_api('utility_api.php');
+require_api('version_api.php');
 
-form_security_validate( 'manage_proj_ver_add' );
+form_security_validate('manage_proj_ver_add');
 
 auth_reauthenticate();
 
-$f_project_id	= gpc_get_int( 'project_id' );
-$f_version		= gpc_get_string( 'version' );
-$f_add_and_edit = gpc_get_bool( 'add_and_edit_version' );
+$f_project_id	= gpc_get_int('project_id');
+$f_version		= gpc_get_string('version');
+$f_add_and_edit = gpc_get_bool('add_and_edit_version');
 
 # We reverse the array so that if the user enters multiple versions
 #  they will likely appear with the last item entered at the top of the list
 #  (i.e. in reverse chronological order).  Unless we find a way to make the
 #  date_order fields different for each one, however, this is fragile, since
 #  the DB may actually pull the rows out in any order
-$t_versions = array_reverse( explode( '|', $f_version ) );
+$t_versions = array_reverse(explode('|', $f_version));
 
 $t_version_id = 0;
 
-foreach ( $t_versions as $t_version ) {
-	if( is_blank( $t_version ) ) {
+foreach ($t_versions as $t_version) {
+	if (is_blank($t_version)) {
 		continue;
 	}
 
-	$t_version = trim( $t_version );
+	$t_version = trim($t_version);
 
 	$t_data = array(
 		'query' => array(
@@ -84,27 +84,27 @@ foreach ( $t_versions as $t_version ) {
 		)
 	);
 
-	$t_command = new VersionAddCommand( $t_data );
+	$t_command = new VersionAddCommand($t_data);
 	$t_result = $t_command->execute();
 	$t_version_id = $t_result['id'];
 }
 
-form_security_purge( 'manage_proj_ver_add' );
+form_security_purge('manage_proj_ver_add');
 
-if( $t_version_id == 0 ) {
-	error_parameters( lang_get( 'version' ) );
-	trigger_error( ERROR_EMPTY_FIELD, ERROR );
+if ($t_version_id == 0) {
+	error_parameters(lang_get('version'));
+	trigger_error(ERROR_EMPTY_FIELD, ERROR);
 }
 
-if( $f_add_and_edit ) {
+if ($f_add_and_edit) {
 	$t_redirect_url = 'manage_proj_ver_edit_page.php?version_id=' . $t_version_id;
 } else {
 	$t_redirect_url = 'manage_proj_edit_page.php?project_id=' . $f_project_id;
 }
 
-layout_page_header( null, $t_redirect_url );
-layout_page_begin( 'manage_overview_page.php' );
+layout_page_header(null, $t_redirect_url);
+layout_page_begin('manage_overview_page.php');
 
-html_operation_successful( $t_redirect_url );
+html_operation_successful($t_redirect_url);
 
 layout_page_end();

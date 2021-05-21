@@ -35,42 +35,42 @@
  * @uses print_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'access_api.php' );
-require_api( 'authentication_api.php' );
-require_api( 'config_api.php' );
-require_api( 'form_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'html_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'news_api.php' );
-require_api( 'print_api.php' );
+require_once('core.php');
+require_api('access_api.php');
+require_api('authentication_api.php');
+require_api('config_api.php');
+require_api('form_api.php');
+require_api('gpc_api.php');
+require_api('helper_api.php');
+require_api('html_api.php');
+require_api('lang_api.php');
+require_api('news_api.php');
+require_api('print_api.php');
 
 news_ensure_enabled();
 
-form_security_validate( 'news_add' );
+form_security_validate('news_add');
 
-access_ensure_project_level( config_get( 'manage_news_threshold' ) );
+access_ensure_project_level(config_get('manage_news_threshold'));
 
-$f_view_state	= gpc_get_int( 'view_state' );
-$f_headline		= gpc_get_string( 'headline' );
-$f_announcement	= gpc_get_bool( 'announcement' );
-$f_body			= gpc_get_string( 'body' );
+$f_view_state	= gpc_get_int('view_state');
+$f_headline		= gpc_get_string('headline');
+$f_announcement	= gpc_get_bool('announcement');
+$f_body			= gpc_get_string('body');
 
-$t_news_id = news_create( helper_get_current_project(), auth_get_current_user_id(), $f_view_state, $f_announcement, $f_headline, $f_body );
+$t_news_id = news_create(helper_get_current_project(), auth_get_current_user_id(), $f_view_state, $f_announcement, $f_headline, $f_body);
 
-form_security_purge( 'news_add' );
+form_security_purge('news_add');
 
-$t_news_row = news_get_row( $t_news_id );
+$t_news_row = news_get_row($t_news_id);
 
 layout_page_header();
 
-layout_page_begin( 'main_page.php' );
+layout_page_begin('main_page.php');
 
 echo '<div class="space-10"></div>';
-html_operation_successful( 'main_page.php' );
+html_operation_successful('main_page.php');
 
-print_news_entry_from_row( $t_news_row );
+print_news_entry_from_row($t_news_row);
 
 layout_page_end();

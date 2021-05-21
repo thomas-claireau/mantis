@@ -37,19 +37,19 @@
  * @uses string_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'config_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'print_api.php' );
-require_api( 'string_api.php' );
+require_once('core.php');
+require_api('config_api.php');
+require_api('gpc_api.php');
+require_api('print_api.php');
+require_api('string_api.php');
 
-$f_return = gpc_get_string( 'return', '' );
+$f_return = gpc_get_string('return', '');
 
 $t_anonymous_account = auth_anonymous_account();
 
-if( $f_return !== '' ) {
-	$t_return = string_url( string_sanitize_url( $f_return ) );
-	print_header_redirect( 'login.php?username=' . $t_anonymous_account . '&perm_login=false&return=' . $t_return );
+if ($f_return !== '') {
+	$t_return = string_url(string_sanitize_url($f_return));
+	print_header_redirect('login.php?username=' . $t_anonymous_account . '&perm_login=false&return=' . $t_return);
 } else {
-	print_header_redirect( 'login.php?username=' . $t_anonymous_account . '&perm_login=false' );
+	print_header_redirect('login.php?username=' . $t_anonymous_account . '&perm_login=false');
 }

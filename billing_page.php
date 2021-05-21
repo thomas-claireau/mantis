@@ -30,23 +30,22 @@
  * @uses lang_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'access_api.php' );
-require_api( 'billing_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'html_api.php' );
-require_api( 'lang_api.php' );
+require_once('core.php');
+require_api('access_api.php');
+require_api('billing_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('html_api.php');
+require_api('lang_api.php');
 
 billing_ensure_reporting_access();
 
-layout_page_header( lang_get( 'time_tracking_billing_link' ) );
+layout_page_header(lang_get('time_tracking_billing_link'));
 
 layout_page_begin();
 
 # Work break-down
-define( 'BILLING_INC_ALLOW', true );
-include( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'billing_inc.php' );
+define('BILLING_INC_ALLOW', true);
+include(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'billing_inc.php');
 
 layout_page_end();
-

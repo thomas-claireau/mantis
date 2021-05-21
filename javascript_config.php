@@ -25,32 +25,33 @@
  */
 
 # Prevent output of HTML in the content if errors occur
-define( 'DISABLE_INLINE_ERROR_REPORTING', true );
+define('DISABLE_INLINE_ERROR_REPORTING', true);
 
-require_once( 'core.php' );
-require_api( 'config_api.php' );
+require_once('core.php');
+require_api('config_api.php');
 
 /**
  * Print array of configuration option->values for javascript.
  * @param string $p_config_key Configuration option.
  * @return void
  */
-function print_config_value( $p_config_key ) {
-	echo "config['" . $p_config_key . "'] = '" . addslashes( config_get( $p_config_key ) ) . "';\n";
+function print_config_value($p_config_key)
+{
+	echo "config['" . $p_config_key . "'] = '" . addslashes(config_get($p_config_key)) . "';\n";
 }
 
 # Send correct MIME Content-Type header for JavaScript content.
 # See http://www.rfc-editor.org/rfc/rfc4329.txt for details on why application/javascript is the correct MIME type.
-header( 'Content-Type: application/javascript; charset=UTF-8' );
+header('Content-Type: application/javascript; charset=UTF-8');
 
 
 # Don't let Internet Explorer second-guess our content-type, as per
 # http://blogs.msdn.com/b/ie/archive/2008/07/02/ie8-security-part-v-comprehensive-protection.aspx
-header( 'X-Content-Type-Options: nosniff' );
+header('X-Content-Type-Options: nosniff');
 
 # rewrite headers to allow caching
-if( gpc_isset( 'cache_key' ) ) {
-	http_caching_headers( true );
+if (gpc_isset('cache_key')) {
+	http_caching_headers(true);
 }
 
 # WARNING: DO NOT EXPOSE SENSITIVE CONFIGURATION VALUES!
@@ -63,5 +64,5 @@ if( gpc_isset( 'cache_key' ) ) {
 # should only be known internally to the server.
 
 echo "var config = new Array();\n";
-print_config_value( 'datetime_picker_format' );
-print_config_value( 'short_path' );
+print_config_value('datetime_picker_format');
+print_config_value('short_path');

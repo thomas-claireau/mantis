@@ -30,30 +30,30 @@
  * @uses print_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'authentication_api.php' );
-require_api( 'config_api.php' );
-require_api( 'form_api.php' );
-require_api( 'html_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'print_api.php' );
+require_once('core.php');
+require_api('authentication_api.php');
+require_api('config_api.php');
+require_api('form_api.php');
+require_api('html_api.php');
+require_api('lang_api.php');
+require_api('print_api.php');
 
-form_security_validate( 'manage_config_columns_reset' );
+form_security_validate('manage_config_columns_reset');
 
 $t_user_id = auth_get_current_user_id();
 
-config_delete_for_user( 'view_issues_page_columns', $t_user_id );
-config_delete_for_user( 'print_issues_page_columns', $t_user_id );
-config_delete_for_user( 'csv_columns', $t_user_id );
-config_delete_for_user( 'excel_columns', $t_user_id );
+config_delete_for_user('view_issues_page_columns', $t_user_id);
+config_delete_for_user('print_issues_page_columns', $t_user_id);
+config_delete_for_user('csv_columns', $t_user_id);
+config_delete_for_user('excel_columns', $t_user_id);
 
-form_security_purge( 'manage_config_columns_reset' );
+form_security_purge('manage_config_columns_reset');
 
 $t_redirect_url = 'account_manage_columns_page.php';
-layout_page_header( lang_get( 'manage_email_config' ), $t_redirect_url );
+layout_page_header(lang_get('manage_email_config'), $t_redirect_url);
 
 layout_page_begin();
 
-html_operation_successful( $t_redirect_url );
+html_operation_successful($t_redirect_url);
 
 layout_page_end();

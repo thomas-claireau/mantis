@@ -33,22 +33,22 @@
  * @uses print_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'access_api.php' );
-require_api( 'authentication_api.php' );
-require_api( 'config_api.php' );
-require_api( 'form_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'html_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'print_api.php' );
+require_once('core.php');
+require_api('access_api.php');
+require_api('authentication_api.php');
+require_api('config_api.php');
+require_api('form_api.php');
+require_api('gpc_api.php');
+require_api('html_api.php');
+require_api('lang_api.php');
+require_api('print_api.php');
 
-form_security_validate( 'manage_proj_subproj_delete' );
+form_security_validate('manage_proj_subproj_delete');
 
 auth_reauthenticate();
 
-$f_project_id    = gpc_get_int( 'project_id' );
-$f_subproject_id = gpc_get_int( 'subproject_id' );
+$f_project_id    = gpc_get_int('project_id');
+$f_subproject_id = gpc_get_int('subproject_id');
 
 
 $t_data = array(
@@ -58,17 +58,17 @@ $t_data = array(
 	)
 );
 
-$t_command = new ProjectHierarchyDeleteCommand( $t_data );
+$t_command = new ProjectHierarchyDeleteCommand($t_data);
 $t_command->execute();
 
-form_security_purge( 'manage_proj_subproj_delete' );
+form_security_purge('manage_proj_subproj_delete');
 
 $t_redirect_url = 'manage_proj_edit_page.php?project_id=' . $f_project_id;
 
-layout_page_header( null, $t_redirect_url );
+layout_page_header(null, $t_redirect_url);
 
-layout_page_begin( 'manage_overview_page.php' );
+layout_page_begin('manage_overview_page.php');
 
-html_operation_successful( $t_redirect_url );
+html_operation_successful($t_redirect_url);
 
 layout_page_end();

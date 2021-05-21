@@ -35,95 +35,95 @@
  * @uses profile_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'access_api.php' );
-require_api( 'authentication_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'current_user_api.php' );
-require_api( 'form_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'print_api.php' );
-require_api( 'profile_api.php' );
+require_once('core.php');
+require_api('access_api.php');
+require_api('authentication_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('current_user_api.php');
+require_api('form_api.php');
+require_api('gpc_api.php');
+require_api('print_api.php');
+require_api('profile_api.php');
 
-if( !config_get( 'enable_profiles' ) ) {
-	trigger_error( ERROR_ACCESS_DENIED, ERROR );
+if (!config_get('enable_profiles')) {
+	trigger_error(ERROR_ACCESS_DENIED, ERROR);
 }
 
 $t_form_name = 'account_prof_update';
-form_security_validate( $t_form_name );
+form_security_validate($t_form_name);
 
 auth_ensure_user_authenticated();
 current_user_ensure_unprotected();
 
-$f_action = gpc_get_string( 'action' );
-$f_redirect_page = gpc_get_string( 'redirect', 'account_prof_menu_page.php' );
+$f_action = gpc_get_string('action');
+$f_redirect_page = gpc_get_string('redirect', 'account_prof_menu_page.php');
 
-if( $f_action != 'add' ) {
-	$f_profile_id = gpc_get_int( 'profile_id' );
+if ($f_action != 'add') {
+	$f_profile_id = gpc_get_int('profile_id');
 }
 
-switch( $f_action ) {
+switch ($f_action) {
 	case 'add':
-		$f_platform		= gpc_get_string( 'platform' );
-		$f_os			= gpc_get_string( 'os' );
-		$f_os_build		= gpc_get_string( 'os_build' );
-		$f_description	= gpc_get_string( 'description' );
-		$t_user_id		= gpc_get_int( 'user_id' );
+		$f_platform		= gpc_get_string('platform');
+		$f_os			= gpc_get_string('os');
+		$f_os_build		= gpc_get_string('os_build');
+		$f_description	= gpc_get_string('description');
+		$t_user_id		= gpc_get_int('user_id');
 
-		if( ALL_USERS == $t_user_id ) {
-			access_ensure_global_level( config_get( 'manage_global_profile_threshold' ) );
+		if (ALL_USERS == $t_user_id) {
+			access_ensure_global_level(config_get('manage_global_profile_threshold'));
 		} else {
-			access_ensure_global_level( config_get( 'add_profile_threshold' ) );
+			access_ensure_global_level(config_get('add_profile_threshold'));
 			$t_user_id = auth_get_current_user_id();
 		}
 
-		profile_create( $t_user_id, $f_platform, $f_os, $f_os_build, $f_description );
+		profile_create($t_user_id, $f_platform, $f_os, $f_os_build, $f_description);
 		break;
 
 	case 'update':
-		if( profile_is_global( $f_profile_id ) ) {
-			access_ensure_global_level( config_get( 'manage_global_profile_threshold' ) );
+		if (profile_is_global($f_profile_id)) {
+			access_ensure_global_level(config_get('manage_global_profile_threshold'));
 			$t_user_id = ALL_USERS;
 		} else {
 			$t_user_id = auth_get_current_user_id();
 		}
 
-		$f_platform = gpc_get_string( 'platform' );
-		$f_os = gpc_get_string( 'os' );
-		$f_os_build = gpc_get_string( 'os_build' );
-		$f_description = gpc_get_string( 'description' );
+		$f_platform = gpc_get_string('platform');
+		$f_os = gpc_get_string('os');
+		$f_os_build = gpc_get_string('os_build');
+		$f_description = gpc_get_string('description');
 
-		profile_update( $t_user_id, $f_profile_id, $f_platform, $f_os, $f_os_build, $f_description );
+		profile_update($t_user_id, $f_profile_id, $f_platform, $f_os, $f_os_build, $f_description);
 		break;
 
 	case 'delete':
-		if( profile_is_global( $f_profile_id ) ) {
-			access_ensure_global_level( config_get( 'manage_global_profile_threshold' ) );
+		if (profile_is_global($f_profile_id)) {
+			access_ensure_global_level(config_get('manage_global_profile_threshold'));
 			$t_user_id = ALL_USERS;
 		} else {
 			$t_user_id = auth_get_current_user_id();
 		}
 
 		helper_ensure_confirmed(
-			sprintf( lang_get( 'delete_profile_confirm_msg' ),
-				string_attribute( profile_get_name( $f_profile_id ) )
+			sprintf(
+				lang_get('delete_profile_confirm_msg'),
+				string_attribute(profile_get_name($f_profile_id))
 			),
-			lang_get( 'delete_profile' )
+			lang_get('delete_profile')
 		);
 
-		profile_delete( $t_user_id, $f_profile_id );
+		profile_delete($t_user_id, $f_profile_id);
 		break;
 
 	case 'make_default':
-		current_user_set_pref( 'default_profile', $f_profile_id );
+		current_user_set_pref('default_profile', $f_profile_id);
 		break;
 }
 
-form_security_purge( $t_form_name );
+form_security_purge($t_form_name);
 
-layout_page_header( null, $f_redirect_page );
+layout_page_header(null, $f_redirect_page);
 layout_page_begin();
-html_operation_successful( $f_redirect_page );
+html_operation_successful($f_redirect_page);
 layout_page_end();
-

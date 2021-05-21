@@ -35,23 +35,23 @@
  * @uses user_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'access_api.php' );
-require_api( 'authentication_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'database_api.php' );
-require_api( 'form_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'print_api.php' );
-require_api( 'user_api.php' );
+require_once('core.php');
+require_api('access_api.php');
+require_api('authentication_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('database_api.php');
+require_api('form_api.php');
+require_api('helper_api.php');
+require_api('lang_api.php');
+require_api('print_api.php');
+require_api('user_api.php');
 
-form_security_validate( 'manage_user_prune' );
+form_security_validate('manage_user_prune');
 
 auth_reauthenticate();
 
-access_ensure_global_level( config_get( 'manage_user_threshold' ) );
+access_ensure_global_level(config_get('manage_user_threshold'));
 
 
 # Delete the users who have never logged in and are older than 1 week
@@ -59,28 +59,30 @@ $t_days_old = (int)7 * SECONDS_PER_DAY;
 
 $t_query = 'SELECT id, access_level FROM {user}
 		WHERE ( login_count = 0 ) AND ( date_created = last_visit ) AND ' .
-		'( protected = 0 ) AND ' . db_helper_compare_time( db_param(), '>', 'date_created', $t_days_old );
-$t_result = db_query( $t_query, array( db_now() ) );
+	'( protected = 0 ) AND ' . db_helper_compare_time(db_param(), '>', 'date_created', $t_days_old);
+$t_result = db_query($t_query, array(db_now()));
 
-if( !$t_result ) {
-	trigger_error( ERROR_GENERIC, ERROR );
+if (!$t_result) {
+	trigger_error(ERROR_GENERIC, ERROR);
 }
 
-$t_count = db_num_rows( $t_result );
+$t_count = db_num_rows($t_result);
 
-if( $t_count > 0 ) {
-	helper_ensure_confirmed( lang_get( 'confirm_account_pruning' ),
-							 lang_get( 'prune_accounts_button' ) );
+if ($t_count > 0) {
+	helper_ensure_confirmed(
+		lang_get('confirm_account_pruning'),
+		lang_get('prune_accounts_button')
+	);
 }
 
-for( $i=0; $i < $t_count; $i++ ) {
-	$t_row = db_fetch_array( $t_result );
+for ($i = 0; $i < $t_count; $i++) {
+	$t_row = db_fetch_array($t_result);
 	# Don't prune accounts with a higher global access level than the current user
-	if( access_has_global_level( $t_row['access_level'] ) ) {
-		user_delete( $t_row['id'] );
+	if (access_has_global_level($t_row['access_level'])) {
+		user_delete($t_row['id']);
 	}
 }
 
-form_security_purge( 'manage_user_prune' );
+form_security_purge('manage_user_prune');
 
-print_header_redirect( 'manage_user_page.php' );
+print_header_redirect('manage_user_page.php');

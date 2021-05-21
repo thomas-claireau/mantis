@@ -32,68 +32,68 @@
  * @uses utility_api.php
  */
 
-if( !defined( 'BUG_ACTIONGROUP_INC_ALLOW' ) ) {
+if (!defined('BUG_ACTIONGROUP_INC_ALLOW')) {
 	return;
 }
 
 # This variable is defined in parent script
 global $t_event_params;
 
-require_api( 'authentication_api.php' );
-require_api( 'bug_group_action_api.php' );
-require_api( 'form_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'print_api.php' );
-require_api( 'string_api.php' );
-require_api( 'utility_api.php' );
+require_api('authentication_api.php');
+require_api('bug_group_action_api.php');
+require_api('form_api.php');
+require_api('gpc_api.php');
+require_api('print_api.php');
+require_api('string_api.php');
+require_api('utility_api.php');
 
-$t_external_action = mb_strtolower( mb_substr( $f_action, mb_strlen( $t_external_action_prefix ) ) );
+$t_external_action = mb_strtolower(mb_substr($f_action, mb_strlen($t_external_action_prefix)));
 $t_form_fields_page = 'bug_actiongroup_' . $t_external_action . '_inc.php';
 $t_form_name = 'bug_actiongroup_' . $t_external_action;
 
-bug_group_action_init( $t_external_action );
+bug_group_action_init($t_external_action);
 
 bug_group_action_print_top();
 ?>
 
 <div class="col-md-12 col-xs-12">
 
-<div id="action-group-div" class="form-container" >
-<form method="post" action="bug_actiongroup_ext.php">
-	<?php echo form_security_field( $t_form_name ); ?>
-	<input type="hidden" name="action" value="<?php echo string_attribute( $t_external_action ) ?>" />
-	<div class="widget-box widget-color-blue2">
-	<div class="widget-header widget-header-small">
-		<h4 class="widget-title lighter">
-			<?php bug_group_action_print_title( $t_external_action ); ?>
-		</h4>
-	</div>
-	<div class="widget-body">
-	<div class="widget-main no-padding">
-	<div class="table-responsive">
-	<table class="table table-bordered table-condensed table-striped">
-	<tbody>
-<?php
-	bug_group_action_print_hidden_fields( $f_bug_arr );
-	bug_group_action_print_action_fields( $t_external_action );
+	<div id="action-group-div" class="form-container">
+		<form method="post" action="bug_actiongroup_ext.php">
+			<?php echo form_security_field($t_form_name); ?>
+			<input type="hidden" name="action" value="<?php echo string_attribute($t_external_action) ?>" />
+			<div class="widget-box widget-color-blue2">
+				<div class="widget-header widget-header-small">
+					<h4 class="widget-title lighter">
+						<?php bug_group_action_print_title($t_external_action); ?>
+					</h4>
+				</div>
+				<div class="widget-body">
+					<div class="widget-main no-padding">
+						<div class="table-responsive">
+							<table class="table table-bordered table-condensed table-striped">
+								<tbody>
+									<?php
+									bug_group_action_print_hidden_fields($f_bug_arr);
+									bug_group_action_print_action_fields($t_external_action);
 
-	# signal plugin event for additional fields
-	event_signal( 'EVENT_BUG_ACTIONGROUP_FORM', array( $t_event_params ) );
-?>
-	<tr class="spacer"></tr>
-	<?php bug_group_action_print_bug_list( $f_bug_arr ); ?>
-	<tr class="spacer"></tr>
-	</tbody>
-	</table>
+									# signal plugin event for additional fields
+									event_signal('EVENT_BUG_ACTIONGROUP_FORM', array($t_event_params));
+									?>
+									<tr class="spacer"></tr>
+									<?php bug_group_action_print_bug_list($f_bug_arr); ?>
+									<tr class="spacer"></tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="widget-toolbox padding-8 clearfix">
+						<input type="submit" class="btn btn-primary btn-white btn-round" value="<?php bug_group_action_print_title($t_external_action); ?>" />
+					</div>
+				</div>
+			</div>
+		</form>
 	</div>
-	</div>
-	<div class="widget-toolbox padding-8 clearfix">
-		<input type="submit" class="btn btn-primary btn-white btn-round" value="<?php bug_group_action_print_title( $t_external_action ); ?>" />
-	</div>
-	</div>
-	</div>
-</form>
-</div>
 </div>
 
 

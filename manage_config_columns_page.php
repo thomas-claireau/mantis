@@ -28,25 +28,25 @@
  * @uses lang_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'authentication_api.php' );
-require_api( 'html_api.php' );
-require_api( 'lang_api.php' );
+require_once('core.php');
+require_api('authentication_api.php');
+require_api('html_api.php');
+require_api('lang_api.php');
 
 auth_reauthenticate();
 
-layout_page_header( lang_get( 'manage_columns_config' ) );
+layout_page_header(lang_get('manage_columns_config'));
 
-layout_page_begin( 'manage_overview_page.php' );
+layout_page_begin('manage_overview_page.php');
 
-print_manage_menu( PAGE_CONFIG_DEFAULT );
-print_manage_config_menu( 'manage_config_columns_page.php' );
+print_manage_menu(PAGE_CONFIG_DEFAULT);
+print_manage_config_menu('manage_config_columns_page.php');
 
 
 # Define constant that will be checked by the include page.
-define( 'MANAGE_COLUMNS', true );
+define('MANAGE_COLUMNS', true);
 
-define( 'MANAGE_COLUMNS_INC_ALLOW', true );
-include ( dirname( __FILE__ ) . '/manage_columns_inc.php' );
+define('MANAGE_COLUMNS_INC_ALLOW', true);
+include(dirname(__FILE__) . '/manage_columns_inc.php');
 
 layout_page_end();

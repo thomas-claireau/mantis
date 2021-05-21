@@ -27,43 +27,42 @@
  * @uses string_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'api_token_api.php' );
-require_api( 'string_api.php' );
+require_once('core.php');
+require_api('api_token_api.php');
+require_api('string_api.php');
 
-form_security_validate( 'create_api_token_form' );
+form_security_validate('create_api_token_form');
 
 auth_ensure_user_authenticated();
 auth_reauthenticate();
 
-$f_token_name = gpc_get_string( 'token_name' );
+$f_token_name = gpc_get_string('token_name');
 
 $t_user_id = auth_get_current_user_id();
 
-user_ensure_unprotected( $t_user_id );
+user_ensure_unprotected($t_user_id);
 
-if( !api_token_can_create() ) {
+if (!api_token_can_create()) {
 	access_denied();
 }
 
-$t_token = api_token_create( $f_token_name, $t_user_id );
-$t_disclose_message = lang_get( 'api_token_disclose_message' );
-$t_display_once_message = lang_get( 'api_token_displayed_once' );
+$t_token = api_token_create($f_token_name, $t_user_id);
+$t_disclose_message = lang_get('api_token_disclose_message');
+$t_display_once_message = lang_get('api_token_displayed_once');
 
 
-layout_page_header( lang_get( 'api_tokens_link' ) );
+layout_page_header(lang_get('api_tokens_link'));
 
 layout_page_begin();
 ?>
 
 <div class="col-md-12 col-xs-12">
-<h2><?php echo $t_disclose_message ?></h2>
-<div class="lead red"><?php echo $t_display_once_message ?></div>
-<div class="space-10"></div>
-<div class="well"><?php echo string_display_line( $t_token ) ?></div>
-<div class="space-10"></div>
-<?php print_link_button( 'api_tokens_page.php', lang_get( 'api_tokens_link' ) ) ?>
+	<h2><?php echo $t_disclose_message ?></h2>
+	<div class="lead red"><?php echo $t_display_once_message ?></div>
+	<div class="space-10"></div>
+	<div class="well"><?php echo string_display_line($t_token) ?></div>
+	<div class="space-10"></div>
+	<?php print_link_button('api_tokens_page.php', lang_get('api_tokens_link')) ?>
 </div>
 <?php
 layout_page_end();
-

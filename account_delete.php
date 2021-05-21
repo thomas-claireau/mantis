@@ -51,19 +51,19 @@
  * @uses user_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'access_api.php' );
-require_api( 'authentication_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'current_user_api.php' );
-require_api( 'form_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'print_api.php' );
-require_api( 'user_api.php' );
+require_once('core.php');
+require_api('access_api.php');
+require_api('authentication_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('current_user_api.php');
+require_api('form_api.php');
+require_api('helper_api.php');
+require_api('lang_api.php');
+require_api('print_api.php');
+require_api('user_api.php');
 
-form_security_validate( 'account_delete' );
+form_security_validate('account_delete');
 
 auth_ensure_user_authenticated();
 
@@ -71,28 +71,34 @@ current_user_ensure_unprotected();
 
 # Only allow users to delete their own accounts if allow_account_delete = ON or
 # the user has permission to manage user accounts.
-if( OFF == config_get( 'allow_account_delete' ) &&
-	 !access_has_global_level( config_get( 'manage_user_threshold' ) ) ) {
-	print_header_redirect( 'account_page.php' );
+if (
+	OFF == config_get('allow_account_delete') &&
+	!access_has_global_level(config_get('manage_user_threshold'))
+) {
+	print_header_redirect('account_page.php');
 }
 
 # check that we are not deleting the last administrator account
-$t_admin_threshold = config_get_global( 'admin_site_threshold' );
-if( current_user_is_administrator() &&
-	 user_count_level( $t_admin_threshold ) <= 1 ) {
-	trigger_error( ERROR_USER_CHANGE_LAST_ADMIN, ERROR );
+$t_admin_threshold = config_get_global('admin_site_threshold');
+if (
+	current_user_is_administrator() &&
+	user_count_level($t_admin_threshold) <= 1
+) {
+	trigger_error(ERROR_USER_CHANGE_LAST_ADMIN, ERROR);
 }
 
-helper_ensure_confirmed( lang_get( 'confirm_delete_msg' ),
-						 lang_get( 'delete_account_button' ) );
+helper_ensure_confirmed(
+	lang_get('confirm_delete_msg'),
+	lang_get('delete_account_button')
+);
 
-form_security_purge( 'account_delete' );
+form_security_purge('account_delete');
 
 $t_user_id = auth_get_current_user_id();
 
 auth_logout();
 
-user_delete( $t_user_id );
+user_delete($t_user_id);
 
 layout_page_header();
 
@@ -101,10 +107,10 @@ layout_page_begin();
 
 <div class="col-md-12 col-xs-12">
 	<div class="space-10"></div>
-<?php
-echo lang_get( 'account_removed_msg' ) . '<br />';
-print_link_button( config_get_global( 'logout_redirect_page' ), lang_get( 'proceed' ));
-?>
+	<?php
+	echo lang_get('account_removed_msg') . '<br />';
+	print_link_button(config_get_global('logout_redirect_page'), lang_get('proceed'));
+	?>
 </div>
 
 <?php

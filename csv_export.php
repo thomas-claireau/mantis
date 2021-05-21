@@ -33,17 +33,17 @@
  */
 
 # Prevent output of HTML in the content if errors occur
-define( 'DISABLE_INLINE_ERROR_REPORTING', true );
+define('DISABLE_INLINE_ERROR_REPORTING', true);
 
-require_once( 'core.php' );
-require_api( 'authentication_api.php' );
-require_api( 'columns_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'csv_api.php' );
-require_api( 'file_api.php' );
-require_api( 'filter_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'print_api.php' );
+require_once('core.php');
+require_api('authentication_api.php');
+require_api('columns_api.php');
+require_api('constant_inc.php');
+require_api('csv_api.php');
+require_api('file_api.php');
+require_api('filter_api.php');
+require_api('helper_api.php');
+require_api('print_api.php');
 
 auth_ensure_user_authenticated();
 
@@ -55,30 +55,30 @@ $t_sep = csv_get_separator();
 # Get current filter
 $t_filter = filter_get_bug_rows_filter();
 
-$t_filter_query = new BugFilterQuery( $t_filter );
-$t_filter_query->set_limit( EXPORT_BLOCK_SIZE );
+$t_filter_query = new BugFilterQuery($t_filter);
+$t_filter_query->set_limit(EXPORT_BLOCK_SIZE);
 
-if( 0 == $t_filter_query->get_bug_count() ) {
-	print_header_redirect( 'view_all_set.php?type=0' );
+if (0 == $t_filter_query->get_bug_count()) {
+	print_header_redirect('view_all_set.php?type=0');
 }
 
 # Get columns to be exported
 $t_columns = csv_get_columns();
 
-csv_start( csv_get_default_filename() );
+csv_start(csv_get_default_filename());
 
 # export the titles
 $t_first_column = true;
 ob_start();
 $t_titles = array();
-foreach ( $t_columns as $t_column ) {
-	if( !$t_first_column ) {
+foreach ($t_columns as $t_column) {
+	if (!$t_first_column) {
 		echo $t_sep;
 	} else {
 		$t_first_column = false;
 	}
 
-	echo column_get_title( $t_column );
+	echo column_get_title($t_column);
 }
 
 echo $t_nl;
@@ -88,9 +88,9 @@ $t_header = ob_get_clean();
 # Fixed for a problem in Excel where it prompts error message "SYLK: File Format Is Not Valid"
 # See Microsoft Knowledge Base Article - 323626
 # http://support.microsoft.com/default.aspx?scid=kb;en-us;323626&Product=xlw
-$t_first_three_chars = mb_substr( $t_header, 0, 3 );
-if( strcmp( $t_first_three_chars, 'ID' . $t_sep ) == 0 ) {
-	$t_header = str_replace( 'ID' . $t_sep, 'Id' . $t_sep, $t_header );
+$t_first_three_chars = mb_substr($t_header, 0, 3);
+if (strcmp($t_first_three_chars, 'ID' . $t_sep) == 0) {
+	$t_header = str_replace('ID' . $t_sep, 'Id' . $t_sep, $t_header);
 }
 # end of fix
 
@@ -103,7 +103,7 @@ do {
 	bug_clear_cache_all();
 
 	# select a new block
-	$t_filter_query->set_offset( $t_offset );
+	$t_filter_query->set_offset($t_offset);
 	$t_result = $t_filter_query->execute();
 	$t_offset += EXPORT_BLOCK_SIZE;
 
@@ -112,9 +112,9 @@ do {
 	$t_count = 0;
 	$t_bug_id_array = array();
 	$t_unique_user_ids = array();
-	while( $t_count < EXPORT_BLOCK_SIZE ) {
-		$t_row = db_fetch_array( $t_result );
-		if( false === $t_row ) {
+	while ($t_count < EXPORT_BLOCK_SIZE) {
+		$t_row = db_fetch_array($t_result);
+		if (false === $t_row) {
 			# a premature end indicates end of query results. Set flag as finished
 			$t_end_of_results = true;
 			break;
@@ -127,34 +127,34 @@ do {
 	# Either way, process what we have
 
 	# convert and cache data
-	$t_rows = filter_cache_result( $t_read_rows, $t_bug_id_array );
-	bug_cache_columns_data( $t_rows, $t_columns );
+	$t_rows = filter_cache_result($t_read_rows, $t_bug_id_array);
+	bug_cache_columns_data($t_rows, $t_columns);
 
 	# Clear arrays that are not needed
-	unset( $t_read_rows );
-	unset( $t_unique_user_ids );
-	unset( $t_bug_id_array );
+	unset($t_read_rows);
+	unset($t_unique_user_ids);
+	unset($t_bug_id_array);
 
 	# export the rows
-	foreach ( $t_rows as $t_row ) {
+	foreach ($t_rows as $t_row) {
 		$t_first_column = true;
 
-		foreach ( $t_columns as $t_column ) {
-			if( !$t_first_column ) {
+		foreach ($t_columns as $t_column) {
+			if (!$t_first_column) {
 				echo $t_sep;
 			} else {
 				$t_first_column = false;
 			}
 
-			$t_custom_field = column_get_custom_field_name( $t_column );
-			if( $t_custom_field !== null ) {
-				echo csv_format_custom_field( $t_row->id, $t_row->project_id, $t_custom_field );
-			} else if( column_is_plugin_column( $t_column ) ) {
-				echo csv_format_plugin_column_value( $t_column, $t_row );
+			$t_custom_field = column_get_custom_field_name($t_column);
+			if ($t_custom_field !== null) {
+				echo csv_format_custom_field($t_row->id, $t_row->project_id, $t_custom_field);
+			} else if (column_is_plugin_column($t_column)) {
+				echo csv_format_plugin_column_value($t_column, $t_row);
 			} else {
 				$t_function = 'csv_format_' . $t_column;
-				if( function_exists( $t_function ) ) {
-					echo $t_function( $t_row );
+				if (function_exists($t_function)) {
+					echo $t_function($t_row);
 				} else {
 					# Field is unknown
 					echo '';
@@ -164,6 +164,4 @@ do {
 
 		echo $t_nl;
 	}
-
-} while ( false === $t_end_of_results );
-
+} while (false === $t_end_of_results);

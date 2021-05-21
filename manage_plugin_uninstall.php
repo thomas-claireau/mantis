@@ -34,32 +34,32 @@
  */
 
 /** @ignore */
-define( 'PLUGINS_DISABLED', true );
+define('PLUGINS_DISABLED', true);
 
-require_once( 'core.php' );
-require_api( 'access_api.php' );
-require_api( 'authentication_api.php' );
-require_api( 'config_api.php' );
-require_api( 'form_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'plugin_api.php' );
-require_api( 'print_api.php' );
-require_api( 'string_api.php' );
+require_once('core.php');
+require_api('access_api.php');
+require_api('authentication_api.php');
+require_api('config_api.php');
+require_api('form_api.php');
+require_api('gpc_api.php');
+require_api('helper_api.php');
+require_api('lang_api.php');
+require_api('plugin_api.php');
+require_api('print_api.php');
+require_api('string_api.php');
 
-form_security_validate( 'manage_plugin_uninstall' );
+form_security_validate('manage_plugin_uninstall');
 
 auth_reauthenticate();
-access_ensure_global_level( config_get( 'manage_plugin_threshold' ) );
+access_ensure_global_level(config_get('manage_plugin_threshold'));
 
 # register plugins and metadata without initializing
 plugin_register_installed();
 
-$f_basename = gpc_get_string( 'name' );
-$t_plugin = plugin_register( $f_basename, true );
+$f_basename = gpc_get_string('name');
+$t_plugin = plugin_register($f_basename, true);
 
-switch( $t_plugin->status ) {
+switch ($t_plugin->status) {
 	case MantisPlugin::STATUS_MISSING_PLUGIN:
 	case MantisPlugin::STATUS_MISSING_BASE_CLASS:
 		$t_message = 'plugin_remove_message';
@@ -71,14 +71,14 @@ switch( $t_plugin->status ) {
 }
 
 helper_ensure_confirmed(
-	sprintf( lang_get( $t_message ), string_display_line( $t_plugin->name ) ),
-	lang_get( $t_button )
+	sprintf(lang_get($t_message), string_display_line($t_plugin->name)),
+	lang_get($t_button)
 );
 
-if( !is_null( $t_plugin ) ) {
-	plugin_uninstall( $t_plugin );
+if (!is_null($t_plugin)) {
+	plugin_uninstall($t_plugin);
 }
 
-form_security_purge( 'manage_plugin_uninstall' );
+form_security_purge('manage_plugin_uninstall');
 
-print_successful_redirect( 'manage_plugin_page.php' );
+print_successful_redirect('manage_plugin_page.php');

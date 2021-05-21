@@ -28,35 +28,35 @@
  */
 
 $g_bypass_headers = true;
-header( 'Content-type: ' );
+header('Content-type: ');
 
-require_once( 'core.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'gpc_api.php' );
-require_api( 'plugin_api.php' );
+require_once('core.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('gpc_api.php');
+require_api('plugin_api.php');
 
-$t_plugin_path = config_get_global( 'plugin_path' );
+$t_plugin_path = config_get_global('plugin_path');
 
-$f_file = gpc_get_string( 'file' );
+$f_file = gpc_get_string('file');
 
 $t_regex = '/^'
 	# File must start with plugin name, ending with /
 	. '([a-zA-Z0-9_-]+)\/'
 	# Path must not start with a '.' to avoid arbitrary includes higher in the file system
-	. '('. '(?:(?:[a-zA-Z0-9_-][.a-zA-Z0-9_-]*\/)*)'
+	. '(' . '(?:(?:[a-zA-Z0-9_-][.a-zA-Z0-9_-]*\/)*)'
 	# Same goes for filename
 	. '(?:[a-zA-Z0-9_-][.a-zA-Z0-9_-]*)'
 	. ')$/';
 
-if( !preg_match( $t_regex, $f_file, $t_matches ) ) {
-	error_parameters( $f_file );
-	trigger_error( ERROR_PLUGIN_INVALID_FILE, ERROR );
+if (!preg_match($t_regex, $f_file, $t_matches)) {
+	error_parameters($f_file);
+	trigger_error(ERROR_PLUGIN_INVALID_FILE, ERROR);
 }
 
 $t_basename = $t_matches[1];
 $t_file = $t_matches[2];
 
-$t_plugin = plugin_get( $t_basename );
+$t_plugin = plugin_get($t_basename);
 
-plugin_file_include( $t_file, $t_basename );
+plugin_file_include($t_file, $t_basename);

@@ -30,24 +30,26 @@
  * @uses string_api.php
  */
 
-require_once( 'core.php' );
-require_api( 'form_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'print_api.php' );
-require_api( 'string_api.php' );
+require_once('core.php');
+require_api('form_api.php');
+require_api('gpc_api.php');
+require_api('print_api.php');
+require_api('string_api.php');
 
-form_security_validate( 'bugnote_delete' );
+form_security_validate('bugnote_delete');
 
-$f_bugnote_id = gpc_get_int( 'bugnote_id' );
+$f_bugnote_id = gpc_get_int('bugnote_id');
 
-helper_ensure_confirmed( lang_get( 'delete_bugnote_sure_msg' ),
-						 lang_get( 'delete_bugnote_button' ) );
+helper_ensure_confirmed(
+	lang_get('delete_bugnote_sure_msg'),
+	lang_get('delete_bugnote_button')
+);
 
-$t_data = array( 'query' => array( 'id' => $f_bugnote_id  ) );
+$t_data = array('query' => array('id' => $f_bugnote_id));
 
-$t_command = new IssueNoteDeleteCommand( $t_data );
+$t_command = new IssueNoteDeleteCommand($t_data);
 $t_result = $t_command->execute();
 
-form_security_purge( 'bugnote_delete' );
+form_security_purge('bugnote_delete');
 
-print_successful_redirect( string_get_bug_view_url( $t_result['issue_id'] ) . '#bugnotes' );
+print_successful_redirect(string_get_bug_view_url($t_result['issue_id']) . '#bugnotes');
