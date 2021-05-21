@@ -27,7 +27,8 @@
  * @package MantisBT
  * @subpackage classes
  */
-class IssueAssignedTimelineEvent extends TimelineEvent {
+class IssueAssignedTimelineEvent extends TimelineEvent
+{
 	private $issue_id;
 	private $handler_id;
 
@@ -37,8 +38,9 @@ class IssueAssignedTimelineEvent extends TimelineEvent {
 	 * @param integer $p_issue_id   A issue identifier.
 	 * @param integer $p_handler_id A user identifier.
 	 */
-	public function __construct( $p_timestamp, $p_user_id, $p_issue_id, $p_handler_id ) {
-		parent::__construct( $p_timestamp, $p_user_id );
+	public function __construct($p_timestamp, $p_user_id, $p_issue_id, $p_handler_id)
+	{
+		parent::__construct($p_timestamp, $p_user_id);
 
 		$this->issue_id = $p_issue_id;
 		$this->handler_id = $p_handler_id;
@@ -48,16 +50,17 @@ class IssueAssignedTimelineEvent extends TimelineEvent {
 	 * Returns html string to display
 	 * @return string
 	 */
-	public function html() {
-		if( $this->user_id == $this->handler_id ) {
-			$t_html = $this->html_start( 'fa-flag-o' );
-			$t_string = sprintf( lang_get( 'timeline_issue_assigned_to_self' ), prepare_user_name( $this->user_id ), string_get_bug_view_link( $this->issue_id ) );
-		} else if( $this->handler_id != NO_USER ) {
-			$t_html = $this->html_start( 'fa-hand-o-right' );
-			$t_string = sprintf( lang_get( 'timeline_issue_assigned' ), prepare_user_name( $this->user_id ), string_get_bug_view_link( $this->issue_id ), prepare_user_name( $this->handler_id ) );
+	public function html()
+	{
+		if ($this->user_id == $this->handler_id) {
+			$t_html = $this->html_start('fa-flag-o');
+			$t_string = sprintf(lang_get('timeline_issue_assigned_to_self'), prepare_user_name($this->user_id), string_get_bug_view_link($this->issue_id));
+		} else if ($this->handler_id != NO_USER) {
+			$t_html = $this->html_start('fa-hand-o-right');
+			$t_string = sprintf(lang_get('timeline_issue_assigned'), prepare_user_name($this->user_id), string_get_bug_view_link($this->issue_id), prepare_user_name($this->handler_id));
 		} else {
-            $t_html = $this->html_start( 'fa-flag-o' );
-			$t_string = sprintf( lang_get( 'timeline_issue_unassigned' ), prepare_user_name( $this->user_id ), string_get_bug_view_link( $this->issue_id ) );
+			$t_html = $this->html_start('fa-flag-o');
+			$t_string = sprintf(lang_get('timeline_issue_unassigned'), prepare_user_name($this->user_id), string_get_bug_view_link($this->issue_id));
 		}
 
 		$t_html .= '<div class="action">' . $t_string . '</div>';

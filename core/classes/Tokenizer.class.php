@@ -46,49 +46,49 @@ class Tokenizer
 	 * @param string $p_code PHP code to tokenize
 	 * @throws Exception if given code is not valid
 	 */
-	public function __construct( $p_code )
+	public function __construct($p_code)
 	{
 		# Check syntax to make sure we get valid PHP code
 		# prepend 'return' statement to ensure the code is not actually executed
 		$t_code = 'return; ' . $p_code . ';';
-		if( version_compare( PHP_VERSION, '7', '>=' ) ) {
+		if (version_compare(PHP_VERSION, '7', '>=')) {
 			# In PHP >= 7, eval() throws a ParseError which we can catch
 			# and rethrow as an Exception
 			try {
-				eval( $t_code );
-			}
-			catch( ParseError $e ) {
-				throw new Exception( $e->getMessage() );
+				eval($t_code);
+			} catch (ParseError $e) {
+				throw new Exception($e->getMessage());
 			}
 		} else {
 			# In earlier PHP versions, eval() simply returns false and outputs
 			# an error message to STDERR, but this can't be capture using ob_
 			# functions so we suppress errors and throw a generic error message
-			$result = @eval( $t_code );
-			if( $result === false ) {
-				throw new Exception( 'syntax error' );
+			$result = @eval($t_code);
+			if ($result === false) {
+				throw new Exception('syntax error');
 			}
 		}
 
-		$t_tokens = token_get_all( '<?php ' . $p_code );
+		$t_tokens = token_get_all('<?php ' . $p_code);
 
 		# Strip whitespace
-		$t_tokens = array_filter( $t_tokens,
-			function( $p_token ) {
-				return !is_array( $p_token ) || $p_token[0] !== T_WHITESPACE;
+		$t_tokens = array_filter(
+			$t_tokens,
+			function ($p_token) {
+				return !is_array($p_token) || $p_token[0] !== T_WHITESPACE;
 			}
 		);
 
 		# Get rid of the opening '<?php' tag we added
-		array_shift( $t_tokens );
+		array_shift($t_tokens);
 
 		# Remove any trailing ';'
-		while( true ) {
-			$t_last = end( $t_tokens );
-			if( $t_last != ';' ) {
+		while (true) {
+			$t_last = end($t_tokens);
+			if ($t_last != ';') {
 				break;
 			}
-			array_pop( $t_tokens );
+			array_pop($t_tokens);
 		}
 
 		$this->tokens = $t_tokens;
@@ -98,18 +98,20 @@ class Tokenizer
 	 * Return true if we're at the end of the token array.
 	 * @return bool
 	 */
-	public function is_empty() {
-		return empty( $this->tokens );
+	public function is_empty()
+	{
+		return empty($this->tokens);
 	}
 
 	/**
 	 * Returns all remaining tokens as PHP Code
 	 * @return string
 	 */
-	public function get_string() {
+	public function get_string()
+	{
 		$t_code = '';
 		foreach ($this->tokens as $t_token) {
-			$t_code .= is_array( $t_token ) ? $t_token[1] : $t_token;
+			$t_code .= is_array($t_token) ? $t_token[1] : $t_token;
 		}
 		return $t_code;
 	}
@@ -119,9 +121,10 @@ class Tokenizer
 	 * @return mixed token
 	 * @throws Exception if there are no more tokens to process
 	 */
-	public function get() {
-		if( $this->is_empty() ) {
-			throw new Exception( 'No more tokens' );
+	public function get()
+	{
+		if ($this->is_empty()) {
+			throw new Exception('No more tokens');
 		}
 		return $this->tokens[0];
 	}
@@ -131,9 +134,10 @@ class Tokenizer
 	 * @return mixed token
 	 * @throws Exception
 	 */
-	public function pop() {
+	public function pop()
+	{
 		$t_token = $this->get();
-		array_shift( $this->tokens );
+		array_shift($this->tokens);
 		return $t_token;
 	}
 
@@ -142,18 +146,20 @@ class Tokenizer
 	 * @link http://php.net/manual/en/tokens.php
 	 * @return int|string Token number or character
 	 */
-	public function type() {
+	public function type()
+	{
 		$t_token = $this->get();
-		return is_array( $t_token ) ? $t_token[0] : $t_token;
+		return is_array($t_token) ? $t_token[0] : $t_token;
 	}
 
 	/**
 	 * Get the current token's value.
 	 * @return int|string Token number or character
 	 */
-	public function value() {
+	public function value()
+	{
 		$t_token = $this->get();
-		return is_array( $t_token ) ? $t_token[1] : $t_token;
+		return is_array($t_token) ? $t_token[1] : $t_token;
 	}
 
 	/**
@@ -161,7 +167,8 @@ class Tokenizer
 	 * @param int|string $p_value value to check
 	 * @return bool
 	 */
-	public function matches( $p_value ) {
+	public function matches($p_value)
+	{
 		$t_type = $this->type();
 		return $t_type === $p_value;
 	}
@@ -171,10 +178,11 @@ class Tokenizer
 	 * @param int|string $p_value value to check
 	 * @throws Exception if token does not match
 	 */
-	public function ensure_matches( $p_value ) {
-		if( !$this->matches( $p_value ) ) {
-			if( is_int( $p_value ) ) {
-				$p_value = token_name( $p_value );
+	public function ensure_matches($p_value)
+	{
+		if (!$this->matches($p_value)) {
+			if (is_int($p_value)) {
+				$p_value = token_name($p_value);
 			}
 			throw new Exception(
 				'Invalid token: got "' . $this->value() . '", expected "' . $p_value . '"'
@@ -183,23 +191,23 @@ class Tokenizer
 		$this->pop();
 	}
 
-#	/**
-#	 * Prints the tokens array.
-#	 * For debugging purposes only
-#	 */
-#	public function debug_output()
-#	{
-#		if( count( $this->tokens ) == 0 ) {
-#			echo "Empty !\n";
-#		}
-#		foreach ($this->tokens as $id => $token) {
-#			echo "$id - ";
-#			if( is_array( $token ) ) {
-#				echo token_name($token[0]) . " " . var_export( $token[1], true ) . "\n";
-#			} else {
-#				echo $token . "\n";
-#			}
-#		}
-#	}
+	#	/**
+	#	 * Prints the tokens array.
+	#	 * For debugging purposes only
+	#	 */
+	#	public function debug_output()
+	#	{
+	#		if( count( $this->tokens ) == 0 ) {
+	#			echo "Empty !\n";
+	#		}
+	#		foreach ($this->tokens as $id => $token) {
+	#			echo "$id - ";
+	#			if( is_array( $token ) ) {
+	#				echo token_name($token[0]) . " " . var_export( $token[1], true ) . "\n";
+	#			} else {
+	#				echo $token . "\n";
+	#			}
+	#		}
+	#	}
 
 }

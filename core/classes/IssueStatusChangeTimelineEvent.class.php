@@ -27,7 +27,8 @@
  * @package MantisBT
  * @subpackage classes
  */
-class IssueStatusChangeTimelineEvent extends TimelineEvent {
+class IssueStatusChangeTimelineEvent extends TimelineEvent
+{
 	private $issue_id;
 	private $old_status;
 	private $new_status;
@@ -49,8 +50,9 @@ class IssueStatusChangeTimelineEvent extends TimelineEvent {
 	 * @param integer $p_old_status Old status value of issue.
 	 * @param integer $p_new_status New status value of issue.
 	 */
-	public function __construct( $p_timestamp, $p_user_id, $p_issue_id, $p_old_status, $p_new_status ) {
-		parent::__construct( $p_timestamp, $p_user_id );
+	public function __construct($p_timestamp, $p_user_id, $p_issue_id, $p_old_status, $p_new_status)
+	{
+		parent::__construct($p_timestamp, $p_user_id);
 
 		$this->issue_id = $p_issue_id;
 		$this->old_status = $p_old_status;
@@ -62,15 +64,16 @@ class IssueStatusChangeTimelineEvent extends TimelineEvent {
 	 * Return the type of status change
 	 * @return int One of the status change constants defined above
 	 */
-	private function change_type() {
-		$t_resolved = config_get( 'bug_resolved_status_threshold' );
-		$t_closed = config_get( 'bug_closed_status_threshold' );
+	private function change_type()
+	{
+		$t_resolved = config_get('bug_resolved_status_threshold');
+		$t_closed = config_get('bug_closed_status_threshold');
 
-		if( $this->old_status < $t_closed && $this->new_status >= $t_closed ) {
+		if ($this->old_status < $t_closed && $this->new_status >= $t_closed) {
 			return IssueStatusChangeTimelineEvent::CLOSED;
-		} else if( $this->old_status < $t_resolved && $this->new_status >= $t_resolved ) {
+		} else if ($this->old_status < $t_resolved && $this->new_status >= $t_resolved) {
 			return IssueStatusChangeTimelineEvent::RESOLVED;
-		} else if( $this->old_status >= $t_resolved && $this->new_status < $t_resolved ) {
+		} else if ($this->old_status >= $t_resolved && $this->new_status < $t_resolved) {
 			return IssueStatusChangeTimelineEvent::REOPENED;
 		} else {
 			return IssueStatusChangeTimelineEvent::IGNORED;
@@ -82,7 +85,8 @@ class IssueStatusChangeTimelineEvent extends TimelineEvent {
 	 * This normally implements access checks for the event.
 	 * @return boolean
 	 */
-	public function skip() {
+	public function skip()
+	{
 		return $this->type == IssueStatusChangeTimelineEvent::IGNORED;
 	}
 
@@ -90,40 +94,41 @@ class IssueStatusChangeTimelineEvent extends TimelineEvent {
 	 * Returns html string to display
 	 * @return string
 	 */
-	public function html() {
-		switch( $this->type ) {
+	public function html()
+	{
+		switch ($this->type) {
 			case IssueStatusChangeTimelineEvent::RESOLVED:
-                $t_html = $this->html_start( 'fa-thumbs-o-up' );
+				$t_html = $this->html_start('fa-thumbs-o-up');
 				$t_string = sprintf(
-					lang_get( 'timeline_issue_resolved' ),
-					prepare_user_name( $this->user_id ),
-					string_get_bug_view_link( $this->issue_id )
+					lang_get('timeline_issue_resolved'),
+					prepare_user_name($this->user_id),
+					string_get_bug_view_link($this->issue_id)
 				);
 				break;
 			case IssueStatusChangeTimelineEvent::CLOSED:
-                $t_html = $this->html_start( 'fa-power-off' );
+				$t_html = $this->html_start('fa-power-off');
 				$t_string = sprintf(
-					lang_get( 'timeline_issue_closed' ),
-					prepare_user_name( $this->user_id ),
-					string_get_bug_view_link( $this->issue_id )
+					lang_get('timeline_issue_closed'),
+					prepare_user_name($this->user_id),
+					string_get_bug_view_link($this->issue_id)
 				);
 				break;
 			case IssueStatusChangeTimelineEvent::REOPENED:
-                $t_html = $this->html_start( 'fa-refresh' );
+				$t_html = $this->html_start('fa-refresh');
 				$t_string = sprintf(
-					lang_get( 'timeline_issue_reopened' ),
-					prepare_user_name( $this->user_id ),
-					string_get_bug_view_link( $this->issue_id )
+					lang_get('timeline_issue_reopened'),
+					prepare_user_name($this->user_id),
+					string_get_bug_view_link($this->issue_id)
 				);
 				break;
 			case IssueStatusChangeTimelineEvent::IGNORED:
 				return '';
 			default:
 				# Unknown status change type
-				trigger_error( ERROR_GENERIC, ERROR );
+				trigger_error(ERROR_GENERIC, ERROR);
 				return '';
 		}
-        
+
 		$t_html .= '<div class="action">' . $t_string . '</div>';
 		$t_html .= $this->html_end();
 

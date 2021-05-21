@@ -11,9 +11,10 @@
 
 */
 
-class ADODB_pdo_pgsql extends ADODB_pdo {
+class ADODB_pdo_pgsql extends ADODB_pdo
+{
 	var $metaDatabasesSQL = "select datname from pg_database where datname not in ('template0','template1') order by 1";
-    var $metaTablesSQL = "select tablename,'T' from pg_tables where tablename not like 'pg\_%'
+	var $metaTablesSQL = "select tablename,'T' from pg_tables where tablename not like 'pg\_%'
 	and tablename not in ('sql_features', 'sql_implementation_info', 'sql_languages',
 	 'sql_packages', 'sql_sizing', 'sql_sizing_profiles')
 	union
@@ -54,7 +55,7 @@ WHERE relkind in ('r','v') AND (c.relname='%s' or c.relname = lower('%s'))
 	var $_dropSeqSQL = "DROP SEQUENCE %s";
 	var $metaDefaultsSQL = "SELECT d.adnum as num, d.adsrc as def from pg_attrdef d, pg_class c where d.adrelid=c.oid and c.relname='%s' order by d.adnum";
 	var $random = 'random()';		/// random function
-	var $concat_operator='||';
+	var $concat_operator = '||';
 
 	function _init($parentDriver)
 	{
@@ -71,25 +72,25 @@ WHERE relkind in ('r','v') AND (c.relname='%s' or c.relname = lower('%s'))
 		return $arr;
 	}
 
-	function SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false,$secs2cache=0)
+	function SelectLimit($sql, $nrows = -1, $offset = -1, $inputarr = false, $secs2cache = 0)
 	{
 		$nrows = (int) $nrows;
 		$offset = (int) $offset;
 		$offsetStr = ($offset >= 0) ? " OFFSET $offset" : '';
 		$limitStr  = ($nrows >= 0)  ? " LIMIT $nrows" : '';
 		if ($secs2cache)
-			$rs = $this->CacheExecute($secs2cache,$sql."$limitStr$offsetStr",$inputarr);
+			$rs = $this->CacheExecute($secs2cache, $sql . "$limitStr$offsetStr", $inputarr);
 		else
-			$rs = $this->Execute($sql."$limitStr$offsetStr",$inputarr);
+			$rs = $this->Execute($sql . "$limitStr$offsetStr", $inputarr);
 
 		return $rs;
 	}
 
-	function MetaTables($ttype=false,$showSchema=false,$mask=false)
+	function MetaTables($ttype = false, $showSchema = false, $mask = false)
 	{
 		$info = $this->ServerInfo();
 		if ($info['version'] >= 7.3) {
-	    	$this->metaTablesSQL = "select tablename,'T' from pg_tables where tablename not like 'pg\_%'
+			$this->metaTablesSQL = "select tablename,'T' from pg_tables where tablename not like 'pg\_%'
 			  and schemaname  not in ( 'pg_catalog','information_schema')
 	union
         select viewname,'V' from pg_views where viewname not like 'pg\_%'  and schemaname  not in ( 'pg_catalog','information_schema') ";
@@ -97,7 +98,7 @@ WHERE relkind in ('r','v') AND (c.relname='%s' or c.relname = lower('%s'))
 		if ($mask) {
 			$save = $this->metaTablesSQL;
 			$mask = $this->qstr(strtolower($mask));
-			if ($info['version']>=7.3)
+			if ($info['version'] >= 7.3)
 				$this->metaTablesSQL = "
 select tablename,'T' from pg_tables where tablename like $mask and schemaname not in ( 'pg_catalog','information_schema')
  union
@@ -108,7 +109,7 @@ select tablename,'T' from pg_tables where tablename like $mask
  union
 select viewname,'V' from pg_views where viewname like $mask";
 		}
-		$ret = ADOConnection::MetaTables($ttype,$showSchema);
+		$ret = ADOConnection::MetaTables($ttype, $showSchema);
 
 		if ($mask) {
 			$this->metaTablesSQL = $save;
@@ -116,12 +117,12 @@ select viewname,'V' from pg_views where viewname like $mask";
 		return $ret;
 	}
 
-	function MetaColumns($table,$normalize=true)
+	function MetaColumns($table, $normalize = true)
 	{
-	global $ADODB_FETCH_MODE;
+		global $ADODB_FETCH_MODE;
 
 		$schema = false;
-		$this->_findschema($table,$schema);
+		$this->_findschema($table, $schema);
 
 		if ($normalize) $table = strtolower($table);
 
@@ -129,8 +130,8 @@ select viewname,'V' from pg_views where viewname like $mask";
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 		if ($this->fetchMode !== false) $savem = $this->SetFetchMode(false);
 
-		if ($schema) $rs = $this->Execute(sprintf($this->metaColumnsSQL1,$table,$table,$schema));
-		else $rs = $this->Execute(sprintf($this->metaColumnsSQL,$table,$table));
+		if ($schema) $rs = $this->Execute(sprintf($this->metaColumnsSQL1, $table, $table, $schema));
+		else $rs = $this->Execute(sprintf($this->metaColumnsSQL, $table, $table));
 		if (isset($savem)) $this->SetFetchMode($savem);
 		$ADODB_FETCH_MODE = $save;
 
@@ -146,7 +147,7 @@ select viewname,'V' from pg_views where viewname like $mask";
 
 			$ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
 
-			$rskey = $this->Execute(sprintf($this->metaKeySQL,($table)));
+			$rskey = $this->Execute(sprintf($this->metaKeySQL, ($table)));
 			// fetch all result in once for performance.
 			$keys = $rskey->GetArray();
 			if (isset($savem)) $this->SetFetchMode($savem);
@@ -168,7 +169,7 @@ select viewname,'V' from pg_views where viewname like $mask";
 				while (!$rsdef->EOF) {
 					$num = $rsdef->fields['num'];
 					$s = $rsdef->fields['def'];
-					if (strpos($s,'::')===false && substr($s, 0, 1) == "'") { /* quoted strings hack... for now... fixme */
+					if (strpos($s, '::') === false && substr($s, 0, 1) == "'") { /* quoted strings hack... for now... fixme */
 						$s = substr($s, 1);
 						$s = substr($s, 0, strlen($s) - 1);
 					}
@@ -177,7 +178,7 @@ select viewname,'V' from pg_views where viewname like $mask";
 					$rsdef->MoveNext();
 				}
 			} else {
-				ADOConnection::outp( "==> SQL => " . $sql);
+				ADOConnection::outp("==> SQL => " . $sql);
 			}
 			unset($rsdef);
 		}
@@ -188,7 +189,7 @@ select viewname,'V' from pg_views where viewname like $mask";
 			$fld->name = $rs->fields[0];
 			$fld->type = $rs->fields[1];
 			$fld->max_length = $rs->fields[2];
-			if ($fld->max_length <= 0) $fld->max_length = $rs->fields[3]-4;
+			if ($fld->max_length <= 0) $fld->max_length = $rs->fields[3] - 4;
 			if ($fld->max_length <= 0) $fld->max_length = -1;
 			if ($fld->type == 'numeric') {
 				$fld->scale = $fld->max_length & 0xFFFF;
@@ -208,10 +209,10 @@ select viewname,'V' from pg_views where viewname like $mask";
 
 			// Freek
 			if (is_array($keys)) {
-				foreach($keys as $key) {
-					if ($fld->name == $key['column_name'] AND $key['primary_key'] == $this->true)
+				foreach ($keys as $key) {
+					if ($fld->name == $key['column_name'] and $key['primary_key'] == $this->true)
 						$fld->primary_key = true;
-					if ($fld->name == $key['column_name'] AND $key['unique_key'] == $this->true)
+					if ($fld->name == $key['column_name'] and $key['unique_key'] == $this->true)
 						$fld->unique = true; // What name is more compatible?
 				}
 			}
@@ -226,7 +227,5 @@ select viewname,'V' from pg_views where viewname like $mask";
 			$false = false;
 			return $false;
 		} else return $retarr;
-
 	}
-
 }

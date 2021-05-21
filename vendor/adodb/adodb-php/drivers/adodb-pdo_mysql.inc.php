@@ -10,7 +10,8 @@
 
 */
 
-class ADODB_pdo_mysql extends ADODB_pdo {
+class ADODB_pdo_mysql extends ADODB_pdo
+{
 
 	var $metaTablesSQL = "SELECT
 			TABLE_NAME,
@@ -35,7 +36,7 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 	}
 
 	// dayFraction is a day in floating point
-	function OffsetDate($dayFraction, $date=false)
+	function OffsetDate($dayFraction, $date = false)
 	{
 		if (!$date) {
 			$date = $this->sysDate;
@@ -43,7 +44,7 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 
 		$fraction = $dayFraction * 24 * 3600;
 		return $date . ' + INTERVAL ' .	$fraction . ' SECOND';
-//		return "from_unixtime(unix_timestamp($date)+$fraction)";
+		//		return "from_unixtime(unix_timestamp($date)+$fraction)";
 	}
 
 	function Concat()
@@ -66,7 +67,7 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 		return $arr;
 	}
 
-	function MetaTables($ttype=false, $showSchema=false, $mask=false)
+	function MetaTables($ttype = false, $showSchema = false, $mask = false)
 	{
 		$save = $this->metaTablesSQL;
 		if ($showSchema && is_string($showSchema)) {
@@ -85,14 +86,14 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 		return $ret;
 	}
 
-    /**
-     * @param bool $auto_commit
-     * @return void
-     */
-    function SetAutoCommit($auto_commit)
-    {
-        $this->_connectionID->setAttribute(PDO::ATTR_AUTOCOMMIT, $auto_commit);
-    }
+	/**
+	 * @param bool $auto_commit
+	 * @return void
+	 */
+	function SetAutoCommit($auto_commit)
+	{
+		$this->_connectionID->setAttribute(PDO::ATTR_AUTOCOMMIT, $auto_commit);
+	}
 
 	function SetTransactionMode($transaction_mode)
 	{
@@ -107,7 +108,7 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 		$this->Execute('SET SESSION TRANSACTION ' . $transaction_mode);
 	}
 
-	function MetaColumns($table, $normalize=true)
+	function MetaColumns($table, $normalize = true)
 	{
 		$this->_findschema($table, $schema);
 		if ($schema) {
@@ -137,7 +138,7 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 		}
 
 		$retarr = array();
-		while (!$rs->EOF){
+		while (!$rs->EOF) {
 			$fld = new ADOFieldObject();
 			$fld->name = $rs->fields[0];
 			$type = $rs->fields[1];
@@ -199,11 +200,11 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 	}
 
 	// parameters use PostgreSQL convention, not MySQL
-	function SelectLimit($sql, $nrows=-1, $offset=-1, $inputarr=false, $secs=0)
+	function SelectLimit($sql, $nrows = -1, $offset = -1, $inputarr = false, $secs = 0)
 	{
 		$nrows = (int) $nrows;
-		$offset = (int) $offset;		
-		$offsetStr =($offset>=0) ? "$offset," : '';
+		$offset = (int) $offset;
+		$offsetStr = ($offset >= 0) ? "$offset," : '';
 		// jason judge, see PHPLens Issue No: 9220
 		if ($nrows < 0) {
 			$nrows = '18446744073709551615';
@@ -217,7 +218,7 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 		return $rs;
 	}
 
-	function SQLDate($fmt, $col=false)
+	function SQLDate($fmt, $col = false)
 	{
 		if (!$col) {
 			$col = $this->sysTimeStamp;
@@ -225,9 +226,9 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 		$s = 'DATE_FORMAT(' . $col . ",'";
 		$concat = false;
 		$len = strlen($fmt);
-		for ($i=0; $i < $len; $i++) {
+		for ($i = 0; $i < $len; $i++) {
 			$ch = $fmt[$i];
-			switch($ch) {
+			switch ($ch) {
 
 				default:
 					if ($ch == '\\') {
@@ -262,7 +263,7 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 				case 'q':
 					$s .= "'),Quarter($col)";
 
-					if ($len > $i+1) {
+					if ($len > $i + 1) {
 						$s .= ",DATE_FORMAT($col,'";
 					} else {
 						$s .= ",('";

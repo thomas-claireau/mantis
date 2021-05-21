@@ -28,14 +28,15 @@
  * @subpackage classes
  */
 
-require_api( 'access_api.php' );
-require_api( 'plugin_api.php' );
-require_api( 'user_api.php' );
+require_api('access_api.php');
+require_api('plugin_api.php');
+require_api('user_api.php');
 
 /**
  * A class that that contains authentication flags.
  */
-class AuthFlags {
+class AuthFlags
+{
 	/**
 	 * Indicates whether user can use the native login via passwords in MantisBT database.
 	 * @var bool|null
@@ -128,7 +129,8 @@ class AuthFlags {
 	/**
 	 * AuthFlags constructor.
 	 */
-	function __construct() {
+	function __construct()
+	{
 	}
 
 	/**
@@ -138,7 +140,8 @@ class AuthFlags {
 	 * @return void
 	 * @see getPasswordManagedExternallyMessage()
 	 */
-	function setPasswordManagedExternallyMessage( $p_message ) {
+	function setPasswordManagedExternallyMessage($p_message)
+	{
 		$this->password_managed_elsewhere_message = $p_message;
 	}
 
@@ -148,9 +151,10 @@ class AuthFlags {
 	 * @return string The message.
 	 * @see setPasswordManagedExternallyMessage()
 	 */
-	function getPasswordManagedExternallyMessage() {
-		if( empty( $this->password_managed_elsewhere_message ) ) {
-			return lang_get( 'no_password_change' );
+	function getPasswordManagedExternallyMessage()
+	{
+		if (empty($this->password_managed_elsewhere_message)) {
+			return lang_get('no_password_change');
 		}
 
 		return $this->password_managed_elsewhere_message;
@@ -163,7 +167,8 @@ class AuthFlags {
 	 * @return void
 	 * @see getCanUseStandardLogin()
 	 */
-	function setCanUseStandardLogin( $p_enabled ) {
+	function setCanUseStandardLogin($p_enabled)
+	{
 		$this->can_use_native_login = $p_enabled;
 	}
 
@@ -173,8 +178,9 @@ class AuthFlags {
 	 * @return bool true: can use standard MantisBT login, false: otherwise.
 	 * @see setCanUseStandardLogin()
 	 */
-	function getCanUseStandardLogin() {
-		return is_null( $this->can_use_native_login ) ? true : $this->can_use_native_login;
+	function getCanUseStandardLogin()
+	{
+		return is_null($this->can_use_native_login) ? true : $this->can_use_native_login;
 	}
 
 	/**
@@ -185,7 +191,8 @@ class AuthFlags {
 	 * @return void
 	 * @see getLoginPage()
 	 */
-	function setLoginPage( $p_page ) {
+	function setLoginPage($p_page)
+	{
 		$this->login_page = $p_page;
 	}
 
@@ -195,8 +202,9 @@ class AuthFlags {
 	 * @return string The relative login page name.
 	 * @see setLoginPage()
 	 */
-	function getLoginPage() {
-		return is_null( $this->login_page ) ? AUTH_PAGE_USERNAME : $this->login_page;
+	function getLoginPage()
+	{
+		return is_null($this->login_page) ? AUTH_PAGE_USERNAME : $this->login_page;
 	}
 
 	/**
@@ -207,7 +215,8 @@ class AuthFlags {
 	 * @return void
 	 * @see getCredentialsPage()
 	 */
-	function setCredentialsPage( $p_page ) {
+	function setCredentialsPage($p_page)
+	{
 		$this->credentials_page = $p_page;
 	}
 
@@ -219,9 +228,10 @@ class AuthFlags {
 	 * @return string The relative url for the credential page.
 	 * @see setCredentialsPage()
 	 */
-	function getCredentialsPage( $p_query_string ) {
-		$t_page = is_null( $this->credentials_page ) ? AUTH_PAGE_CREDENTIAL : $this->credentials_page;
-		return helper_url_combine( $t_page, $p_query_string );
+	function getCredentialsPage($p_query_string)
+	{
+		$t_page = is_null($this->credentials_page) ? AUTH_PAGE_CREDENTIAL : $this->credentials_page;
+		return helper_url_combine($t_page, $p_query_string);
 	}
 
 	/**
@@ -232,7 +242,8 @@ class AuthFlags {
 	 * @return void
 	 * @see getLogoutPage()
 	 */
-	function setLogoutPage( $p_page ) {
+	function setLogoutPage($p_page)
+	{
 		$this->logout_page = $p_page;
 	}
 
@@ -242,8 +253,9 @@ class AuthFlags {
 	 * @return string The relative url of the logout page.
 	 * @see setLogoutPage()
 	 */
-	function getLogoutPage() {
-		return is_null( $this->logout_page ) ? 'logout_page.php' : $this->logout_page;
+	function getLogoutPage()
+	{
+		return is_null($this->logout_page) ? 'logout_page.php' : $this->logout_page;
 	}
 
 	/**
@@ -254,7 +266,8 @@ class AuthFlags {
 	 * @return void
 	 * @see getLogoutRedirectPage()
 	 */
-	function setLogoutRedirectPage( $p_page ) {
+	function setLogoutRedirectPage($p_page)
+	{
 		$this->logout_redirect_page = $p_page;
 	}
 
@@ -265,9 +278,10 @@ class AuthFlags {
 	 * @return string The relative redirect url.
 	 * @see setLogoutRedirectPage()
 	 */
-	function getLogoutRedirectPage() {
-		if( is_null( $this->logout_redirect_page ) ) {
-			return config_get_global( 'logout_redirect_page' );
+	function getLogoutRedirectPage()
+	{
+		if (is_null($this->logout_redirect_page)) {
+			return config_get_global('logout_redirect_page');
 		}
 
 		return $this->logout_redirect_page;
@@ -280,7 +294,8 @@ class AuthFlags {
 	 * @return void
 	 * @see getSessionLifetime()
 	 */
-	function setSessionLifetime( $p_seconds ) {
+	function setSessionLifetime($p_seconds)
+	{
 		$this->session_lifetime = $p_seconds;
 	}
 
@@ -290,8 +305,9 @@ class AuthFlags {
 	 * @return int The lifetime of the session in seconds or 0 for browser session.
 	 * @see setSessionLifetime()
 	 */
-	function getSessionLifetime() {
-		if( is_null( $this->session_lifetime ) ) {
+	function getSessionLifetime()
+	{
+		if (is_null($this->session_lifetime)) {
 			return 0;
 		}
 
@@ -305,7 +321,8 @@ class AuthFlags {
 	 * @return void
 	 * @see getPermSessionEnabled()
 	 */
-	function setPermSessionEnabled( $p_enabled ) {
+	function setPermSessionEnabled($p_enabled)
+	{
 		$this->perm_session_enabled = $p_enabled;
 	}
 
@@ -315,9 +332,10 @@ class AuthFlags {
 	 * @return bool true: enabled, false: otherwise.
 	 * @see setPermSessionEnabled()
 	 */
-	function getPermSessionEnabled() {
-		if( is_null( $this->perm_session_enabled ) ) {
-			return config_get_global( 'allow_permanent_cookie' ) != OFF;
+	function getPermSessionEnabled()
+	{
+		if (is_null($this->perm_session_enabled)) {
+			return config_get_global('allow_permanent_cookie') != OFF;
 		}
 
 		return $this->perm_session_enabled;
@@ -330,7 +348,8 @@ class AuthFlags {
 	 * @return void
 	 * @see getPermSessionLifetime()
 	 */
-	function setPermSessionLifetime( $p_seconds ) {
+	function setPermSessionLifetime($p_seconds)
+	{
 		$this->perm_session_lifetime = $p_seconds;
 	}
 
@@ -340,9 +359,10 @@ class AuthFlags {
 	 * @return int The session lifetime in seconds or 0 for a browser session.
 	 * @see setPermSessionLifetime()
 	 */
-	function getPermSessionLifetime() {
-		if( is_null( $this->perm_session_lifetime ) ) {
-			return config_get_global( 'cookie_time_length' );
+	function getPermSessionLifetime()
+	{
+		if (is_null($this->perm_session_lifetime)) {
+			return config_get_global('cookie_time_length');
 		}
 
 		return $this->perm_session_lifetime;
@@ -355,7 +375,8 @@ class AuthFlags {
 	 * @return void
 	 * @see getReauthenticationEnabled()
 	 */
-	function setReauthenticationEnabled( $p_enabled ) {
+	function setReauthenticationEnabled($p_enabled)
+	{
 		$this->reauthentication_enabled = $p_enabled;
 	}
 
@@ -365,9 +386,10 @@ class AuthFlags {
 	 * @return bool true: enabled, false otherwise.
 	 * @see setReauthenticationEnabled()
 	 */
-	function getReauthenticationEnabled() {
-		if( is_null( $this->reauthentication_enabled ) ) {
-			return config_get( 'reauthentication' );
+	function getReauthenticationEnabled()
+	{
+		if (is_null($this->reauthentication_enabled)) {
+			return config_get('reauthentication');
 		}
 
 		return $this->reauthentication_enabled;
@@ -380,7 +402,8 @@ class AuthFlags {
 	 * @return void
 	 * @see getReauthenticationEnabled()
 	 */
-	function setReauthenticationLifetime( $p_seconds ) {
+	function setReauthenticationLifetime($p_seconds)
+	{
 		$this->reauthentication_expiry = $p_seconds;
 	}
 
@@ -390,12 +413,12 @@ class AuthFlags {
 	 * @return int seconds after which the user should be re-authenticated.
 	 * @see setReauthenticationLifetime()
 	 */
-	function getReauthenticationLifetime() {
-		if( is_null( $this->reauthentication_expiry ) ) {
-			return config_get( 'reauthentication_expiry' );
+	function getReauthenticationLifetime()
+	{
+		if (is_null($this->reauthentication_expiry)) {
+			return config_get('reauthentication_expiry');
 		}
 
 		return $this->reauthentication_expiry;
 	}
 }
-

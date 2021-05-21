@@ -18,17 +18,18 @@ Set tabs to 4 for best viewing.
 if (!defined('ADODB_DIR')) die();
 
 if (!defined('_ADODB_ODBC_LAYER')) {
-	include(ADODB_DIR."/drivers/adodb-odbc.inc.php");
+	include(ADODB_DIR . "/drivers/adodb-odbc.inc.php");
 }
 
 
-class  ADODB_odbc_mssql extends ADODB_odbc {
+class  ADODB_odbc_mssql extends ADODB_odbc
+{
 	var $databaseType = 'odbc_mssql';
 	var $fmtDate = "'Y-m-d'";
 	var $fmtTimeStamp = "'Y-m-d\TH:i:s'";
 	var $_bindInputArray = true;
 	var $metaDatabasesSQL = "select name from sysdatabases where name <> 'master'";
-	var $metaTablesSQL="select name,case when type='U' then 'T' else 'V' end from sysobjects where (type='U' or type='V') and (name not in ('sysallocations','syscolumns','syscomments','sysdepends','sysfilegroups','sysfiles','sysfiles1','sysforeignkeys','sysfulltextcatalogs','sysindexes','sysindexkeys','sysmembers','sysobjects','syspermissions','sysprotects','sysreferences','systypes','sysusers','sysalternates','sysconstraints','syssegments','REFERENTIAL_CONSTRAINTS','CHECK_CONSTRAINTS','CONSTRAINT_TABLE_USAGE','CONSTRAINT_COLUMN_USAGE','VIEWS','VIEW_TABLE_USAGE','VIEW_COLUMN_USAGE','SCHEMATA','TABLES','TABLE_CONSTRAINTS','TABLE_PRIVILEGES','COLUMNS','COLUMN_DOMAIN_USAGE','COLUMN_PRIVILEGES','DOMAINS','DOMAIN_CONSTRAINTS','KEY_COLUMN_USAGE'))";
+	var $metaTablesSQL = "select name,case when type='U' then 'T' else 'V' end from sysobjects where (type='U' or type='V') and (name not in ('sysallocations','syscolumns','syscomments','sysdepends','sysfilegroups','sysfiles','sysfiles1','sysforeignkeys','sysfulltextcatalogs','sysindexes','sysindexkeys','sysmembers','sysobjects','syspermissions','sysprotects','sysreferences','systypes','sysusers','sysalternates','sysconstraints','syssegments','REFERENTIAL_CONSTRAINTS','CHECK_CONSTRAINTS','CONSTRAINT_TABLE_USAGE','CONSTRAINT_COLUMN_USAGE','VIEWS','VIEW_TABLE_USAGE','VIEW_COLUMN_USAGE','SCHEMATA','TABLES','TABLE_CONSTRAINTS','TABLE_PRIVILEGES','COLUMNS','COLUMN_DOMAIN_USAGE','COLUMN_PRIVILEGES','DOMAINS','DOMAIN_CONSTRAINTS','KEY_COLUMN_USAGE'))";
 	var $metaColumnsSQL = # xtype==61 is datetime
 	"select c.name,t.name,c.length,c.isnullable, c.status,
 		(case when c.xusertype=61 then 0 else c.xprec end),
@@ -45,7 +46,7 @@ class  ADODB_odbc_mssql extends ADODB_odbc {
 	var $identitySQL = 'select SCOPE_IDENTITY()'; // 'select SCOPE_IDENTITY'; # for mssql 2000
 	var $hasInsertID = true;
 	var $connectStmt = 'SET CONCAT_NULL_YIELDS_NULL OFF'; # When SET CONCAT_NULL_YIELDS_NULL is ON,
-														  # concatenating a null value with a string yields a NULL result
+	# concatenating a null value with a string yields a NULL result
 
 	function __construct()
 	{
@@ -56,7 +57,7 @@ class  ADODB_odbc_mssql extends ADODB_odbc {
 	// crashes php...
 	function ServerInfo()
 	{
-	global $ADODB_FETCH_MODE;
+		global $ADODB_FETCH_MODE;
 		$save = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 		$row = $this->GetRow("execute sp_server_info 2");
@@ -67,32 +68,32 @@ class  ADODB_odbc_mssql extends ADODB_odbc {
 		return $arr;
 	}
 
-	function IfNull( $field, $ifNull )
+	function IfNull($field, $ifNull)
 	{
 		return " ISNULL($field, $ifNull) "; // if MS SQL Server
 	}
 
 	function _insertid()
 	{
-	// SCOPE_IDENTITY()
-	// Returns the last IDENTITY value inserted into an IDENTITY column in
-	// the same scope. A scope is a module -- a stored procedure, trigger,
-	// function, or batch. Thus, two statements are in the same scope if
-	// they are in the same stored procedure, function, or batch.
-			return $this->GetOne($this->identitySQL);
+		// SCOPE_IDENTITY()
+		// Returns the last IDENTITY value inserted into an IDENTITY column in
+		// the same scope. A scope is a module -- a stored procedure, trigger,
+		// function, or batch. Thus, two statements are in the same scope if
+		// they are in the same stored procedure, function, or batch.
+		return $this->GetOne($this->identitySQL);
 	}
 
 
-	function MetaForeignKeys($table, $owner=false, $upper=false)
+	function MetaForeignKeys($table, $owner = false, $upper = false)
 	{
-	global $ADODB_FETCH_MODE;
+		global $ADODB_FETCH_MODE;
 
 		$save = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 		$table = $this->qstr(strtoupper($table));
 
 		$sql =
-"select object_name(constid) as constraint_name,
+			"select object_name(constid) as constraint_name,
 	col_name(fkeyid, fkey) as column_name,
 	object_name(rkeyid) as referenced_table_name,
    	col_name(rkeyid, rkey) as referenced_column_name
@@ -105,16 +106,16 @@ order by constraint_name, referenced_table_name, keyno";
 		$ADODB_FETCH_MODE = $save;
 
 		$arr = false;
-		foreach($constraints as $constr) {
+		foreach ($constraints as $constr) {
 			//print_r($constr);
-			$arr[$constr[0]][$constr[2]][] = $constr[1].'='.$constr[3];
+			$arr[$constr[0]][$constr[2]][] = $constr[1] . '=' . $constr[3];
 		}
 		if (!$arr) return false;
 
 		$arr2 = false;
 
-		foreach($arr as $k => $v) {
-			foreach($v as $a => $b) {
+		foreach ($arr as $k => $v) {
+			foreach ($v as $a => $b) {
 				if ($upper) $a = strtoupper($a);
 				$arr2[$a] = $b;
 			}
@@ -122,14 +123,14 @@ order by constraint_name, referenced_table_name, keyno";
 		return $arr2;
 	}
 
-	function MetaTables($ttype=false,$showSchema=false,$mask=false)
+	function MetaTables($ttype = false, $showSchema = false, $mask = false)
 	{
-		if ($mask) {//$this->debug=1;
+		if ($mask) { //$this->debug=1;
 			$save = $this->metaTablesSQL;
 			$mask = $this->qstr($mask);
 			$this->metaTablesSQL .= " AND name like $mask";
 		}
-		$ret = ADOConnection::MetaTables($ttype,$showSchema);
+		$ret = ADOConnection::MetaTables($ttype, $showSchema);
 
 		if ($mask) {
 			$this->metaTablesSQL = $save;
@@ -137,10 +138,10 @@ order by constraint_name, referenced_table_name, keyno";
 		return $ret;
 	}
 
-	function MetaColumns($table, $normalize=true)
+	function MetaColumns($table, $normalize = true)
 	{
 
-		$this->_findschema($table,$schema);
+		$this->_findschema($table, $schema);
 		if ($schema) {
 			$dbName = $this->database;
 			$this->SelectDB($schema);
@@ -150,7 +151,7 @@ order by constraint_name, referenced_table_name, keyno";
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 
 		if ($this->fetchMode !== false) $savem = $this->SetFetchMode(false);
-		$rs = $this->Execute(sprintf($this->metaColumnsSQL,$table));
+		$rs = $this->Execute(sprintf($this->metaColumnsSQL, $table));
 
 		if ($schema) {
 			$this->SelectDB($dbName);
@@ -164,7 +165,7 @@ order by constraint_name, referenced_table_name, keyno";
 		}
 
 		$retarr = array();
-		while (!$rs->EOF){
+		while (!$rs->EOF) {
 			$fld = new ADOFieldObject();
 			$fld->name = $rs->fields[0];
 			$fld->type = $rs->fields[1];
@@ -174,9 +175,9 @@ order by constraint_name, referenced_table_name, keyno";
 
 
 			if (isset($rs->fields[5]) && $rs->fields[5]) {
-				if ($rs->fields[5]>0) $fld->max_length = $rs->fields[5];
+				if ($rs->fields[5] > 0) $fld->max_length = $rs->fields[5];
 				$fld->scale = $rs->fields[6];
-				if ($fld->scale>0) $fld->max_length += 1;
+				if ($fld->scale > 0) $fld->max_length += 1;
 			} else
 				$fld->max_length = $rs->fields[2];
 
@@ -186,16 +187,15 @@ order by constraint_name, referenced_table_name, keyno";
 			} else {
 				$retarr[strtoupper($fld->name)] = $fld;
 			}
-				$rs->MoveNext();
-			}
+			$rs->MoveNext();
+		}
 
-			$rs->Close();
-			return $retarr;
-
+		$rs->Close();
+		return $retarr;
 	}
 
 
-	function MetaIndexes($table,$primary=false, $owner=false)
+	function MetaIndexes($table, $primary = false, $owner = false)
 	{
 		$table = $this->qstr($table);
 
@@ -210,56 +210,56 @@ order by constraint_name, referenced_table_name, keyno";
 
 		global $ADODB_FETCH_MODE;
 		$save = $ADODB_FETCH_MODE;
-        $ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-        if ($this->fetchMode !== FALSE) {
-        	$savem = $this->SetFetchMode(FALSE);
-        }
+		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
+		if ($this->fetchMode !== FALSE) {
+			$savem = $this->SetFetchMode(FALSE);
+		}
 
-        $rs = $this->Execute($sql);
-        if (isset($savem)) {
-        	$this->SetFetchMode($savem);
-        }
-        $ADODB_FETCH_MODE = $save;
+		$rs = $this->Execute($sql);
+		if (isset($savem)) {
+			$this->SetFetchMode($savem);
+		}
+		$ADODB_FETCH_MODE = $save;
 
-        if (!is_object($rs)) {
-        	return FALSE;
-        }
+		if (!is_object($rs)) {
+			return FALSE;
+		}
 
 		$indexes = array();
 		while ($row = $rs->FetchRow()) {
 			if (!$primary && $row[5]) continue;
 
-            $indexes[$row[0]]['unique'] = $row[6];
-            $indexes[$row[0]]['columns'][] = $row[1];
-    	}
-        return $indexes;
+			$indexes[$row[0]]['unique'] = $row[6];
+			$indexes[$row[0]]['columns'][] = $row[1];
+		}
+		return $indexes;
 	}
 
-	function _query($sql,$inputarr=false)
+	function _query($sql, $inputarr = false)
 	{
-		if (is_string($sql)) $sql = str_replace('||','+',$sql);
-		return ADODB_odbc::_query($sql,$inputarr);
+		if (is_string($sql)) $sql = str_replace('||', '+', $sql);
+		return ADODB_odbc::_query($sql, $inputarr);
 	}
 
-	function SetTransactionMode( $transaction_mode )
+	function SetTransactionMode($transaction_mode)
 	{
 		$this->_transmode  = $transaction_mode;
 		if (empty($transaction_mode)) {
 			$this->Execute('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
 			return;
 		}
-		if (!stristr($transaction_mode,'isolation')) $transaction_mode = 'ISOLATION LEVEL '.$transaction_mode;
-		$this->Execute("SET TRANSACTION ".$transaction_mode);
+		if (!stristr($transaction_mode, 'isolation')) $transaction_mode = 'ISOLATION LEVEL ' . $transaction_mode;
+		$this->Execute("SET TRANSACTION " . $transaction_mode);
 	}
 
 	// "Stein-Aksel Basma" <basma@accelero.no>
 	// tested with MSSQL 2000
 	function MetaPrimaryKeys($table, $owner = false)
 	{
-	global $ADODB_FETCH_MODE;
+		global $ADODB_FETCH_MODE;
 
 		$schema = '';
-		$this->_findschema($table,$schema);
+		$this->_findschema($table, $schema);
 		//if (!$schema) $schema = $this->database;
 		if ($schema) $schema = "and k.table_catalog like '$schema%'";
 
@@ -273,93 +273,96 @@ order by constraint_name, referenced_table_name, keyno";
 		$a = $this->GetCol($sql);
 		$ADODB_FETCH_MODE = $savem;
 
-		if ($a && sizeof($a)>0) return $a;
+		if ($a && sizeof($a) > 0) return $a;
 		$false = false;
 		return $false;
 	}
 
-	function SelectLimit($sql,$nrows=-1,$offset=-1, $inputarr=false,$secs2cache=0)
+	function SelectLimit($sql, $nrows = -1, $offset = -1, $inputarr = false, $secs2cache = 0)
 	{
 		$nrows = (int) $nrows;
 		$offset = (int) $offset;
 		if ($nrows > 0 && $offset <= 0) {
 			$sql = preg_replace(
-				'/(^\s*select\s+(distinctrow|distinct)?)/i','\\1 '.$this->hasTop." $nrows ",$sql);
-			$rs = $this->Execute($sql,$inputarr);
+				'/(^\s*select\s+(distinctrow|distinct)?)/i',
+				'\\1 ' . $this->hasTop . " $nrows ",
+				$sql
+			);
+			$rs = $this->Execute($sql, $inputarr);
 		} else
-			$rs = ADOConnection::SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
+			$rs = ADOConnection::SelectLimit($sql, $nrows, $offset, $inputarr, $secs2cache);
 
 		return $rs;
 	}
 
 	// Format date column in sql string given an input format that understands Y M D
-	function SQLDate($fmt, $col=false)
+	function SQLDate($fmt, $col = false)
 	{
 		if (!$col) $col = $this->sysTimeStamp;
 		$s = '';
 
 		$len = strlen($fmt);
-		for ($i=0; $i < $len; $i++) {
+		for ($i = 0; $i < $len; $i++) {
 			if ($s) $s .= '+';
 			$ch = $fmt[$i];
-			switch($ch) {
-			case 'Y':
-			case 'y':
-				$s .= "datename(yyyy,$col)";
-				break;
-			case 'M':
-				$s .= "convert(char(3),$col,0)";
-				break;
-			case 'm':
-				$s .= "replace(str(month($col),2),' ','0')";
-				break;
-			case 'Q':
-			case 'q':
-				$s .= "datename(quarter,$col)";
-				break;
-			case 'D':
-			case 'd':
-				$s .= "replace(str(day($col),2),' ','0')";
-				break;
-			case 'h':
-				$s .= "substring(convert(char(14),$col,0),13,2)";
-				break;
+			switch ($ch) {
+				case 'Y':
+				case 'y':
+					$s .= "datename(yyyy,$col)";
+					break;
+				case 'M':
+					$s .= "convert(char(3),$col,0)";
+					break;
+				case 'm':
+					$s .= "replace(str(month($col),2),' ','0')";
+					break;
+				case 'Q':
+				case 'q':
+					$s .= "datename(quarter,$col)";
+					break;
+				case 'D':
+				case 'd':
+					$s .= "replace(str(day($col),2),' ','0')";
+					break;
+				case 'h':
+					$s .= "substring(convert(char(14),$col,0),13,2)";
+					break;
 
-			case 'H':
-				$s .= "replace(str(datepart(hh,$col),2),' ','0')";
-				break;
+				case 'H':
+					$s .= "replace(str(datepart(hh,$col),2),' ','0')";
+					break;
 
-			case 'i':
-				$s .= "replace(str(datepart(mi,$col),2),' ','0')";
-				break;
-			case 's':
-				$s .= "replace(str(datepart(ss,$col),2),' ','0')";
-				break;
-			case 'a':
-			case 'A':
-				$s .= "substring(convert(char(19),$col,0),18,2)";
-				break;
+				case 'i':
+					$s .= "replace(str(datepart(mi,$col),2),' ','0')";
+					break;
+				case 's':
+					$s .= "replace(str(datepart(ss,$col),2),' ','0')";
+					break;
+				case 'a':
+				case 'A':
+					$s .= "substring(convert(char(19),$col,0),18,2)";
+					break;
 
-			default:
-				if ($ch == '\\') {
-					$i++;
-					$ch = substr($fmt,$i,1);
-				}
-				$s .= $this->qstr($ch);
-				break;
+				default:
+					if ($ch == '\\') {
+						$i++;
+						$ch = substr($fmt, $i, 1);
+					}
+					$s .= $this->qstr($ch);
+					break;
 			}
 		}
 		return $s;
 	}
-
 }
 
-class  ADORecordSet_odbc_mssql extends ADORecordSet_odbc {
+class  ADORecordSet_odbc_mssql extends ADORecordSet_odbc
+{
 
 	var $databaseType = 'odbc_mssql';
 
-	function __construct($id,$mode=false)
+	function __construct($id, $mode = false)
 	{
-		return parent::__construct($id,$mode);
+		return parent::__construct($id, $mode);
 	}
 }

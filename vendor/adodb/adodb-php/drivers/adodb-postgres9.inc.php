@@ -14,7 +14,7 @@
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
 
-include_once(ADODB_DIR."/drivers/adodb-postgres8.inc.php");
+include_once(ADODB_DIR . "/drivers/adodb-postgres8.inc.php");
 
 class ADODB_postgres9 extends ADODB_postgres8
 {

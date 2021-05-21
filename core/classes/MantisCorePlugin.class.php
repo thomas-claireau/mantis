@@ -28,12 +28,14 @@
  * Used to give other plugins a permanent core plugin to 'require' for compatibility.
  * Can/should not be used as a base class.
  */
-final class MantisCorePlugin extends MantisPlugin {
+final class MantisCorePlugin extends MantisPlugin
+{
 	/**
 	 * Plugin registration
 	 * @return void
 	 */
-	function register() {
+	function register()
+	{
 		$this->name = 'MantisBT Core';
 		$this->description = 'Core Plugin API for the Mantis Bug Tracker.';
 

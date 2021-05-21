@@ -1,8 +1,8 @@
 <?php
 
-define('ADODB_REPLICATE',1.2);
+define('ADODB_REPLICATE', 1.2);
 
-include_once(ADODB_DIR.'/adodb-datadict.inc.php');
+include_once(ADODB_DIR . '/adodb-datadict.inc.php');
 
 /*
 1.2		9 June 2009
@@ -55,7 +55,8 @@ First release
 		- debugging turned off ($rep->debug = false)
 */
 
-class ADODB_Replicate {
+class ADODB_Replicate
+{
 	var $connSrc;
 	var $connDest;
 
@@ -83,7 +84,7 @@ class ADODB_Replicate {
 	var $copyTableDefaults = false; // turn off because functions defined as defaults will not work when copied
 	var $errHandler = false; // name of error handler function, if used.
 	var $htmlSpecialChars = true; 	// if execute false, then output with htmlspecialchars enabled.
-									// Will autoconfigure itself. No need to modify
+	// Will autoconfigure itself. No need to modify
 
 	var $trgSuffix = '_mrgTr';
 	var $idxSuffix = '_mrgidx';
@@ -97,14 +98,14 @@ class ADODB_Replicate {
 	// connSrc2 and connDest2 are only required if the db driver
 	// does not allow updates back to src db in first connection (the select connection),
 	// so we need 2nd connection
-	function __construct($connSrc, $connDest, $connSrc2=false, $connDest2=false)
+	function __construct($connSrc, $connDest, $connSrc2 = false, $connDest2 = false)
 	{
 
-		if (strpos($connSrc->databaseType,'odbtp') !== false) {
+		if (strpos($connSrc->databaseType, 'odbtp') !== false) {
 			$connSrc->_bindInputArray = false;  # bug in odbtp, binding fails
 		}
 
-		if (strpos($connDest->databaseType,'odbtp') !== false) {
+		if (strpos($connDest->databaseType, 'odbtp') !== false) {
 			$connDest->_bindInputArray = false;  # bug in odbtp, binding fails
 		}
 
@@ -124,8 +125,8 @@ class ADODB_Replicate {
 		if (!is_array($sql)) $sql[] = $sql;
 
 		$ret = true;
-		foreach($sql as $s)
-			if (!$this->execute) echo "<pre>",$s.";\n</pre>";
+		foreach ($sql as $s)
+			if (!$this->execute) echo "<pre>", $s . ";\n</pre>";
 			else {
 				$ok = $this->connDest->Execute($s);
 				if (!$ok)
@@ -142,9 +143,9 @@ class ADODB_Replicate {
 		Also $table and desttable can have different names.
 	*/
 
-	function CopyTableStruct($table,$desttable='')
+	function CopyTableStruct($table, $desttable = '')
 	{
-		$sql = $this->CopyTableStructSQL($table,$desttable);
+		$sql = $this->CopyTableStructSQL($table, $desttable);
 		if (empty($sql)) return false;
 		return $this->ExecSQL($sql);
 	}
@@ -183,19 +184,19 @@ class ADODB_Replicate {
 		if the rec was modified after replicatedata retrieves the data but before we update back the src record,
 		we don't set the copiedflag='Y' yet.
 	*/
-	function RunUpdateSrcFn($srcdb, $table, $fldoffsets, $row, $where, $mode, $dest_insertid=null, $lastUpdateFld='')
+	function RunUpdateSrcFn($srcdb, $table, $fldoffsets, $row, $where, $mode, $dest_insertid = null, $lastUpdateFld = '')
 	{
 		if (!$this->updateSrcFn) return;
 
 		$bindarr = array();
-		foreach($fldoffsets as $k) {
+		foreach ($fldoffsets as $k) {
 			$bindarr[$k] = $row[$k];
 		}
 		$last = sizeof($row);
 
-		if ($lastUpdateFld && $row[$last-1]) {
-			$ds = $row[$last-1];
-			if (strpos($ds,':') !== false) $s = $srcdb->DBTimeStamp($ds);
+		if ($lastUpdateFld && $row[$last - 1]) {
+			$ds = $row[$last - 1];
+			if (strpos($ds, ':') !== false) $s = $srcdb->DBTimeStamp($ds);
 			else $s = $srcdb->qstr($ds);
 			$where = "WHERE $lastUpdateFld = $s and $where";
 		} else
@@ -207,20 +208,19 @@ class ADODB_Replicate {
 			if ($set) {
 
 				if (strlen($dest_insertid) == 0) $dest_insertid = 'null';
-				$set = str_replace('$INSERT_ID',$dest_insertid,$set);
+				$set = str_replace('$INSERT_ID', $dest_insertid, $set);
 
 				$sql = "UPDATE $table SET $set $where  ";
-				$ok = $srcdb->Execute($sql,$bindarr);
+				$ok = $srcdb->Execute($sql, $bindarr);
 				if (!$ok) {
-					echo $srcdb->ErrorMsg(),"<br>\n";
+					echo $srcdb->ErrorMsg(), "<br>\n";
 					die();
 				}
 			}
 		} else $fn($srcdb, $table, $row, $where, $bindarr, $mode, $dest_insertid);
-
 	}
 
-	function CopyTableStructSQL($table, $desttable='',$dropdest =false)
+	function CopyTableStructSQL($table, $desttable = '', $dropdest = false)
 	{
 		if (!$desttable) {
 			$desttable = $table;
@@ -242,15 +242,15 @@ class ADODB_Replicate {
 		$sa = array();
 		$idxcols = array();
 
-		foreach($types as $name => $t) {
+		foreach ($types as $name => $t) {
 			$s = '';
 			$mt = $this->ddSrc->MetaType($t->type);
 			$len = $t->max_length;
-			$fldname = $this->RunFieldFilter($t->name,'TABLE');
+			$fldname = $this->RunFieldFilter($t->name, 'TABLE');
 			if (!$fldname) continue;
 
-			$s .= $fldname . ' '.$mt;
-			if (isset($t->scale)) $precision = '.'.$t->scale;
+			$s .= $fldname . ' ' . $mt;
+			if (isset($t->scale)) $precision = '.' . $t->scale;
 			else $precision = '';
 			if ($mt == 'C' or $mt == 'X') $s .= "($len)";
 			else if ($mt == 'N' && $precision) $s .= "($len$precision)";
@@ -261,19 +261,19 @@ class ADODB_Replicate {
 				if (isset($t->default_value)) {
 					$v = $t->default_value;
 					if ($mt == 'C' or $mt == 'X') $v = $this->connDest->qstr($v); // might not work as this could be function
-					$s .= ' DEFAULT '.$v;
+					$s .= ' DEFAULT ' . $v;
 				}
 			}
 
 			$sa[] = $s;
 		}
 
-		$s = implode(",\n",$sa);
+		$s = implode(",\n", $sa);
 
 		// dump adodb intermediate data dictionary format
-		if ($this->debug) echo '<pre>'.$s.'</pre>';
+		if ($this->debug) echo '<pre>' . $s . '</pre>';
 
-		$sqla =  $this->ddDest->CreateTableSQL($desttable,$s);
+		$sqla =  $this->ddDest->CreateTableSQL($desttable, $s);
 
 		/*
 		if ($idxcols) {
@@ -284,47 +284,47 @@ class ADODB_Replicate {
 
 		$idxs = $conn->MetaIndexes($table);
 		if ($idxs)
-		foreach($idxs as $name => $iarr) {
-			$idxoptions = array();
-			$fldnames = array();
+			foreach ($idxs as $name => $iarr) {
+				$idxoptions = array();
+				$fldnames = array();
 
-			if(!empty($iarr['unique'])) {
-				$idxoptions['UNIQUE'] = 1;
+				if (!empty($iarr['unique'])) {
+					$idxoptions['UNIQUE'] = 1;
+				}
+
+				foreach ($iarr['columns'] as $fld) {
+					$fldnames[] = $this->RunFieldFilter($fld, 'TABLE');
+				}
+
+				$idxname = $prefixidx . str_replace($table, $desttable, $name);
+
+				if (!empty($this->indexFilter)) {
+					$fn = $this->indexFilter;
+					$idxname = $fn($desttable, $idxname, $fldnames, $idxoptions);
+				}
+				$sqla2 = $this->ddDest->_IndexSQL($idxname, $desttable, $fldnames, $idxoptions);
+				$sqla = array_merge($sqla, $sqla2);
 			}
-
-			foreach($iarr['columns'] as $fld) {
-				$fldnames[] = $this->RunFieldFilter($fld,'TABLE');
-			}
-
-			$idxname = $prefixidx.str_replace($table,$desttable,$name);
-
-			if (!empty($this->indexFilter)) {
-				$fn = $this->indexFilter;
-				$idxname = $fn($desttable,$idxname,$fldnames,$idxoptions);
-			}
-			$sqla2 = $this->ddDest->_IndexSQL($idxname, $desttable, $fldnames,$idxoptions);
-			$sqla = array_merge($sqla,$sqla2);
-		}
 
 		return $sqla;
 	}
 
 	function _clearcache()
 	{
-
 	}
 
 	function _concat($v)
 	{
-		return $this->connDest->concat("' ","chr(".ord($v).")","'");
+		return $this->connDest->concat("' ", "chr(" . ord($v) . ")", "'");
 	}
 
 	function fixupbinary($v)
 	{
 		return str_replace(
-			array("\r","\n"),
-			array($this->_concat("\r"),$this->_concat("\n")),
-			$v );
+			array("\r", "\n"),
+			array($this->_concat("\r"), $this->_concat("\n")),
+			$v
+		);
 	}
 
 	function SwapDBs()
@@ -530,9 +530,16 @@ class ADODB_Replicate {
 	*/
 
 
-	function ReplicateData($table, $desttable = '',  $uniqflds = array(), $where = '',$ignore_flds = array(),
-		$dstCopyDateFld='', $extraflds = array(), $lastUpdateFld = '')
-	{
+	function ReplicateData(
+		$table,
+		$desttable = '',
+		$uniqflds = array(),
+		$where = '',
+		$ignore_flds = array(),
+		$dstCopyDateFld = '',
+		$extraflds = array(),
+		$lastUpdateFld = ''
+	) {
 		if (is_array($where)) {
 			$wheresrc = $where[0];
 			$wheredest = $where[1];
@@ -555,20 +562,19 @@ class ADODB_Replicate {
 					 Any update statement will need to use a different where clause
 				*/
 				$destuniqflds = $uniqflds[0];
-				if (sizeof($uniqflds)>1 && $uniqflds[1]) // srckey field name in dest table
+				if (sizeof($uniqflds) > 1 && $uniqflds[1]) // srckey field name in dest table
 					$srcuniqflds = $uniqflds[1];
 				else
 					$srcuniqflds = array();
 
-				if (sizeof($uniqflds)>2)
+				if (sizeof($uniqflds) > 2)
 					$srcPKDest = reset($uniqflds[2]);
-
 			} else {
 				$destuniqflds = $uniqflds;
 				$srcuniqflds = array();
 			}
 			$onlyInsert = false;
-			foreach($destuniqflds as $k => $u) {
+			foreach ($destuniqflds as $k => $u) {
 				if ($u == '*INSERTONLY*' || $u == '*ONLYINSERT*') {
 					$onlyInsert = true;
 					continue;
@@ -583,7 +589,7 @@ class ADODB_Replicate {
 		if ($deleteFirst) $onlyInsert = true;
 
 		if ($ignore_flds) {
-			foreach($ignore_flds as $u) {
+			foreach ($ignore_flds as $u) {
 				$ignoreflds[strtoupper($u)] = 1;
 			}
 		} else
@@ -616,11 +622,11 @@ class ADODB_Replicate {
 		$srcwheref = array();
 		$fldoffsets = array();
 		$k = 0;
-		foreach($types as $name => $t) {
-			$name2 = strtoupper($this->RunFieldFilter($name,'SELECT'));
+		foreach ($types as $name => $t) {
+			$name2 = strtoupper($this->RunFieldFilter($name, 'SELECT'));
 			// handle quotes
-			if ($name2 && $name2[0] == '"' && $name2[strlen($name2)-1] == '"') $name22 = substr($name2,1,strlen($name2)-2);
-			elseif ($name2 && $name2[0] == '`' && $name2[strlen($name2)-1] == '`') $name22 = substr($name2,1,strlen($name2)-2);
+			if ($name2 && $name2[0] == '"' && $name2[strlen($name2) - 1] == '"') $name22 = substr($name2, 1, strlen($name2) - 2);
+			elseif ($name2 && $name2[0] == '`' && $name2[strlen($name2) - 1] == '`') $name22 = substr($name2, 1, strlen($name2) - 2);
 			else $name22 = $name2;
 
 			//else $name22 = $name2; // this causes problem for quotes strip above
@@ -652,7 +658,7 @@ class ADODB_Replicate {
 			if (!isset($uniq[$ufld])) {
 
 				$selfld = $fld;
-				$fld = $this->RunFieldFilter($selfld,'SELECT');
+				$fld = $this->RunFieldFilter($selfld, 'SELECT');
 				$selflds[] = $selfld;
 
 				$p = $dest->Param($k);
@@ -661,10 +667,11 @@ class ADODB_Replicate {
 				else if ($mt == 'T') $p = $dest->DBTimeStamp($p, true);
 
 				# UPDATES
-				$sets[] = "$fld = ".$this->RunUpdateFilter($desttable, $fld, $p);
+				$sets[] = "$fld = " . $this->RunUpdateFilter($desttable, $fld, $p);
 
 				# INSERTS
-				$insflds[] = $this->RunInsertFilter($desttable,$fld, $p); $params[] = $p;
+				$insflds[] = $this->RunInsertFilter($desttable, $fld, $p);
+				$params[] = $p;
 				$k++;
 			} else {
 				$fld = $this->RunFieldFilter($fld);
@@ -677,44 +684,46 @@ class ADODB_Replicate {
 		}
 
 
-		foreach($extraflds as $fld => $evals) {
+		foreach ($extraflds as $fld => $evals) {
 			if (!is_array($evals)) $evals = array($evals, $evals);
-			$insflds[] = $this->RunInsertFilter($desttable,$fld, $p); $params[] = $evals[0];
-			$sets[] = "$fld = ".$evals[1];
+			$insflds[] = $this->RunInsertFilter($desttable, $fld, $p);
+			$params[] = $evals[0];
+			$sets[] = "$fld = " . $evals[1];
 		}
 
 		if ($dstCopyDateFld) {
-			$sets[] = "$dstCopyDateName = ".$dest->sysTimeStamp;
-			$insflds[] = $this->RunInsertFilter($desttable,$dstCopyDateName, $p); $params[] = $dest->sysTimeStamp;
+			$sets[] = "$dstCopyDateName = " . $dest->sysTimeStamp;
+			$insflds[] = $this->RunInsertFilter($desttable, $dstCopyDateName, $p);
+			$params[] = $dest->sysTimeStamp;
 		}
 
 
 		if (!empty($srcPKDest)) {
 			$selflds[] = $srcPKDest;
-			$fldoffsets = array($k+1);
+			$fldoffsets = array($k + 1);
 		}
 
-		foreach($wheref as $uu => $fld) {
+		foreach ($wheref as $uu => $fld) {
 
 			$p = $dest->Param($k);
 			$sp = $src->Param($k);
 			if (!empty($srcuniqflds)) {
 				if ($uu > 1) die("Only one primary key for srcuniqflds allowed currently");
 				$destsrckey = reset($srcuniqflds);
-				$wheres[] = reset($srcuniqflds).' = '.$p;
+				$wheres[] = reset($srcuniqflds) . ' = ' . $p;
 
-				$insflds[] = $this->RunInsertFilter($desttable,$destsrckey, $p);
+				$insflds[] = $this->RunInsertFilter($desttable, $destsrckey, $p);
 				$params[] = $p;
 			} else {
-				$wheres[] = $fld.' = '.$p;
+				$wheres[] = $fld . ' = ' . $p;
 				if (!isset($ignoreflds[strtoupper($fld)]) || !empty($insertpkey)) {
-					$insflds[] = $this->RunInsertFilter($desttable,$fld, $p);
+					$insflds[] = $this->RunInsertFilter($desttable, $fld, $p);
 					$params[] = $p;
 				}
 			}
 
 			$selflds[] = $fld;
-			$srcwheres[] = $fld.' = '.$sp;
+			$srcwheres[] = $fld . ' = ' . $sp;
 			$fldoffsets[] = $k;
 
 			$k++;
@@ -722,7 +731,7 @@ class ADODB_Replicate {
 
 		if (!empty($srcPKDest)) {
 			$fldoffsets = array($k);
-			$srcwheres = array($fld.'='.$src->Param($k));
+			$srcwheres = array($fld . '=' . $src->Param($k));
 			$k++;
 		}
 
@@ -737,11 +746,11 @@ class ADODB_Replicate {
 		$paramss = implode(', ', $params);
 		$wheress = implode(' AND ', $wheres);
 		if (isset($srcwheres))
-			$srcwheress = implode(' AND ',$srcwheres);
+			$srcwheress = implode(' AND ', $srcwheres);
 
 
 		$seltable = $table;
-		if ($this->readUncommitted && strpos($src->databaseType,'mssql')) $seltable .= ' with (NOLOCK)';
+		if ($this->readUncommitted && strpos($src->databaseType, 'mssql')) $seltable .= ' with (NOLOCK)';
 
 		$sa['SEL'] = "SELECT $fldss FROM $seltable $wheresrc";
 		$sa['INS'] = "INSERT INTO $desttable ($insfldss) VALUES ($paramss) /**INS**/";
@@ -765,7 +774,7 @@ word-wrap: break-word; /* Internet Explorer 5.5+ */
 		if ($deleteFirst && $this->deleteFirst) {
 			$where = preg_replace('/[ \n\r\t]+order[ \n\r\t]+by.*$/i', '', $where);
 			$sql = "DELETE FROM $desttable $wheredest\n";
-			if (!$this->execute) echo $DB2,'</font>*/',$sql,"\n";
+			if (!$this->execute) echo $DB2, '</font>*/', $sql, "\n";
 			else $dest->Execute($sql);
 		}
 
@@ -775,24 +784,25 @@ word-wrap: break-word; /* Internet Explorer 5.5+ */
 		$ADODB_COUNTRECS = false;
 
 		if (!$this->execute) {
-			echo $DB1,$sa['SEL'],"</font>\n*/\n\n";
-			echo $DB2,$sa['INS'],"</font>\n*/\n\n";
+			echo $DB1, $sa['SEL'], "</font>\n*/\n\n";
+			echo $DB2, $sa['INS'], "</font>\n*/\n\n";
 			$suffix = ($onlyInsert) ? ' PRIMKEY=?' : '';
-			echo $DB2,$sa['UPD'],"$suffix</font>\n*/\n\n";
+			echo $DB2, $sa['UPD'], "$suffix</font>\n*/\n\n";
 
 			$rs = $src->Execute($sa['SEL']);
 			$cnt = 1;
 			$upd = 0;
 			$ins = 0;
 
-			$sqlarr = explode('?',$sa['INS']);
-			$nparams = sizeof($sqlarr)-1;
+			$sqlarr = explode('?', $sa['INS']);
+			$nparams = sizeof($sqlarr) - 1;
 
 			$useQmark = $dest && ($dest->dataProvider != 'oci8');
 
 			while ($rs && !$rs->EOF) {
 				if ($useQmark) {
-					$sql = ''; $i = 0;
+					$sql = '';
+					$i = 0;
 					$arr = array_reverse($rs->fields);
 					foreach ($arr as $v) {
 						$sql .= $sqlarr[$i];
@@ -803,7 +813,7 @@ word-wrap: break-word; /* Internet Explorer 5.5+ */
 							//New memory copy of input created here -mikefedyk
 							$sql .= $dest->qstr($v);
 						else if ($typ == 'double')
-							$sql .= str_replace(',','.',$v); // locales fix so 1.1 does not get converted to 1,1
+							$sql .= str_replace(',', '.', $v); // locales fix so 1.1 does not get converted to 1,1
 						else if ($typ == 'boolean')
 							$sql .= $v ? $dest->true : $dest->false;
 						else if ($typ == 'object') {
@@ -825,15 +835,15 @@ word-wrap: break-word; /* Internet Explorer 5.5+ */
 				} else {
 					$INS = $sa['INS'];
 					$arr = array_reverse($rs->fields);
-					foreach($arr as $k => $v) { // only works on oracle currently
-						$k = sizeof($arr)-$k-1;
-						$v = str_replace(":","%~%COLON%!%",$v);
-						$INS = str_replace(':'.$k,$this->fixupbinary($dest->qstr($v)),$INS);
+					foreach ($arr as $k => $v) { // only works on oracle currently
+						$k = sizeof($arr) - $k - 1;
+						$v = str_replace(":", "%~%COLON%!%", $v);
+						$INS = str_replace(':' . $k, $this->fixupbinary($dest->qstr($v)), $INS);
 					}
-					$INS = str_replace("%~%COLON%!%",":",$INS);
+					$INS = str_replace("%~%COLON%!%", ":", $INS);
 					if ($this->htmlSpecialChars) $INS = htmlspecialchars($INS);
 				}
-				echo "-- $cnt\n",$INS,";\n\n";
+				echo "-- $cnt\n", $INS, ";\n\n";
 				$cnt += 1;
 				$ins += 1;
 				$rs->MoveNext();
@@ -843,14 +853,14 @@ word-wrap: break-word; /* Internet Explorer 5.5+ */
 		} else {
 			$saved = $src->debug;
 			#$src->debug=1;
-			if ($this->limitRecs>100)
-				$rs = $src->SelectLimit($sa['SEL'],$this->limitRecs);
+			if ($this->limitRecs > 100)
+				$rs = $src->SelectLimit($sa['SEL'], $this->limitRecs);
 			else
 				$rs = $src->Execute($sa['SEL']);
 			$src->debug = $saved;
 			if (!$rs) {
-				if ($this->errHandler) $this->_doerr('SEL',array());
-				return array(0,0,0,0);
+				if ($this->errHandler) $this->_doerr('SEL', array());
+				return array(0, 0, 0, 0);
 			}
 
 
@@ -859,7 +869,7 @@ word-wrap: break-word; /* Internet Explorer 5.5+ */
 				if ($this->updateSrcFn) $src2->BeginTrans();
 			}
 
-			if ($this->updateSrcFn && strpos($src2->databaseType,'mssql') !== false) {
+			if ($this->updateSrcFn && strpos($src2->databaseType, 'mssql') !== false) {
 				# problem is writers interfere with readers in mssql
 				$rs = $src->_rs2rs($rs);
 			}
@@ -877,32 +887,35 @@ word-wrap: break-word; /* Internet Explorer 5.5+ */
 			if ($this->deleteFirst) $onlyInsert = true;
 			while ($origrow = $rs->FetchRow()) {
 
-				if ($dest->debug) {flush(); @ob_flush();}
+				if ($dest->debug) {
+					flush();
+					@ob_flush();
+				}
 
 				if ($fn) {
 					if (!$fn($desttable, $origrow, $deleteFirst, $this, $selflds)) continue;
 				}
 				$doinsert = true;
-				$row = array_slice($origrow,0,$sizeofrow-1);
+				$row = array_slice($origrow, 0, $sizeofrow - 1);
 
 				if (!$onlyInsert) {
 					$doinsert = false;
 					$upderr = false;
 
 					if (isset($srcPKDest)) {
-						if (is_null($origrow[$sizeofrow-3])) {
+						if (is_null($origrow[$sizeofrow - 3])) {
 							$doinsert = true;
 							$upderr = true;
 						}
 					}
-					if (!$upderr && !$dest->Execute($sa['UPD'],$row)) {
+					if (!$upderr && !$dest->Execute($sa['UPD'], $row)) {
 						$err = true;
 						$upderr = true;
-						if ($this->errHandler) $this->_doerr('UPD',$row);
+						if ($this->errHandler) $this->_doerr('UPD', $row);
 						if (!$this->neverAbort) break;
 					}
 
-				 	if ($upderr || $dest->Affected_Rows() == 0) {
+					if ($upderr || $dest->Affected_Rows() == 0) {
 						$doinsert = true;
 					} else {
 						if (!empty($uniqflds)) $this->RunUpdateSrcFn($src2, $table, $fldoffsets, $origrow, $srcwheress, 'UPD', null, $lastUpdateFld);
@@ -913,25 +926,25 @@ word-wrap: break-word; /* Internet Explorer 5.5+ */
 				if ($doinsert) {
 					$inserr = false;
 					if (isset($srcPKDest)) {
-						$row = array_slice($origrow,0,$sizeofrow-2);
+						$row = array_slice($origrow, 0, $sizeofrow - 2);
 					}
 
-					if (! $dest->Execute($sa['INS'],$row)) {
+					if (!$dest->Execute($sa['INS'], $row)) {
 						$err = true;
 						$inserr = true;
-						if ($this->errHandler) $this->_doerr('INS',$row);
+						if ($this->errHandler) $this->_doerr('INS', $row);
 						if ($this->neverAbort) continue;
 						else break;
 					} else {
 						if ($dest->dataProvider == 'oci8') {
-							if ($this->oracleSequence) $lastid = $dest->GetOne("select ".$this->oracleSequence.".currVal from dual");
-						 	else $lastid = 'null';
+							if ($this->oracleSequence) $lastid = $dest->GetOne("select " . $this->oracleSequence . ".currVal from dual");
+							else $lastid = 'null';
 						} else {
 							$lastid = $dest->Insert_ID();
 						}
 
 						if (!$inserr && !empty($uniqflds)) {
-							$this->RunUpdateSrcFn($src2, $table, $fldoffsets, $origrow, $srcwheress, 'INS', $lastid,$lastUpdateFld);
+							$this->RunUpdateSrcFn($src2, $table, $fldoffsets, $origrow, $srcwheress, 'INS', $lastid, $lastUpdateFld);
 						}
 						$ins += 1;
 					}
@@ -947,7 +960,6 @@ word-wrap: break-word; /* Internet Explorer 5.5+ */
 						$src2->BeginTrans();
 					}
 				}
-
 			} // while
 
 
@@ -967,22 +979,28 @@ word-wrap: break-word; /* Internet Explorer 5.5+ */
 	}
 	// trigger support only for sql server and oracle
 	// need to add
-	function MergeSrcSetup($srcTable,  $pkeys, $srcUpdateDateFld, $srcCopyDateFld, $srcCopyFlagFld,
-		$srcCopyFlagType='C(1)', $srcCopyFlagVals = array('Y','N','P','='))
-	{
+	function MergeSrcSetup(
+		$srcTable,
+		$pkeys,
+		$srcUpdateDateFld,
+		$srcCopyDateFld,
+		$srcCopyFlagFld,
+		$srcCopyFlagType = 'C(1)',
+		$srcCopyFlagVals = array('Y', 'N', 'P', '=')
+	) {
 		$sqla = array();
 		$src = $this->connSrc;
-		$idx = $srcTable.'_mrgIdx';
+		$idx = $srcTable . '_mrgIdx';
 		$cols = $src->MetaColumns($srcTable);
 		#adodb_pr($cols);
 		if (!isset($cols[strtoupper($srcUpdateDateFld)])) {
 			$sqla = $this->ddSrc->AddColumnSQL($srcTable, "$srcUpdateDateFld TS DEFTIMESTAMP");
-			foreach($sqla as $sql) $src->Execute($sql);
+			foreach ($sqla as $sql) $src->Execute($sql);
 		}
 
 		if ($srcCopyDateFld && !isset($cols[strtoupper($srcCopyDateFld)])) {
 			$sqla = $this->ddSrc->AddColumnSQL($srcTable, "$srcCopyDateFld TS DEFTIMESTAMP");
-			foreach($sqla as $sql) $src->Execute($sql);
+			foreach ($sqla as $sql) $src->Execute($sql);
 		}
 
 		$sysdate = $src->sysTimeStamp;
@@ -993,14 +1011,14 @@ word-wrap: break-word; /* Internet Explorer 5.5+ */
 
 		if ($srcCopyFlagFld && !isset($cols[strtoupper($srcCopyFlagFld)])) {
 			$sqla = $this->ddSrc->AddColumnSQL($srcTable, "$srcCopyFlagFld  $srcCopyFlagType DEFAULT $arrv1");
-			foreach($sqla as $sql) $src->Execute($sql);
+			foreach ($sqla as $sql) $src->Execute($sql);
 		}
 
 		$sqla = array();
 
 
 		$name = "{$srcTable}_mrgTr";
-		if (is_array($pkeys) && strpos($src->databaseType,'mssql') !== false) {
+		if (is_array($pkeys) && strpos($src->databaseType, 'mssql') !== false) {
 			$pk = reset($pkeys);
 
 			#$sqla[] = "DROP TRIGGER $name";
@@ -1022,15 +1040,15 @@ word-wrap: break-word; /* Internet Explorer 5.5+ */
 		WHERE I.$srcCopyFlagFld = D.$srcCopyFlagFld or I.$srcCopyFlagFld = $arrv2
 		or I.$srcCopyFlagFld = $arrv3 or I.$srcCopyFlagFld is null
 	";
-			$sqla[] = 'CREATE '.$sqltr; // first if does not exists
-			$sqla[] = 'ALTER '.$sqltr; // second if it already exists
-		} else if (strpos($src->databaseType,'oci') !== false) {
+			$sqla[] = 'CREATE ' . $sqltr; // first if does not exists
+			$sqla[] = 'ALTER ' . $sqltr; // second if it already exists
+		} else if (strpos($src->databaseType, 'oci') !== false) {
 
-			if (strlen($srcTable)>22) $tableidx = substr($srcTable,0,16).substr(crc32($srcTable),6);
+			if (strlen($srcTable) > 22) $tableidx = substr($srcTable, 0, 16) . substr(crc32($srcTable), 6);
 			else $tableidx = $srcTable;
 
-			$name = $tableidx.$this->trgSuffix;
-			$idx = $tableidx.$this->idxSuffix;
+			$name = $tableidx . $this->trgSuffix;
+			$idx = $tableidx . $this->idxSuffix;
 			$sqla[] = "
 CREATE OR REPLACE TRIGGER $name /* for data replication and merge */
 BEFORE UPDATE ON $srcTable REFERENCING NEW AS NEW OLD AS OLD
@@ -1049,7 +1067,7 @@ BEGIN
 END;
 ";
 		}
-		foreach($sqla as $sql) $src->Execute($sql);
+		foreach ($sqla as $sql) $src->Execute($sql);
 
 		if ($srcCopyFlagFld) $srcCopyFlagFld .= ', ';
 		$src->Execute("CREATE INDEX {$idx} on $srcTable ($srcCopyFlagFld$srcUpdateDateFld)");
@@ -1087,16 +1105,22 @@ END;
 	*/
 
 
-	function Merge($srcTable, $dstTable, $pkeys, $srcignoreflds, $setsrc,
+	function Merge(
+		$srcTable,
+		$dstTable,
+		$pkeys,
+		$srcignoreflds,
+		$setsrc,
 		$srcUpdateDateFld,
-		$srcCopyFlagFld,  $flagvals=array('Y','N','P','='),
+		$srcCopyFlagFld,
+		$flagvals = array('Y', 'N', 'P', '='),
 		$srcCopyDateFld = false,
 		$dstCopyDateFld = false,
 		$whereClauses = '',
 		$orderBy = '', # MUST INCLUDE THE "ORDER BY" suffix
 		$copyDoneFlagIdx = 3,
-		$defaultDestRaiseErrorFn = '')
-	{
+		$defaultDestRaiseErrorFn = ''
+	) {
 		$src = $this->connSrc;
 		$dest = $this->connDest;
 
@@ -1113,27 +1137,35 @@ END;
 		$srcignoreflds[] = $srcCopyDateFld;
 
 		if (empty($whereClauses)) $whereClauses = '1=1';
-		$where = " WHERE ($whereClauses) and ($srcCopyFlagFld = ".$src->qstr($flagvals[1]).')';
-		if ($orderBy) $where .= ' '.$orderBy;
-		else $where .= ' ORDER BY '.$srcUpdateDateFld;
+		$where = " WHERE ($whereClauses) and ($srcCopyFlagFld = " . $src->qstr($flagvals[1]) . ')';
+		if ($orderBy) $where .= ' ' . $orderBy;
+		else $where .= ' ORDER BY ' . $srcUpdateDateFld;
 
 		if ($setsrc) $set[] = $setsrc;
 		else $set = array();
 
-		if ($srcCopyFlagFld) $set[] = "$srcCopyFlagFld = ".$src->qstr($flagvals[2]);
-		if ($srcCopyDateFld) $set[]= "$srcCopyDateFld = ".$src->sysTimeStamp;
-		if ($set) $this->updateSrcFn = array(implode(', ',$set));
+		if ($srcCopyFlagFld) $set[] = "$srcCopyFlagFld = " . $src->qstr($flagvals[2]);
+		if ($srcCopyDateFld) $set[] = "$srcCopyDateFld = " . $src->sysTimeStamp;
+		if ($set) $this->updateSrcFn = array(implode(', ', $set));
 		else $this->updateSrcFn = '';
 
 
-		$extra[$srcCopyFlagFld] = array($dest->qstr($flagvals[0]),$dest->qstr($flagvals[$copyDoneFlagIdx]));
+		$extra[$srcCopyFlagFld] = array($dest->qstr($flagvals[0]), $dest->qstr($flagvals[$copyDoneFlagIdx]));
 
 		$saveraise = $dest->raiseErrorFn;
 		$dest->raiseErrorFn = '';
 
 		if ($this->compat && $this->compat == 1.0) $srcUpdateDateFld = '';
-		$arr = $this->ReplicateData($srcTable, $dstTable, $pkeys, $where, $srcignoreflds,
-			 $dstCopyDateFld,$extra,$srcUpdateDateFld);
+		$arr = $this->ReplicateData(
+			$srcTable,
+			$dstTable,
+			$pkeys,
+			$where,
+			$srcignoreflds,
+			$dstCopyDateFld,
+			$extra,
+			$srcUpdateDateFld
+		);
 
 		$dest->raiseErrorFn = $saveraise;
 
@@ -1151,25 +1183,38 @@ END;
 			$rep->MergeDone()
 	*/
 
-	function MergeDone($srcTable, $dstTable, $pkeys, $srcignoreflds, $setsrc,
+	function MergeDone(
+		$srcTable,
+		$dstTable,
+		$pkeys,
+		$srcignoreflds,
+		$setsrc,
 		$srcUpdateDateFld,
-		$srcCopyFlagFld,  $flagvals=array('Y','N','P','='),
+		$srcCopyFlagFld,
+		$flagvals = array('Y', 'N', 'P', '='),
 		$srcCopyDateFld = false,
 		$dstCopyDateFld = false,
 		$whereClauses = '',
 		$orderBy = '', # MUST INCLUDE THE "ORDER BY" suffix
 		$copyDoneFlagIdx = 2,
-		$defaultDestRaiseErrorFn = '')
-	{
-		return  $this->Merge($srcTable, $dstTable, $pkeys, $srcignoreflds, $setsrc,
-		$srcUpdateDateFld,
-		$srcCopyFlagFld,  $flagvals,
-		$srcCopyDateFld,
-		$dstCopyDateFld,
-		$whereClauses,
-		$orderBy, # MUST INCLUDE THE "ORDER BY" suffix
-		$copyDoneFlagIdx,
-		$defaultDestRaiseErrorFn);
+		$defaultDestRaiseErrorFn = ''
+	) {
+		return  $this->Merge(
+			$srcTable,
+			$dstTable,
+			$pkeys,
+			$srcignoreflds,
+			$setsrc,
+			$srcUpdateDateFld,
+			$srcCopyFlagFld,
+			$flagvals,
+			$srcCopyDateFld,
+			$dstCopyDateFld,
+			$whereClauses,
+			$orderBy, # MUST INCLUDE THE "ORDER BY" suffix
+			$copyDoneFlagIdx,
+			$defaultDestRaiseErrorFn
+		);
 	}
 
 	function _doerr($reason, $selflds)

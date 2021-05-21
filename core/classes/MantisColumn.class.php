@@ -26,7 +26,8 @@
  * Base class that implements basic column functionality
  * and integration with MantisBT.
  */
-abstract class MantisColumn {
+abstract class MantisColumn
+{
 
 	/**
 	 * Column title, as displayed to the user.
@@ -50,7 +51,8 @@ abstract class MantisColumn {
 	 * @param string $p_direction Sorting order ('ASC' or 'DESC').
 	 * @return array Keyed-array with query elements; see developer guide
 	 */
-	public function sortquery( $p_direction ) {
+	public function sortquery($p_direction)
+	{
 		return array();
 	}
 
@@ -62,7 +64,9 @@ abstract class MantisColumn {
 	 * @param array $p_bugs Bug objects.
 	 * @return void
 	 */
-	public function cache( array $p_bugs ) {}
+	public function cache(array $p_bugs)
+	{
+	}
 
 	/**
 	 * Function to clear the cache of values that was built with the cache() method.
@@ -70,7 +74,9 @@ abstract class MantisColumn {
 	 * memory helps to keep a long export process within memory limits.
 	 * @return void
 	 */
-	public function clear_cache() {}
+	public function clear_cache()
+	{
+	}
 
 	/**
 	 * Function to display column data for a given bug row.
@@ -78,7 +84,7 @@ abstract class MantisColumn {
 	 * @param integer $p_columns_target Column display target.
 	 * @return void
 	 */
-	abstract public function display( BugData $p_bug, $p_columns_target );
+	abstract public function display(BugData $p_bug, $p_columns_target);
 
 	/**
 	 * Function to return column value for a given bug row.
@@ -91,9 +97,10 @@ abstract class MantisColumn {
 	 * @param integer $p_columns_target Column display target.
 	 * @return string The column value.
 	 */
-	public function value( BugData $p_bug, $p_columns_target = COLUMNS_TARGET_CSV_PAGE ) {
+	public function value(BugData $p_bug, $p_columns_target = COLUMNS_TARGET_CSV_PAGE)
+	{
 		ob_start();
-		$this->display( $p_bug, $p_columns_target );
+		$this->display($p_bug, $p_columns_target);
 		return ob_get_clean();
 	}
 }

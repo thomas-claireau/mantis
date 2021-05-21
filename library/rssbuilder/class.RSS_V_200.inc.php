@@ -1,22 +1,25 @@
 <?php
 require_once 'class.RSSBase.inc.php';
 /**
-* Class for creating an RSS-feed
-* @author Michael Wimmer <flaimo@gmail.com>
-* @category flaimo-php
-* @copyright Copyright © 2002-2008, Michael Wimmer
-* @license GNU General Public License v3
-* @link http://code.google.com/p/flaimo-php/
-* @package RSS
-* @version 2.2.1
-*/
-class RSS_V_200 extends RSS_V_abstract {
+ * Class for creating an RSS-feed
+ * @author Michael Wimmer <flaimo@gmail.com>
+ * @category flaimo-php
+ * @copyright Copyright ï¿½ 2002-2008, Michael Wimmer
+ * @license GNU General Public License v3
+ * @link http://code.google.com/p/flaimo-php/
+ * @package RSS
+ * @version 2.2.1
+ */
+class RSS_V_200 extends RSS_V_abstract
+{
 
-	function __construct(RSSBuilder &$rssdata) {
+	function __construct(RSSBuilder &$rssdata)
+	{
 		parent::__construct($rssdata);
 	} // end constructor
 
-	protected function generateXML() {
+	protected function generateXML()
+	{
 		parent::generateXML();
 		$root = $this->xml->createElement('rss');
 		$root->setAttribute('version', '2.0');
@@ -207,14 +210,13 @@ class RSS_V_200 extends RSS_V_abstract {
 			$$item_guid->appendChild($this->xml->createTextNode($rss_item->getLink()));
 			$$item->appendChild($$item_guid);
 
-			if ( $rss_item->getComments() != FALSE ) {
+			if ($rss_item->getComments() != FALSE) {
 				$item_comments = '$item_comments_' . $id;
 				$$item_comments = $this->xml->createElement('comments');
 				$$item_comments->appendChild($this->xml->createTextNode($rss_item->getComments()));
-				$$item->appendChild($$item_comments);			
+				$$item->appendChild($$item_comments);
 			} // end if
 
 		} // end foreach
 	} // function
 } // end class
-?>

@@ -26,12 +26,14 @@
 /**
  * Abstract class for any plugin that's modifying textual output.
  */
-abstract class MantisFormattingPlugin extends MantisPlugin {
+abstract class MantisFormattingPlugin extends MantisPlugin
+{
 	/**
 	 * Event hook declaration.
 	 * @return array
 	 */
-	function hooks() {
+	function hooks()
+	{
 		return array(
 			'EVENT_DISPLAY_TEXT'		=> 'text',			# Text String Display
 			'EVENT_DISPLAY_FORMATTED'	=> 'formatted',		# Formatted String Display
@@ -47,7 +49,8 @@ abstract class MantisFormattingPlugin extends MantisPlugin {
 	 * @param boolean $p_multiline Multi-line text.
 	 * @return string plain text
 	 */
-	function text( $p_event, $p_string, $p_multiline = true ) {
+	function text($p_event, $p_string, $p_multiline = true)
+	{
 		return $p_string;
 	}
 
@@ -58,7 +61,8 @@ abstract class MantisFormattingPlugin extends MantisPlugin {
 	 * @param boolean $p_multiline Multi-line text.
 	 * @return string formatted text
 	 */
-	function formatted( $p_event, $p_string, $p_multiline = true ) {
+	function formatted($p_event, $p_string, $p_multiline = true)
+	{
 		return $p_string;
 	}
 
@@ -68,7 +72,8 @@ abstract class MantisFormattingPlugin extends MantisPlugin {
 	 * @param string $p_string Un-formatted text.
 	 * @return string Formatted RSS text.
 	 */
-	function rss( $p_event, $p_string ) {
+	function rss($p_event, $p_string)
+	{
 		return $p_string;
 	}
 
@@ -78,7 +83,8 @@ abstract class MantisFormattingPlugin extends MantisPlugin {
 	 * @param string $p_string Un-formatted text.
 	 * @return string Formatted email text
 	 */
-	function email( $p_event, $p_string ) {
+	function email($p_event, $p_string)
+	{
 		return $p_string;
 	}
 }

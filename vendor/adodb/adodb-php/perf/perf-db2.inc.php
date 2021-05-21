@@ -20,7 +20,8 @@ if (!defined('ADODB_DIR')) die();
 // Simple guide to configuring db2: so-so http://www.devx.com/gethelpon/10MinuteSolution/16575
 
 // SELECT * FROM TABLE(SNAPSHOT_APPL('SAMPLE', -1)) as t
-class perf_db2 extends adodb_perf{
+class perf_db2 extends adodb_perf
+{
 	var $createTableSQL = "CREATE TABLE adodb_logsql (
 		  created TIMESTAMP NOT NULL,
 		  sql0 varchar(250) NOT NULL,
@@ -31,28 +32,38 @@ class perf_db2 extends adodb_perf{
 		)";
 
 	var $settings = array(
-	'Ratios',
-		'data cache hit ratio' => array('RATIO',
+		'Ratios',
+		'data cache hit ratio' => array(
+			'RATIO',
 			"SELECT
 				case when sum(POOL_DATA_L_READS+POOL_INDEX_L_READS)=0 then 0
 				else 100*(1-sum(POOL_DATA_P_READS+POOL_INDEX_P_READS)/sum(POOL_DATA_L_READS+POOL_INDEX_L_READS)) end
 				FROM TABLE(SNAPSHOT_APPL('',-2)) as t",
-			'=WarnCacheRatio'),
+			'=WarnCacheRatio'
+		),
 
-	'Data Cache',
-		'data cache buffers' => array('DATAC',
-		'select sum(npages) from SYSCAT.BUFFERPOOLS',
-			'See <a href=http://www7b.boulder.ibm.com/dmdd/library/techarticle/anshum/0107anshum.html#bufferpoolsize>tuning reference</a>.' ),
-		'cache blocksize' => array('DATAC',
-		'select avg(pagesize) from SYSCAT.BUFFERPOOLS',
-			'' ),
-		'data cache size' => array('DATAC',
-		'select sum(npages*pagesize) from SYSCAT.BUFFERPOOLS',
-			'' ),
-	'Connections',
-		'current connections' => array('SESS',
+		'Data Cache',
+		'data cache buffers' => array(
+			'DATAC',
+			'select sum(npages) from SYSCAT.BUFFERPOOLS',
+			'See <a href=http://www7b.boulder.ibm.com/dmdd/library/techarticle/anshum/0107anshum.html#bufferpoolsize>tuning reference</a>.'
+		),
+		'cache blocksize' => array(
+			'DATAC',
+			'select avg(pagesize) from SYSCAT.BUFFERPOOLS',
+			''
+		),
+		'data cache size' => array(
+			'DATAC',
+			'select sum(npages*pagesize) from SYSCAT.BUFFERPOOLS',
+			''
+		),
+		'Connections',
+		'current connections' => array(
+			'SESS',
 			"SELECT count(*) FROM TABLE(SNAPSHOT_APPL_INFO('',-2)) as t",
-			''),
+			''
+		),
 
 		false
 	);
@@ -63,14 +74,14 @@ class perf_db2 extends adodb_perf{
 		$this->conn = $conn;
 	}
 
-	function Explain($sql,$partial=false)
+	function Explain($sql, $partial = false)
 	{
 		$save = $this->conn->LogSQL(false);
 		if ($partial) {
-			$sqlq = $this->conn->qstr($sql.'%');
+			$sqlq = $this->conn->qstr($sql . '%');
 			$arr = $this->conn->GetArray("select distinct sql1 from adodb_logsql where sql1 like $sqlq");
 			if ($arr) {
-				foreach($arr as $row) {
+				foreach ($arr as $row) {
 					$sql = reset($row);
 					if (crc32($sql) == $partial) break;
 				}
@@ -98,11 +109,11 @@ class perf_db2 extends adodb_perf{
 	 * @param int $throwaway discarded variable to match the parent method
 	 * @return string The formatted table list
 	 */
-	function Tables($throwaway=0)
+	function Tables($throwaway = 0)
 	{
 		$rs = $this->conn->Execute("select tabschema,tabname,card as rows,
 			npages pages_used,fpages pages_allocated, tbspace tablespace
 			from syscat.tables where tabschema not in ('SYSCAT','SYSIBM','SYSSTAT') order by 1,2");
-		return rs2html($rs,false,false,false,false);
+		return rs2html($rs, false, false, false, false);
 	}
 }

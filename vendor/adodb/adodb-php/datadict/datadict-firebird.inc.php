@@ -10,42 +10,59 @@
 
   Set tabs to 4 for best viewing.
 
-*/
+ */
 
-class ADODB2_firebird extends ADODB_DataDict {
+class ADODB2_firebird extends ADODB_DataDict
+{
 
 	var $databaseType = 'firebird';
 	var $seqField = false;
 	var $seqPrefix = 'gen_';
 	var $blobSize = 40000;
 
- 	function ActualType($meta)
+	function ActualType($meta)
 	{
-		switch($meta) {
-		case 'C': return 'VARCHAR';
-		case 'XL': return 'VARCHAR(32000)';
-		case 'X': return 'VARCHAR(4000)';
+		switch ($meta) {
+			case 'C':
+				return 'VARCHAR';
+			case 'XL':
+				return 'VARCHAR(32000)';
+			case 'X':
+				return 'VARCHAR(4000)';
 
-		case 'C2': return 'VARCHAR'; // up to 32K
-		case 'X2': return 'VARCHAR(4000)';
+			case 'C2':
+				return 'VARCHAR'; // up to 32K
+			case 'X2':
+				return 'VARCHAR(4000)';
 
-		case 'B': return 'BLOB';
+			case 'B':
+				return 'BLOB';
 
-		case 'D': return 'DATE';
-		case 'TS':
-		case 'T': return 'TIMESTAMP';
+			case 'D':
+				return 'DATE';
+			case 'TS':
+			case 'T':
+				return 'TIMESTAMP';
 
-		case 'L': return 'SMALLINT';
-		case 'I': return 'INTEGER';
-		case 'I1': return 'SMALLINT';
-		case 'I2': return 'SMALLINT';
-		case 'I4': return 'INTEGER';
-		case 'I8': return 'INTEGER';
+			case 'L':
+				return 'SMALLINT';
+			case 'I':
+				return 'INTEGER';
+			case 'I1':
+				return 'SMALLINT';
+			case 'I2':
+				return 'SMALLINT';
+			case 'I4':
+				return 'INTEGER';
+			case 'I8':
+				return 'INTEGER';
 
-		case 'F': return 'DOUBLE PRECISION';
-		case 'N': return 'DECIMAL';
-		default:
-			return $meta;
+			case 'F':
+				return 'DOUBLE PRECISION';
+			case 'N':
+				return 'DECIMAL';
+			default:
+				return $meta;
 		}
 	}
 
@@ -57,26 +74,26 @@ class ADODB2_firebird extends ADODB_DataDict {
 
 		$name = trim($name);
 
-		if ( !is_object($this->connection) ) {
+		if (!is_object($this->connection)) {
 			return $name;
 		}
 
 		$quote = $this->connection->nameQuote;
 
 		// if name is of the form `name`, quote it
-		if ( preg_match('/^`(.+)`$/', $name, $matches) ) {
+		if (preg_match('/^`(.+)`$/', $name, $matches)) {
 			return $quote . $matches[1] . $quote;
 		}
 
 		// if name contains special characters, quote it
-		if ( !preg_match('/^[' . $this->nameRegex . ']+$/', $name) ) {
+		if (!preg_match('/^[' . $this->nameRegex . ']+$/', $name)) {
 			return $quote . $name . $quote;
 		}
 
 		return $quote . $name . $quote;
 	}
 
-	function CreateDatabase($dbname, $options=false)
+	function CreateDatabase($dbname, $options = false)
 	{
 		$options = $this->_Options($options);
 		$sql = array();
@@ -88,27 +105,27 @@ class ADODB2_firebird extends ADODB_DataDict {
 
 	function _DropAutoIncrement($t)
 	{
-		if (strpos($t,'.') !== false) {
-			$tarr = explode('.',$t);
-			return 'DROP GENERATOR '.$tarr[0].'."gen_'.$tarr[1].'"';
+		if (strpos($t, '.') !== false) {
+			$tarr = explode('.', $t);
+			return 'DROP GENERATOR ' . $tarr[0] . '."gen_' . $tarr[1] . '"';
 		}
-		return 'DROP GENERATOR "GEN_'.$t;
+		return 'DROP GENERATOR "GEN_' . $t;
 	}
 
 
-	function _CreateSuffix($fname,&$ftype,$fnotnull,$fdefault,$fautoinc,$fconstraint,$funsigned)
+	function _CreateSuffix($fname, &$ftype, $fnotnull, $fdefault, $fautoinc, $fconstraint, $funsigned)
 	{
 		$suffix = '';
 
 		if (strlen($fdefault)) $suffix .= " DEFAULT $fdefault";
 		if ($fnotnull) $suffix .= ' NOT NULL';
 		if ($fautoinc) $this->seqField = $fname;
-		if ($fconstraint) $suffix .= ' '.$fconstraint;
+		if ($fconstraint) $suffix .= ' ' . $fconstraint;
 
 		return $suffix;
 	}
 
-/*
+	/*
 CREATE or replace TRIGGER jaddress_insert
 before insert on jaddress
 for each row
@@ -117,35 +134,33 @@ IF ( NEW."seqField" IS NULL OR NEW."seqField" = 0 ) THEN
   NEW."seqField" = GEN_ID("GEN_tabname", 1);
 end;
 */
-	function _Triggers($tabname,$tableoptions)
+	function _Triggers($tabname, $tableoptions)
 	{
 		if (!$this->seqField) return array();
 
-		$tab1 = preg_replace( '/"/', '', $tabname );
+		$tab1 = preg_replace('/"/', '', $tabname);
 		if ($this->schema) {
-			$t = strpos($tab1,'.');
-			if ($t !== false) $tab = substr($tab1,$t+1);
+			$t = strpos($tab1, '.');
+			if ($t !== false) $tab = substr($tab1, $t + 1);
 			else $tab = $tab1;
 			$seqField = $this->seqField;
-			$seqname = $this->schema.'.'.$this->seqPrefix.$tab;
-			$trigname = $this->schema.'.trig_'.$this->seqPrefix.$tab;
+			$seqname = $this->schema . '.' . $this->seqPrefix . $tab;
+			$trigname = $this->schema . '.trig_' . $this->seqPrefix . $tab;
 		} else {
 			$seqField = $this->seqField;
-			$seqname = $this->seqPrefix.$tab1;
-			$trigname = 'trig_'.$seqname;
+			$seqname = $this->seqPrefix . $tab1;
+			$trigname = 'trig_' . $seqname;
 		}
-		if (isset($tableoptions['REPLACE']))
-		{ $sql[] = "DROP GENERATOR \"$seqname\"";
-		  $sql[] = "CREATE GENERATOR \"$seqname\"";
-		  $sql[] = "ALTER TRIGGER \"$trigname\" BEFORE INSERT OR UPDATE AS BEGIN IF ( NEW.$seqField IS NULL OR NEW.$seqField = 0 ) THEN NEW.$seqField = GEN_ID(\"$seqname\", 1); END";
-		}
-		else
-		{ $sql[] = "CREATE GENERATOR \"$seqname\"";
-		  $sql[] = "CREATE TRIGGER \"$trigname\" FOR $tabname BEFORE INSERT OR UPDATE AS BEGIN IF ( NEW.$seqField IS NULL OR NEW.$seqField = 0 ) THEN NEW.$seqField = GEN_ID(\"$seqname\", 1); END";
+		if (isset($tableoptions['REPLACE'])) {
+			$sql[] = "DROP GENERATOR \"$seqname\"";
+			$sql[] = "CREATE GENERATOR \"$seqname\"";
+			$sql[] = "ALTER TRIGGER \"$trigname\" BEFORE INSERT OR UPDATE AS BEGIN IF ( NEW.$seqField IS NULL OR NEW.$seqField = 0 ) THEN NEW.$seqField = GEN_ID(\"$seqname\", 1); END";
+		} else {
+			$sql[] = "CREATE GENERATOR \"$seqname\"";
+			$sql[] = "CREATE TRIGGER \"$trigname\" FOR $tabname BEFORE INSERT OR UPDATE AS BEGIN IF ( NEW.$seqField IS NULL OR NEW.$seqField = 0 ) THEN NEW.$seqField = GEN_ID(\"$seqname\", 1); END";
 		}
 
 		$this->seqField = false;
 		return $sql;
 	}
-
 }

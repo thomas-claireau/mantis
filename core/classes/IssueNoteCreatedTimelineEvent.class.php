@@ -27,7 +27,8 @@
  * @package MantisBT
  * @subpackage classes
  */
-class IssueNoteCreatedTimelineEvent extends TimelineEvent {
+class IssueNoteCreatedTimelineEvent extends TimelineEvent
+{
 	private $issue_id;
 	private $issue_note_id;
 
@@ -37,8 +38,9 @@ class IssueNoteCreatedTimelineEvent extends TimelineEvent {
 	 * @param integer $p_issue_id      A issue identifier.
 	 * @param integer $p_issue_note_id A issue note identifier.
 	 */
-	public function __construct( $p_timestamp, $p_user_id, $p_issue_id, $p_issue_note_id ) {
-		parent::__construct( $p_timestamp, $p_user_id );
+	public function __construct($p_timestamp, $p_user_id, $p_issue_id, $p_issue_note_id)
+	{
+		parent::__construct($p_timestamp, $p_user_id);
 
 		$this->issue_id = $p_issue_id;
 		$this->issue_note_id = $p_issue_note_id;
@@ -48,9 +50,10 @@ class IssueNoteCreatedTimelineEvent extends TimelineEvent {
 	 * Returns html string to display
 	 * @return string
 	 */
-	public function html() {
-		$t_html = $this->html_start( 'fa-comment-o' );
-		$t_html .= '<div class="action">' . sprintf( lang_get( 'timeline_issue_note_created' ), prepare_user_name( $this->user_id ), string_get_bug_view_link( $this->issue_id ) ) . '</div>';
+	public function html()
+	{
+		$t_html = $this->html_start('fa-comment-o');
+		$t_html .= '<div class="action">' . sprintf(lang_get('timeline_issue_note_created'), prepare_user_name($this->user_id), string_get_bug_view_link($this->issue_id)) . '</div>';
 		$t_html .= $this->html_end();
 
 		return $t_html;

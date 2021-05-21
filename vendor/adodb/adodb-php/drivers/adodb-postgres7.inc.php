@@ -16,9 +16,10 @@
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
 
-include_once(ADODB_DIR."/drivers/adodb-postgres64.inc.php");
+include_once(ADODB_DIR . "/drivers/adodb-postgres64.inc.php");
 
-class ADODB_postgres7 extends ADODB_postgres64 {
+class ADODB_postgres7 extends ADODB_postgres64
+{
 	var $databaseType = 'postgres7';
 	var $hasLimit = true;	// set to true for pgsql 6.5+ only. support pgsql/mysql SELECT * FROM TABLE LIMIT 10
 	var $ansiOuter = true;
@@ -107,16 +108,16 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 
 	// the following should be compat with postgresql 7.2,
 	// which makes obsolete the LIMIT limit,offset syntax
-	function SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false,$secs2cache=0)
+	function SelectLimit($sql, $nrows = -1, $offset = -1, $inputarr = false, $secs2cache = 0)
 	{
 		$nrows = (int) $nrows;
 		$offset = (int) $offset;
-		$offsetStr = ($offset >= 0) ? " OFFSET ".((integer)$offset) : '';
-		$limitStr  = ($nrows >= 0)  ? " LIMIT ".((integer)$nrows) : '';
+		$offsetStr = ($offset >= 0) ? " OFFSET " . ((int)$offset) : '';
+		$limitStr  = ($nrows >= 0)  ? " LIMIT " . ((int)$nrows) : '';
 		if ($secs2cache)
-			$rs = $this->CacheExecute($secs2cache,$sql."$limitStr$offsetStr",$inputarr);
+			$rs = $this->CacheExecute($secs2cache, $sql . "$limitStr$offsetStr", $inputarr);
 		else
-			$rs = $this->Execute($sql."$limitStr$offsetStr",$inputarr);
+			$rs = $this->Execute($sql . "$limitStr$offsetStr", $inputarr);
 
 		return $rs;
 	}
@@ -142,8 +143,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 	{
 		if ($schema) {
 			return sprintf($this->metaColumnsSQL1, $table, $table, $table, $schema);
-		}
-		else {
+		} else {
 			return sprintf($this->metaColumnsSQL, $table, $table, $schema);
 		}
 	}
@@ -151,11 +151,11 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 	/**
 	 * @returns assoc array where keys are tables, and values are foreign keys
 	 */
-	function MetaForeignKeys($table, $owner=false, $upper=false)
+	function MetaForeignKeys($table, $owner = false, $upper = false)
 	{
 		# Regex isolates the 2 terms between parenthesis using subexpressions
 		$regex = '^.*\((.*)\).*\((.*)\).*$';
-		$sql="
+		$sql = "
 			SELECT
 				lookup_table,
 				regexp_replace(consrc, '$regex', '\\2') AS lookup_field,
@@ -176,7 +176,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 				ORDER BY t.relname, n.nspname, c.conname, c.oid
 				) constraints
 			WHERE
-				dep_table='".strtolower($table)."'
+				dep_table='" . strtolower($table) . "'
 			ORDER BY
 				lookup_table,
 				dep_table,
@@ -188,19 +188,18 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 		$a = array();
 		while (!$rs->EOF) {
 			if ($upper) {
-				$a[strtoupper($rs->Fields('lookup_table'))][] = strtoupper(str_replace('"','',$rs->Fields('dep_field').'='.$rs->Fields('lookup_field')));
+				$a[strtoupper($rs->Fields('lookup_table'))][] = strtoupper(str_replace('"', '', $rs->Fields('dep_field') . '=' . $rs->Fields('lookup_field')));
 			} else {
-				$a[$rs->Fields('lookup_table')][] = str_replace('"','',$rs->Fields('dep_field').'='.$rs->Fields('lookup_field'));
+				$a[$rs->Fields('lookup_table')][] = str_replace('"', '', $rs->Fields('dep_field') . '=' . $rs->Fields('lookup_field'));
 			}
 			$rs->MoveNext();
 		}
 
 		return $a;
-
 	}
 
 	// from  Edward Jaramilla, improved version - works on pg 7.4
-	function _old_MetaForeignKeys($table, $owner=false, $upper=false)
+	function _old_MetaForeignKeys($table, $owner = false, $upper = false)
 	{
 		$sql = 'SELECT t.tgargs as args
 		FROM
@@ -210,7 +209,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 		t.tgrelid = c.oid AND
 		t.tgfoid = p.oid AND
 		p.proname = \'RI_FKey_check_ins\' AND
-		c.relname = \''.strtolower($table).'\'
+		c.relname = \'' . strtolower($table) . '\'
 		ORDER BY
 			t.tgrelid';
 
@@ -220,22 +219,22 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 
 		$arr = $rs->GetArray();
 		$a = array();
-		foreach($arr as $v) {
+		foreach ($arr as $v) {
 			$data = explode(chr(0), $v['args']);
-			$size = count($data)-1; //-1 because the last node is empty
-			for($i = 4; $i < $size; $i++) {
+			$size = count($data) - 1; //-1 because the last node is empty
+			for ($i = 4; $i < $size; $i++) {
 				if ($upper)
-					$a[strtoupper($data[2])][] = strtoupper($data[$i].'='.$data[++$i]);
+					$a[strtoupper($data[2])][] = strtoupper($data[$i] . '=' . $data[++$i]);
 				else
-					$a[$data[2]][] = $data[$i].'='.$data[++$i];
+					$a[$data[2]][] = $data[$i] . '=' . $data[++$i];
 			}
 		}
 		return $a;
 	}
 
-	function _query($sql,$inputarr=false)
+	function _query($sql, $inputarr = false)
 	{
-		if (! $this->_bindInputArray) {
+		if (!$this->_bindInputArray) {
 			// We don't have native support for parameterized queries, so let's emulate it at the parent
 			return ADODB_postgres64::_query($sql, $inputarr);
 		}
@@ -244,19 +243,19 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 		$this->_errorMsg = false;
 		// -- added Cristiano da Cunha Duarte
 		if ($inputarr) {
-			$sqlarr = explode('?',trim($sql));
+			$sqlarr = explode('?', trim($sql));
 			$sql = '';
 			$i = 1;
-			$last = sizeof($sqlarr)-1;
-			foreach($sqlarr as $v) {
+			$last = sizeof($sqlarr) - 1;
+			foreach ($sqlarr as $v) {
 				if ($last < $i) $sql .= $v;
-				else $sql .= $v.' $'.$i;
+				else $sql .= $v . ' $' . $i;
 				$i++;
 			}
 
-			$rez = pg_query_params($this->_connectionID,$sql, $inputarr);
+			$rez = pg_query_params($this->_connectionID, $sql, $inputarr);
 		} else {
-			$rez = pg_query($this->_connectionID,$sql);
+			$rez = pg_query($this->_connectionID, $sql);
 		}
 		// check if no data returned, then no need to create real recordset
 		if ($rez && pg_num_fields($rez) <= 0) {
@@ -298,19 +297,19 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 			} else return false;
 		} else return true;
 	}
-
 }
 
 /*--------------------------------------------------------------------------------------
 	Class Name: Recordset
 --------------------------------------------------------------------------------------*/
 
-class ADORecordSet_postgres7 extends ADORecordSet_postgres64{
+class ADORecordSet_postgres7 extends ADORecordSet_postgres64
+{
 
 	var $databaseType = "postgres7";
 
 
-	function __construct($queryID, $mode=false)
+	function __construct($queryID, $mode = false)
 	{
 		parent::__construct($queryID, $mode);
 	}
@@ -321,7 +320,7 @@ class ADORecordSet_postgres7 extends ADORecordSet_postgres64{
 		if (!$this->EOF) {
 			$this->_currentRow++;
 			if ($this->_numOfRows < 0 || $this->_numOfRows > $this->_currentRow) {
-				$this->fields = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
+				$this->fields = @pg_fetch_array($this->_queryID, $this->_currentRow, $this->fetchMode);
 
 				if (is_array($this->fields)) {
 					if ($this->fields && isset($this->_blobArr)) $this->_fixblobs();
@@ -333,15 +332,15 @@ class ADORecordSet_postgres7 extends ADORecordSet_postgres64{
 		}
 		return false;
 	}
-
 }
 
-class ADORecordSet_assoc_postgres7 extends ADORecordSet_postgres64{
+class ADORecordSet_assoc_postgres7 extends ADORecordSet_postgres64
+{
 
 	var $databaseType = "postgres7";
 
 
-	function __construct($queryID, $mode=false)
+	function __construct($queryID, $mode = false)
 	{
 		parent::__construct($queryID, $mode);
 	}
@@ -352,7 +351,7 @@ class ADORecordSet_assoc_postgres7 extends ADORecordSet_postgres64{
 			return false;
 		}
 
-		$this->fields = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
+		$this->fields = @pg_fetch_array($this->_queryID, $this->_currentRow, $this->fetchMode);
 
 		if ($this->fields) {
 			if (isset($this->_blobArr)) $this->_fixblobs();
@@ -367,7 +366,7 @@ class ADORecordSet_assoc_postgres7 extends ADORecordSet_postgres64{
 		if (!$this->EOF) {
 			$this->_currentRow++;
 			if ($this->_numOfRows < 0 || $this->_numOfRows > $this->_currentRow) {
-				$this->fields = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
+				$this->fields = @pg_fetch_array($this->_queryID, $this->_currentRow, $this->fetchMode);
 
 				if (is_array($this->fields)) {
 					if ($this->fields) {

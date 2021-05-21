@@ -26,20 +26,22 @@
 /**
  * requires MantisWikiPlugin.class
  */
-require_once( 'MantisWikiPlugin.class.php' );
+require_once('MantisWikiPlugin.class.php');
 
 /**
  * Base that uses the old style wiki definitions from config_inc.php
  */
-abstract class MantisCoreWikiPlugin extends MantisWikiPlugin {
+abstract class MantisCoreWikiPlugin extends MantisWikiPlugin
+{
 	/**
 	 * Config Function
 	 * @return array
 	 */
-	function config() {
+	function config()
+	{
 		return array(
-			'root_namespace' => config_get_global( 'wiki_root_namespace' ),
-			'engine_url' => config_get_global( 'wiki_engine_url' ),
+			'root_namespace' => config_get_global('wiki_root_namespace'),
+			'engine_url' => config_get_global('wiki_engine_url'),
 		);
 	}
 }
@@ -47,12 +49,14 @@ abstract class MantisCoreWikiPlugin extends MantisWikiPlugin {
 /**
  * Basic Dokuwiki support with old-style wiki integration.
  */
-class MantisCoreDokuwikiPlugin extends MantisCoreWikiPlugin {
+class MantisCoreDokuwikiPlugin extends MantisCoreWikiPlugin
+{
 	/**
 	 * Plugin Registration
 	 * @return void
 	 */
-	function register() {
+	function register()
+	{
 		$this->name = 'MantisBT Dokuwiki Integration';
 		$this->version = '0.1';
 		$this->requires = array(
@@ -66,16 +70,17 @@ class MantisCoreDokuwikiPlugin extends MantisCoreWikiPlugin {
 	 * @param integer $p_project_id A project identifier.
 	 * @return string
 	 */
-	function base_url( $p_project_id = null ) {
-		$t_base = plugin_config_get( 'engine_url' ) . 'doku.php?id=';
+	function base_url($p_project_id = null)
+	{
+		$t_base = plugin_config_get('engine_url') . 'doku.php?id=';
 
-		$t_namespace = plugin_config_get( 'root_namespace' );
-		if( !is_blank( $t_namespace ) ) {
+		$t_namespace = plugin_config_get('root_namespace');
+		if (!is_blank($t_namespace)) {
 			$t_base .= $t_namespace . ':';
 		}
 
-		if( !is_null( $p_project_id ) && $p_project_id != ALL_PROJECTS ) {
-			$t_base .= urlencode( project_get_name( $p_project_id ) ) . ':';
+		if (!is_null($p_project_id) && $p_project_id != ALL_PROJECTS) {
+			$t_base .= urlencode(project_get_name($p_project_id)) . ':';
 		}
 		return $t_base;
 	}
@@ -87,8 +92,9 @@ class MantisCoreDokuwikiPlugin extends MantisCoreWikiPlugin {
 	 * @param integer $p_bug_id A bug identifier.
 	 * @return string
 	 */
-	function link_bug( $p_event, $p_bug_id ) {
-		return $this->base_url( bug_get_field( $p_bug_id, 'project_id' ) ) .  'issue:' . (int)$p_bug_id;
+	function link_bug($p_event, $p_bug_id)
+	{
+		return $this->base_url(bug_get_field($p_bug_id, 'project_id')) .  'issue:' . (int)$p_bug_id;
 	}
 
 	/**
@@ -98,20 +104,23 @@ class MantisCoreDokuwikiPlugin extends MantisCoreWikiPlugin {
 	 * @param integer $p_project_id A project identifier.
 	 * @return string
 	 */
-	function link_project( $p_event, $p_project_id ) {
-		return $this->base_url( $p_project_id ) . 'start';
+	function link_project($p_event, $p_project_id)
+	{
+		return $this->base_url($p_project_id) . 'start';
 	}
 }
 
 /**
  * Basic MediaWiki support with old-style wiki integration.
  */
-class MantisCoreMediaWikiPlugin extends MantisCoreWikiPlugin {
+class MantisCoreMediaWikiPlugin extends MantisCoreWikiPlugin
+{
 	/**
 	 * Plugin Registration
 	 * @return void
 	 */
-	function register() {
+	function register()
+	{
 		$this->name = 'MantisBT MediaWiki Integration';
 		$this->version = '0.1';
 		$this->requires = array(
@@ -125,12 +134,13 @@ class MantisCoreMediaWikiPlugin extends MantisCoreWikiPlugin {
 	 * @param integer $p_project_id A project identifier.
 	 * @return string
 	 */
-	function base_url( $p_project_id = null ) {
-		$t_base = plugin_config_get( 'engine_url' ) . 'index.php/';
-		if( !is_null( $p_project_id ) && $p_project_id != ALL_PROJECTS ) {
-			$t_base .= urlencode( project_get_name( $p_project_id ) ) . ':';
+	function base_url($p_project_id = null)
+	{
+		$t_base = plugin_config_get('engine_url') . 'index.php/';
+		if (!is_null($p_project_id) && $p_project_id != ALL_PROJECTS) {
+			$t_base .= urlencode(project_get_name($p_project_id)) . ':';
 		} else {
-			$t_base .= plugin_config_get( 'root_namespace' );
+			$t_base .= plugin_config_get('root_namespace');
 		}
 		return $t_base;
 	}
@@ -142,8 +152,9 @@ class MantisCoreMediaWikiPlugin extends MantisCoreWikiPlugin {
 	 * @param integer $p_bug_id A bug identifier.
 	 * @return string
 	 */
-	function link_bug( $p_event, $p_bug_id ) {
-		return $this->base_url( bug_get_field( $p_bug_id, 'project_id' ) ) . (int)$p_bug_id;
+	function link_bug($p_event, $p_bug_id)
+	{
+		return $this->base_url(bug_get_field($p_bug_id, 'project_id')) . (int)$p_bug_id;
 	}
 
 	/**
@@ -153,20 +164,23 @@ class MantisCoreMediaWikiPlugin extends MantisCoreWikiPlugin {
 	 * @param integer $p_project_id A project identifier.
 	 * @return string
 	 */
-	function link_project( $p_event, $p_project_id ) {
-		return $this->base_url( $p_project_id ) . 'Main_Page';
+	function link_project($p_event, $p_project_id)
+	{
+		return $this->base_url($p_project_id) . 'Main_Page';
 	}
 }
 
 /**
  * Basic Twiki support with old-style wiki integration.
  */
-class MantisCoreTwikiPlugin extends MantisCoreWikiPlugin {
+class MantisCoreTwikiPlugin extends MantisCoreWikiPlugin
+{
 	/**
 	 * Plugin Registration
 	 * @return void
 	 */
-	function register() {
+	function register()
+	{
 		$this->name = 'MantisBT Twiki Integration';
 		$this->version = '0.1';
 		$this->requires = array(
@@ -180,16 +194,17 @@ class MantisCoreTwikiPlugin extends MantisCoreWikiPlugin {
 	 * @param integer $p_project_id A project identifier.
 	 * @return string
 	 */
-	function base_url( $p_project_id = null ) {
-		$t_base = plugin_config_get( 'engine_url' );
+	function base_url($p_project_id = null)
+	{
+		$t_base = plugin_config_get('engine_url');
 
-		$t_namespace = plugin_config_get( 'root_namespace' );
-		if( !is_blank( $t_namespace ) ) {
+		$t_namespace = plugin_config_get('root_namespace');
+		if (!is_blank($t_namespace)) {
 			$t_base .= $t_namespace . '/';
 		}
 
-		if( !is_null( $p_project_id ) && $p_project_id != ALL_PROJECTS ) {
-			$t_base .= urlencode( project_get_name( $p_project_id ) ) . '/';
+		if (!is_null($p_project_id) && $p_project_id != ALL_PROJECTS) {
+			$t_base .= urlencode(project_get_name($p_project_id)) . '/';
 		}
 		return $t_base;
 	}
@@ -201,8 +216,9 @@ class MantisCoreTwikiPlugin extends MantisCoreWikiPlugin {
 	 * @param integer $p_bug_id A bug identifier.
 	 * @return string
 	 */
-	function link_bug( $p_event, $p_bug_id ) {
-		return $this->base_url( bug_get_field( $p_bug_id, 'project_id' ) ) . 'IssueNumber' . (int)$p_bug_id;
+	function link_bug($p_event, $p_bug_id)
+	{
+		return $this->base_url(bug_get_field($p_bug_id, 'project_id')) . 'IssueNumber' . (int)$p_bug_id;
 	}
 
 	/**
@@ -212,20 +228,23 @@ class MantisCoreTwikiPlugin extends MantisCoreWikiPlugin {
 	 * @param integer $p_project_id A project identifier.
 	 * @return string
 	 */
-	function link_project( $p_event, $p_project_id ) {
-		return $this->base_url( $p_project_id );
+	function link_project($p_event, $p_project_id)
+	{
+		return $this->base_url($p_project_id);
 	}
 }
 
 /**
  * Basic WikkaWiki support with old-style wiki integration.
  */
-class MantisCoreWikkaWikiPlugin extends MantisCoreWikiPlugin {
+class MantisCoreWikkaWikiPlugin extends MantisCoreWikiPlugin
+{
 	/**
 	 * Plugin Registration
 	 * @return void
 	 */
-	function register() {
+	function register()
+	{
 		$this->name = 'MantisBT WikkaWiki Integration';
 		$this->version = '0.1';
 		$this->requires = array(
@@ -239,16 +258,17 @@ class MantisCoreWikkaWikiPlugin extends MantisCoreWikiPlugin {
 	 * @param integer $p_project_id A project identifier.
 	 * @return string
 	 */
-	function base_url( $p_project_id = null ) {
-		$t_base = plugin_config_get( 'engine_url' ) . 'wikka.php?wakka=';
+	function base_url($p_project_id = null)
+	{
+		$t_base = plugin_config_get('engine_url') . 'wikka.php?wakka=';
 
-		$t_namespace = ucfirst( plugin_config_get( 'root_namespace' ) );
-		if( !is_blank( $t_namespace ) ) {
+		$t_namespace = ucfirst(plugin_config_get('root_namespace'));
+		if (!is_blank($t_namespace)) {
 			$t_base .= $t_namespace;
 		}
 
-		if( !is_null( $p_project_id ) && $p_project_id != ALL_PROJECTS ) {
-			$t_base .= urlencode( project_get_name( $p_project_id ) );
+		if (!is_null($p_project_id) && $p_project_id != ALL_PROJECTS) {
+			$t_base .= urlencode(project_get_name($p_project_id));
 		}
 		return $t_base;
 	}
@@ -260,8 +280,9 @@ class MantisCoreWikkaWikiPlugin extends MantisCoreWikiPlugin {
 	 * @param integer $p_bug_id A bug identifier.
 	 * @return string
 	 */
-	function link_bug( $p_event, $p_bug_id ) {
-		return $this->base_url( bug_get_field( $p_bug_id, 'project_id' ) ) . 'Issue' . (int)$p_bug_id;
+	function link_bug($p_event, $p_bug_id)
+	{
+		return $this->base_url(bug_get_field($p_bug_id, 'project_id')) . 'Issue' . (int)$p_bug_id;
 	}
 
 	/**
@@ -271,20 +292,23 @@ class MantisCoreWikkaWikiPlugin extends MantisCoreWikiPlugin {
 	 * @param integer $p_project_id A project identifier.
 	 * @return string
 	 */
-	function link_project( $p_event, $p_project_id ) {
-		return $this->base_url( $p_project_id ) . 'Start';
+	function link_project($p_event, $p_project_id)
+	{
+		return $this->base_url($p_project_id) . 'Start';
 	}
 }
 
 /**
  * Basic Xwiki support with old-style wiki integration.
  */
-class MantisCoreXwikiPlugin extends MantisCoreWikiPlugin {
+class MantisCoreXwikiPlugin extends MantisCoreWikiPlugin
+{
 	/**
 	 * Plugin Registration
 	 * @return void
 	 */
-	function register() {
+	function register()
+	{
 		$this->name = 'MantisBT Xwiki Integration';
 		$this->version = '0.1';
 		$this->requires = array(
@@ -298,12 +322,13 @@ class MantisCoreXwikiPlugin extends MantisCoreWikiPlugin {
 	 * @param integer $p_project_id A project identifier.
 	 * @return string
 	 */
-	function base_url( $p_project_id = null ) {
-		$t_base = plugin_config_get( 'engine_url' );
-		if( !is_null( $p_project_id ) && $p_project_id != ALL_PROJECTS ) {
-			$t_base .= urlencode( project_get_name( $p_project_id ) ) . '/';
+	function base_url($p_project_id = null)
+	{
+		$t_base = plugin_config_get('engine_url');
+		if (!is_null($p_project_id) && $p_project_id != ALL_PROJECTS) {
+			$t_base .= urlencode(project_get_name($p_project_id)) . '/';
 		} else {
-			$t_base .= plugin_config_get( 'root_namespace' );
+			$t_base .= plugin_config_get('root_namespace');
 		}
 		return $t_base;
 	}
@@ -315,8 +340,9 @@ class MantisCoreXwikiPlugin extends MantisCoreWikiPlugin {
 	 * @param integer $p_bug_id A bug identifier.
 	 * @return string
 	 */
-	function link_bug( $p_event, $p_bug_id ) {
-		return $this->base_url( bug_get_field( $p_bug_id, 'project_id' ) ) .  (int)$p_bug_id;
+	function link_bug($p_event, $p_bug_id)
+	{
+		return $this->base_url(bug_get_field($p_bug_id, 'project_id')) .  (int)$p_bug_id;
 	}
 
 	/**
@@ -326,7 +352,8 @@ class MantisCoreXwikiPlugin extends MantisCoreWikiPlugin {
 	 * @param integer $p_project_id A project identifier.
 	 * @return string
 	 */
-	function link_project( $p_event, $p_project_id ) {
-		return $this->base_url( $p_project_id ) . 'Main_Page';
+	function link_project($p_event, $p_project_id)
+	{
+		return $this->base_url($p_project_id) . 'Main_Page';
 	}
 }

@@ -21,7 +21,8 @@ if (!defined('ADODB_DIR')) die();
 /*
 	MSSQL has moved most performance info to Performance Monitor
 */
-class perf_mssql extends adodb_perf{
+class perf_mssql extends adodb_perf
+{
 	var $sql1 = 'cast(sql1 as text)';
 	var $createTableSQL = "CREATE TABLE adodb_logsql (
 		  created datetime NOT NULL,
@@ -33,35 +34,53 @@ class perf_mssql extends adodb_perf{
 		)";
 
 	var $settings = array(
-	'Ratios',
-		'data cache hit ratio' => array('RATIO',
+		'Ratios',
+		'data cache hit ratio' => array(
+			'RATIO',
 			"select round((a.cntr_value*100.0)/b.cntr_value,2) from master.dbo.sysperfinfo a, master.dbo.sysperfinfo b where a.counter_name = 'Buffer cache hit ratio' and b.counter_name='Buffer cache hit ratio base'",
-			'=WarnCacheRatio'),
-		'prepared sql hit ratio' => array('RATIO',
-			array('dbcc cachestats','Prepared',1,100),
-			''),
-		'adhoc sql hit ratio' => array('RATIO',
-			array('dbcc cachestats','Adhoc',1,100),
-			''),
-	'IO',
-		'data reads' => array('IO',
-		"select cntr_value from master.dbo.sysperfinfo where counter_name = 'Page reads/sec'"),
-		'data writes' => array('IO',
-		"select cntr_value from master.dbo.sysperfinfo where counter_name = 'Page writes/sec'"),
+			'=WarnCacheRatio'
+		),
+		'prepared sql hit ratio' => array(
+			'RATIO',
+			array('dbcc cachestats', 'Prepared', 1, 100),
+			''
+		),
+		'adhoc sql hit ratio' => array(
+			'RATIO',
+			array('dbcc cachestats', 'Adhoc', 1, 100),
+			''
+		),
+		'IO',
+		'data reads' => array(
+			'IO',
+			"select cntr_value from master.dbo.sysperfinfo where counter_name = 'Page reads/sec'"
+		),
+		'data writes' => array(
+			'IO',
+			"select cntr_value from master.dbo.sysperfinfo where counter_name = 'Page writes/sec'"
+		),
 
-	'Data Cache',
-		'data cache size' => array('DATAC',
-		"select cntr_value*8192 from master.dbo.sysperfinfo where counter_name = 'Total Pages' and object_name='SQLServer:Buffer Manager'",
-			'' ),
-		'data cache blocksize' => array('DATAC',
-			"select 8192",'page size'),
-	'Connections',
-		'current connections' => array('SESS',
+		'Data Cache',
+		'data cache size' => array(
+			'DATAC',
+			"select cntr_value*8192 from master.dbo.sysperfinfo where counter_name = 'Total Pages' and object_name='SQLServer:Buffer Manager'",
+			''
+		),
+		'data cache blocksize' => array(
+			'DATAC',
+			"select 8192", 'page size'
+		),
+		'Connections',
+		'current connections' => array(
+			'SESS',
 			'=sp_who',
-			''),
-		'max connections' => array('SESS',
+			''
+		),
+		'max connections' => array(
+			'SESS',
 			"SELECT @@MAX_CONNECTIONS",
-			''),
+			''
+		),
 
 		false
 	);
@@ -76,24 +95,24 @@ class perf_mssql extends adodb_perf{
 		$this->conn = $conn;
 	}
 
-	function Explain($sql,$partial=false)
+	function Explain($sql, $partial = false)
 	{
 
 		$save = $this->conn->LogSQL(false);
 		if ($partial) {
-			$sqlq = $this->conn->qstr($sql.'%');
+			$sqlq = $this->conn->qstr($sql . '%');
 			$arr = $this->conn->GetArray("select distinct sql1 from adodb_logsql where sql1 like $sqlq");
 			if ($arr) {
-				foreach($arr as $row) {
+				foreach ($arr as $row) {
 					$sql = reset($row);
 					if (crc32($sql) == $partial) break;
 				}
 			}
 		}
 
-		$s = '<p><b>Explain</b>: '.htmlspecialchars($sql).'</p>';
+		$s = '<p><b>Explain</b>: ' . htmlspecialchars($sql) . '</p>';
 		$this->conn->Execute("SET SHOWPLAN_ALL ON;");
-		$sql = str_replace('?',"''",$sql);
+		$sql = str_replace('?', "''", $sql);
 		global $ADODB_FETCH_MODE;
 
 		$save = $ADODB_FETCH_MODE;
@@ -105,7 +124,7 @@ class perf_mssql extends adodb_perf{
 			$rs->MoveNext();
 			$s .= '<table bgcolor=white border=0 cellpadding="1" callspacing=0><tr><td nowrap align=center> Rows<td nowrap align=center> IO<td nowrap align=center> CPU<td align=left> &nbsp; &nbsp; Plan</tr>';
 			while (!$rs->EOF) {
-				$s .= '<tr><td>'.round($rs->fields[8],1).'<td>'.round($rs->fields[9],3).'<td align=right>'.round($rs->fields[10],3).'<td nowrap><pre>'.htmlspecialchars($rs->fields[0])."</td></pre></tr>\n"; ## NOTE CORRUPT </td></pre> tag is intentional!!!!
+				$s .= '<tr><td>' . round($rs->fields[8], 1) . '<td>' . round($rs->fields[9], 3) . '<td align=right>' . round($rs->fields[10], 3) . '<td nowrap><pre>' . htmlspecialchars($rs->fields[0]) . "</td></pre></tr>\n"; ## NOTE CORRUPT </td></pre> tag is intentional!!!!
 				$rs->MoveNext();
 			}
 			$s .= '</table>';
@@ -121,7 +140,7 @@ class perf_mssql extends adodb_perf{
 
 	function Tables()
 	{
-	global $ADODB_FETCH_MODE;
+		global $ADODB_FETCH_MODE;
 
 		$save = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
@@ -134,7 +153,7 @@ class perf_mssql extends adodb_perf{
 				$tabq = $this->conn->qstr($tab);
 				$rs2 = $this->conn->Execute("sp_spaceused $tabq");
 				if ($rs2) {
-					$s .= '<tr><td>'.$tab.'</td><td align=right>'.$rs2->fields[3].'</td><td align=right>'.$rs2->fields[4].'</td><td align=right>'.$rs2->fields[2].'</td></tr>';
+					$s .= '<tr><td>' . $tab . '</td><td align=right>' . $rs2->fields[3] . '</td><td align=right>' . $rs2->fields[4] . '</td><td align=right>' . $rs2->fields[2] . '</td></tr>';
 					$rs2->Close();
 				}
 				$rs1->MoveNext();
@@ -142,7 +161,7 @@ class perf_mssql extends adodb_perf{
 			$rs1->Close();
 		}
 		$ADODB_FETCH_MODE = $save;
-		return $s.'</table>';
+		return $s . '</table>';
 	}
 
 	function sp_who()
@@ -151,7 +170,7 @@ class perf_mssql extends adodb_perf{
 		return sizeof($arr);
 	}
 
-	function HealthCheck($cli=false)
+	function HealthCheck($cli = false)
 	{
 
 		$this->conn->Execute('dbcc traceon(3604)');
@@ -159,6 +178,4 @@ class perf_mssql extends adodb_perf{
 		$this->conn->Execute('dbcc traceoff(3604)');
 		return $html;
 	}
-
-
 }

@@ -26,12 +26,14 @@
 /**
  * Base class that implements the skeleton for a wiki plugin.
  */
-abstract class MantisWikiPlugin extends MantisPlugin {
+abstract class MantisWikiPlugin extends MantisPlugin
+{
 	/**
 	 * Hooks
 	 * @return array
 	 */
-	function hooks() {
+	function hooks()
+	{
 		return array(
 			'EVENT_WIKI_INIT' => 'wiki_init',
 			'EVENT_WIKI_LINK_BUG' => 'link_bug',
@@ -43,7 +45,8 @@ abstract class MantisWikiPlugin extends MantisPlugin {
 	 * Plugin initialization function
 	 * @return boolean
 	 */
-	function wiki_init() {
+	function wiki_init()
+	{
 		return true;
 	}
 
@@ -53,7 +56,7 @@ abstract class MantisWikiPlugin extends MantisPlugin {
 	 * @param integer $p_bug_id A bug identifier.
 	 * @return string
 	 */
-	abstract function link_bug( $p_event, $p_bug_id );
+	abstract function link_bug($p_event, $p_bug_id);
 
 	/**
 	 * Generate URL to Project entry in a wiki
@@ -61,6 +64,5 @@ abstract class MantisWikiPlugin extends MantisPlugin {
 	 * @param integer $p_project_id A project identifier.
 	 * @return string
 	 */
-	abstract function link_project( $p_event, $p_project_id );
+	abstract function link_project($p_event, $p_project_id);
 }
-

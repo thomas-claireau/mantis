@@ -23,10 +23,11 @@
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
 
-include_once(ADODB_DIR."/drivers/adodb-mysql.inc.php");
+include_once(ADODB_DIR . "/drivers/adodb-mysql.inc.php");
 
 
-class ADODB_mysqlt extends ADODB_mysql {
+class ADODB_mysqlt extends ADODB_mysql
+{
 	var $databaseType = 'mysqlt';
 	var $ansiOuter = true; // for Version 3.23.17 or later
 	var $hasTransactions = true;
@@ -34,7 +35,8 @@ class ADODB_mysqlt extends ADODB_mysql {
 
 	function __construct()
 	{
-	global $ADODB_EXTENSION; if ($ADODB_EXTENSION) $this->rsPrefix .= 'ext_';
+		global $ADODB_EXTENSION;
+		if ($ADODB_EXTENSION) $this->rsPrefix .= 'ext_';
 	}
 
 	function BeginTrans()
@@ -46,7 +48,7 @@ class ADODB_mysqlt extends ADODB_mysql {
 		return true;
 	}
 
-	function CommitTrans($ok=true)
+	function CommitTrans($ok = true)
 	{
 		if ($this->transOff) return true;
 		if (!$ok) return $this->RollbackTrans();
@@ -66,34 +68,39 @@ class ADODB_mysqlt extends ADODB_mysql {
 		return true;
 	}
 
-	function RowLock($tables,$where='',$col='1 as adodbignore')
+	function RowLock($tables, $where = '', $col = '1 as adodbignore')
 	{
-		if ($this->transCnt==0) $this->BeginTrans();
-		if ($where) $where = ' where '.$where;
+		if ($this->transCnt == 0) $this->BeginTrans();
+		if ($where) $where = ' where ' . $where;
 		$rs = $this->Execute("select $col from $tables $where for update");
 		return !empty($rs);
 	}
-
 }
 
-class ADORecordSet_mysqlt extends ADORecordSet_mysql{
+class ADORecordSet_mysqlt extends ADORecordSet_mysql
+{
 	var $databaseType = "mysqlt";
 
-	function __construct($queryID,$mode=false)
+	function __construct($queryID, $mode = false)
 	{
 		if ($mode === false) {
 			global $ADODB_FETCH_MODE;
 			$mode = $ADODB_FETCH_MODE;
 		}
 
-		switch ($mode)
-		{
-		case ADODB_FETCH_NUM: $this->fetchMode = MYSQL_NUM; break;
-		case ADODB_FETCH_ASSOC:$this->fetchMode = MYSQL_ASSOC; break;
+		switch ($mode) {
+			case ADODB_FETCH_NUM:
+				$this->fetchMode = MYSQL_NUM;
+				break;
+			case ADODB_FETCH_ASSOC:
+				$this->fetchMode = MYSQL_ASSOC;
+				break;
 
-		case ADODB_FETCH_DEFAULT:
-		case ADODB_FETCH_BOTH:
-		default: $this->fetchMode = MYSQL_BOTH; break;
+			case ADODB_FETCH_DEFAULT:
+			case ADODB_FETCH_BOTH:
+			default:
+				$this->fetchMode = MYSQL_BOTH;
+				break;
 		}
 
 		$this->adodbFetchMode = $mode;
@@ -102,7 +109,7 @@ class ADORecordSet_mysqlt extends ADORecordSet_mysql{
 
 	function MoveNext()
 	{
-		if (@$this->fields = mysql_fetch_array($this->_queryID,$this->fetchMode)) {
+		if (@$this->fields = mysql_fetch_array($this->_queryID, $this->fetchMode)) {
 			$this->_currentRow += 1;
 			return true;
 		}
@@ -114,11 +121,12 @@ class ADORecordSet_mysqlt extends ADORecordSet_mysql{
 	}
 }
 
-class ADORecordSet_ext_mysqlt extends ADORecordSet_mysqlt {
+class ADORecordSet_ext_mysqlt extends ADORecordSet_mysqlt
+{
 
-	function __construct($queryID,$mode=false)
+	function __construct($queryID, $mode = false)
 	{
-		parent::__construct($queryID,$mode);
+		parent::__construct($queryID, $mode);
 	}
 
 	function MoveNext()

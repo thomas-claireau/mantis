@@ -29,7 +29,8 @@ use Mantis\Exceptions\ServiceException;
  * @package MantisBT
  * @subpackage classes
  */
-class IssueAttachmentTimelineEvent extends TimelineEvent {
+class IssueAttachmentTimelineEvent extends TimelineEvent
+{
 	private $issue_id;
 	private $filename;
 	private $type;
@@ -41,8 +42,9 @@ class IssueAttachmentTimelineEvent extends TimelineEvent {
 	 * @param string  $p_filename  Attachment's file name.
 	 * @param integer $p_type      Event type (FILE_ADDED, FILE_DELETED)
 	 */
-	public function __construct( $p_timestamp, $p_user_id, $p_issue_id, $p_filename, $p_type ) {
-		parent::__construct( $p_timestamp, $p_user_id );
+	public function __construct($p_timestamp, $p_user_id, $p_issue_id, $p_filename, $p_type)
+	{
+		parent::__construct($p_timestamp, $p_user_id);
 
 		$this->issue_id = $p_issue_id;
 		$this->filename = $p_filename;
@@ -54,8 +56,9 @@ class IssueAttachmentTimelineEvent extends TimelineEvent {
 	 * @return string
 	 * @throws Mantis\Exceptions\ServiceException
 	 */
-	public function html() {
-		switch( $this->type ) {
+	public function html()
+	{
+		switch ($this->type) {
 			case FILE_ADDED:
 				$t_string = 'timeline_issue_file_added';
 				break;
@@ -63,17 +66,18 @@ class IssueAttachmentTimelineEvent extends TimelineEvent {
 				$t_string = 'timeline_issue_file_deleted';
 				break;
 			default:
-				throw new ServiceException( 'Unknown Event Type', ERROR_GENERIC );
+				throw new ServiceException('Unknown Event Type', ERROR_GENERIC);
 		}
 
-		$t_bug_link = string_get_bug_view_link( $this->issue_id );
+		$t_bug_link = string_get_bug_view_link($this->issue_id);
 
-		$t_html = $this->html_start( 'fa-file-o' );
+		$t_html = $this->html_start('fa-file-o');
 		$t_html .= '<div class="action">'
-			. sprintf( lang_get( $t_string ),
-				prepare_user_name( $this->user_id ),
+			. sprintf(
+				lang_get($t_string),
+				prepare_user_name($this->user_id),
 				$t_bug_link,
-				string_html_specialchars( $this->filename )
+				string_html_specialchars($this->filename)
 			)
 			. '</div>';
 		$t_html .= $this->html_end();

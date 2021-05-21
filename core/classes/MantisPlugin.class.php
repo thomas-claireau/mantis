@@ -28,7 +28,8 @@
  * and integration with MantisBT. See the Mantis wiki for
  * more information.
  */
-abstract class MantisPlugin {
+abstract class MantisPlugin
+{
 	/**
 	 * Constants indicating the Plugin's validity status
 	 *
@@ -112,14 +113,17 @@ abstract class MantisPlugin {
 	 * that will be called after all plugins have been initialized.
 	 * @return void
 	 */
-	public function init() {}
+	public function init()
+	{
+	}
 
 	/**
 	 * This function allows plugins to add new error messages for Mantis usage
 	 *
 	 * @return array The error_name=>error_message list to add
 	 */
-	public function errors() {
+	public function errors()
+	{
 		return array();
 	}
 
@@ -127,7 +131,8 @@ abstract class MantisPlugin {
 	 * return an array of default configuration name/value pairs
 	 * @return array
 	 */
-	public function config() {
+	public function config()
+	{
 		return array();
 	}
 
@@ -158,7 +163,8 @@ abstract class MantisPlugin {
 	 * avoid conflicts between plugins.
 	 * @return array
 	 */
-	public function events() {
+	public function events()
+	{
 		return array();
 	}
 
@@ -194,7 +200,8 @@ abstract class MantisPlugin {
 	 * expectations of the "bar" event.
 	 * @return array
 	 */
-	public function hooks() {
+	public function hooks()
+	{
 		return array();
 	}
 
@@ -223,19 +230,21 @@ abstract class MantisPlugin {
 	 * </code>
 	 * @return array
 	 */
-	public function schema() {
+	public function schema()
+	{
 		return array();
 	}
 
 	/**
-	  * Perform pre-installation operations
-	  *
-	  * This method is called before installing the given plugin.
-	  * It can be used to add pre-install checks on external requirements
-	  *
-	  * @return bool true if install can proceed
-	  */
-	public function install() {
+	 * Perform pre-installation operations
+	 *
+	 * This method is called before installing the given plugin.
+	 * It can be used to add pre-install checks on external requirements
+	 *
+	 * @return bool true if install can proceed
+	 */
+	public function install()
+	{
 		return true;
 	}
 
@@ -248,7 +257,8 @@ abstract class MantisPlugin {
 	 * @param integer $p_schema Schema Version ID.
 	 * @return boolean
 	 */
-	public function upgrade( $p_schema ) {
+	public function upgrade($p_schema)
+	{
 		return true;
 	}
 
@@ -260,7 +270,8 @@ abstract class MantisPlugin {
 	 * data, or be able to re-install the plugin later.
 	 * @return void
 	 */
-	public function uninstall() {
+	public function uninstall()
+	{
 	}
 
 	### Core plugin functionality ###
@@ -275,7 +286,8 @@ abstract class MantisPlugin {
 	 *
 	 * @param string $p_basename Plugin Basename.
 	 */
-	final public function __construct( $p_basename ) {
+	final public function __construct($p_basename)
+	{
 		$this->basename = $p_basename;
 		$this->register();
 	}
@@ -284,10 +296,11 @@ abstract class MantisPlugin {
 	 * Initialisation
 	 * @return void
 	 */
-	final public function __init() {
-		plugin_config_defaults( $this->config() );
-		event_declare_many( $this->events() );
-		plugin_event_hook_many( $this->hooks() );
+	final public function __init()
+	{
+		plugin_config_defaults($this->config());
+		event_declare_many($this->events());
+		plugin_event_hook_many($this->hooks());
 
 		$this->init();
 	}
@@ -297,7 +310,8 @@ abstract class MantisPlugin {
 	 *
 	 * @return bool True if the plugin is valid.
 	 */
-	public function isValid() {
+	public function isValid()
+	{
 		return $this->name !== null && $this->version !== null;
 	}
 
@@ -312,9 +326,10 @@ abstract class MantisPlugin {
 	 *
 	 * @return InvalidPlugin
 	 */
-	public function getInvalidPlugin() {
-		$t_plugin = new InvalidDefinitionPlugin( $this->basename );
-		$t_plugin->setInvalidPlugin( $this );
+	public function getInvalidPlugin()
+	{
+		$t_plugin = new InvalidDefinitionPlugin($this->basename);
+		$t_plugin->setInvalidPlugin($this);
 
 		return $t_plugin;
 	}

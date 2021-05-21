@@ -50,8 +50,9 @@ class ConfigParser
 	 * Parser constructor.
 	 * @param string $p_code PHP code to parse
 	 */
-	public function __construct( $p_code ) {
-		$this->tokens = new Tokenizer( $p_code );
+	public function __construct($p_code)
+	{
+		$this->tokens = new Tokenizer($p_code);
 	}
 
 	/**
@@ -66,8 +67,9 @@ class ConfigParser
 	 * @return mixed variable
 	 * @throws Exception when there are unexpected or extra tokens
 	 */
-	public function parse( $p_extra_tokens = self::EXTRA_TOKENS_ERROR ) {
-		switch( $this->tokens->type() ) {
+	public function parse($p_extra_tokens = self::EXTRA_TOKENS_ERROR)
+	{
+		switch ($this->tokens->type()) {
 			case T_ARRAY:
 				$t_result = $this->process_array();
 				break;
@@ -82,12 +84,12 @@ class ConfigParser
 				break;
 
 			default:
-				throw new Exception( 'Unexpected token "' . $this->tokens->value() . '"' );
+				throw new Exception('Unexpected token "' . $this->tokens->value() . '"');
 		}
 
 		# Make sure we have processed all tokens
-		if( $p_extra_tokens == self::EXTRA_TOKENS_ERROR && !$this->tokens->is_empty() ) {
-			throw new Exception( 'Extra tokens found "' . $this->tokens->get_string() .'":' );
+		if ($p_extra_tokens == self::EXTRA_TOKENS_ERROR && !$this->tokens->is_empty()) {
+			throw new Exception('Extra tokens found "' . $this->tokens->get_string() . '":');
 		}
 
 		return $t_result;
@@ -99,11 +101,12 @@ class ConfigParser
 	 * @param string $p_name String to check.
 	 * @return mixed|string value of constant $p_name, or $p_name itself
 	 */
-	public static function constant_replace( $p_name ) {
-		$t_name = trim( $p_name );
-		if( is_string( $t_name ) && defined( $t_name ) ) {
+	public static function constant_replace($p_name)
+	{
+		$t_name = trim($p_name);
+		if (is_string($t_name) && defined($t_name)) {
 			# we have a constant
-			return constant( $t_name );
+			return constant($t_name);
 		}
 		return $t_name;
 	}
@@ -113,37 +116,38 @@ class ConfigParser
 	 * @return array
 	 * @throws Exception when there's an invalid token
 	 */
-	protected function process_array() {
+	protected function process_array()
+	{
 		$t_array = array();
 		$t_count = 0;
 
-		$this->tokens->ensure_matches( T_ARRAY );
-		$this->tokens->ensure_matches( '(' );
+		$this->tokens->ensure_matches(T_ARRAY);
+		$this->tokens->ensure_matches('(');
 
 		# Loop until we reach the end of the array
-		while( !$this->tokens->matches( ')' ) ) {
+		while (!$this->tokens->matches(')')) {
 			# A comma is required before each element except the first one
 			if ($t_count > 0) {
 				$this->tokens->ensure_matches(',');
 			}
 
-			switch( $this->tokens->type() ) {
-				# Nested array
+			switch ($this->tokens->type()) {
+					# Nested array
 				case T_ARRAY:
 					$t_array[] = $this->process_array();
 					break;
 
-				# Value
+					# Value
 				case T_CONSTANT_ENCAPSED_STRING:
 				case T_STRING:
 				case T_LNUMBER:
 				case T_DNUMBER:
 					$t_str = $this->process_value();
 
-					if( $this->tokens->matches( T_DOUBLE_ARROW ) ) {
+					if ($this->tokens->matches(T_DOUBLE_ARROW)) {
 						# key => value
 						$this->tokens->pop();
-						if( $this->tokens->matches( T_ARRAY ) ) {
+						if ($this->tokens->matches(T_ARRAY)) {
 							$t_array[$t_str] = $this->process_array();
 						} else {
 							$t_array[$t_str] = $this->process_value();
@@ -164,7 +168,7 @@ class ConfigParser
 
 			$t_count++;
 		}
-		$this->tokens->ensure_matches( ')' );
+		$this->tokens->ensure_matches(')');
 
 		return $t_array;
 	}
@@ -175,9 +179,10 @@ class ConfigParser
 	 * @return mixed
 	 * @throws Exception when there's an unexpected value
 	 */
-	protected function process_value() {
+	protected function process_value()
+	{
 		# String literals
-		if( $this->tokens->matches( T_STRING ) ) {
+		if ($this->tokens->matches(T_STRING)) {
 			$t_token = $this->tokens->pop();
 			$t_value = $t_token[1];
 
@@ -192,8 +197,8 @@ class ConfigParser
 			}
 
 			# Defined constants
-			$t_value = $this->constant_replace( $t_value );
-			if( $t_value !== $t_token[1] ) {
+			$t_value = $this->constant_replace($t_value);
+			if ($t_value !== $t_token[1]) {
 				return $t_value;
 			}
 
@@ -201,34 +206,34 @@ class ConfigParser
 		}
 
 		# Strings
-		if( $this->tokens->matches( T_CONSTANT_ENCAPSED_STRING ) ) {
+		if ($this->tokens->matches(T_CONSTANT_ENCAPSED_STRING)) {
 			$t_value = $this->tokens->pop();
-			return (string)stripslashes( substr( $t_value[1], 1, -1 ) );
+			return (string)stripslashes(substr($t_value[1], 1, -1));
 		}
 
 		# Numbers
 		$t_negate = 1;
-		if( $this->tokens->matches( '-' ) ) {
+		if ($this->tokens->matches('-')) {
 			$this->tokens->pop();
 			$t_negate = -1;
 		}
-		if( $this->tokens->matches( '+' ) ) {
+		if ($this->tokens->matches('+')) {
 			$this->tokens->pop();
 		}
 
 		# Integers
-		if( $this->tokens->matches( T_LNUMBER ) ) {
+		if ($this->tokens->matches(T_LNUMBER)) {
 			$t_value = $this->tokens->pop();
 			return $t_negate * (int)$t_value[1];
 		}
 
 		# Floating point
-		if( $this->tokens->matches( T_DNUMBER ) ) {
+		if ($this->tokens->matches(T_DNUMBER)) {
 			$t_value = $this->tokens->pop();
 			return $t_negate * (float)$t_value[1];
 		}
 
 		# Anything else
-		throw new Exception( "Unexpected value" . $this->tokens->value() );
+		throw new Exception("Unexpected value" . $this->tokens->value());
 	}
 }

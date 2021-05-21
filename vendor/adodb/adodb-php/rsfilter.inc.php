@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @version   v5.20.20  01-Feb-2021
  * @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
@@ -12,7 +13,7 @@
  * Latest version is available at http://adodb.org/
  *
  * Requires PHP4.01pl2 or later because it uses include_once
-*/
+ */
 
 /*
 	Filter all fields and all rows in a recordset and returns the
@@ -35,7 +36,7 @@
 	}
 	$rs = RSFilter($rs,'do_ucwords');
  */
-function RSFilter($rs,$fn)
+function RSFilter($rs, $fn)
 {
 	if ($rs->databaseType != 'array') {
 		if (!$rs->connection) return false;
@@ -43,15 +44,14 @@ function RSFilter($rs,$fn)
 		$rs = $rs->connection->_rs2rs($rs);
 	}
 	$rows = $rs->RecordCount();
-	for ($i=0; $i < $rows; $i++) {
-		if (is_array ($fn)) {
-        	$obj = $fn[0];
-        	$method = $fn[1];
-        	$obj->$method ($rs->_array[$i],$rs);
-      } else {
-			$fn($rs->_array[$i],$rs);
-      }
-
+	for ($i = 0; $i < $rows; $i++) {
+		if (is_array($fn)) {
+			$obj = $fn[0];
+			$method = $fn[1];
+			$obj->$method($rs->_array[$i], $rs);
+		} else {
+			$fn($rs->_array[$i], $rs);
+		}
 	}
 	if (!$rs->EOF) {
 		$rs->_currentRow = 0;

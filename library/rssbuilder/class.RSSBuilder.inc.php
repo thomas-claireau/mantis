@@ -2,16 +2,17 @@
 require_once 'interface.RSS.inc.php';
 require_once 'class.RSSBase.inc.php';
 /**
-* Class for creating an RSS-feed
-* @author Michael Wimmer <flaimo@gmail.com>
-* @category flaimo-php
-* @copyright Copyright © 2002-2008, Michael Wimmer
-* @license GNU General Public License v3
-* @link http://code.google.com/p/flaimo-php/
-* @package RSS
-* @version 2.2.1
-*/
-class RSSBuilder extends RSSBase {
+ * Class for creating an RSS-feed
+ * @author Michael Wimmer <flaimo@gmail.com>
+ * @category flaimo-php
+ * @copyright Copyright ï¿½ 2002-2008, Michael Wimmer
+ * @license GNU General Public License v3
+ * @link http://code.google.com/p/flaimo-php/
+ * @package RSS
+ * @version 2.2.1
+ */
+class RSSBuilder extends RSSBase
+{
 
 	protected $rss_data = array();
 	protected $dc_data = array();
@@ -22,13 +23,15 @@ class RSSBuilder extends RSSBase {
 	protected $versions = array('0.91' => '091', '1.0' => '100', '2.0' => '200');
 	protected $version_objects = array();
 
-	function __construct($encoding = 'ISO-8859-1',
-						 $about = '',
-						 $title = '',
-						 $description = '',
-						 $image_link = '',
-						 $category = '',
-						 $cache = 60) {
+	function __construct(
+		$encoding = 'ISO-8859-1',
+		$about = '',
+		$title = '',
+		$description = '',
+		$image_link = '',
+		$category = '',
+		$cache = 60
+	) {
 		parent::setVar($encoding, 'rss_data["encoding"]', 'string');
 		parent::setVar($about, 'rss_data["about"]', 'string');
 		parent::setVar($title, 'rss_data["title"]', 'string');
@@ -37,35 +40,48 @@ class RSSBuilder extends RSSBase {
 		parent::setVar($category, 'rss_data["category"]', 'string');
 		parent::setVar($cache, 'rss_data["cache"]', 'int');
 		$this->rss_itemlist = new RSSItemList();
-		$this->filename = 'rss_' . str_replace(' ','_', $this->getTitle()) . '.xml';
+		$this->filename = 'rss_' . str_replace(' ', '_', $this->getTitle()) . '.xml';
 	} // end constructor
 
-	public function addRSSItem($about = '',
-							   $title = '',
-							   $link = '',
-							   $description = '',
-							   $subject = '',
-							   $date = 0,
-							   $author = '',
-							   $comments = '',
-							   $image = '') {
-		$newItem = new RSSItem($about, $title, $link, $description, $subject,
-			$date, $author, $comments, $image);
+	public function addRSSItem(
+		$about = '',
+		$title = '',
+		$link = '',
+		$description = '',
+		$subject = '',
+		$date = 0,
+		$author = '',
+		$comments = '',
+		$image = ''
+	) {
+		$newItem = new RSSItem(
+			$about,
+			$title,
+			$link,
+			$description,
+			$subject,
+			$date,
+			$author,
+			$comments,
+			$image
+		);
 		$this->rss_itemlist->addRSSItem($newItem);
 	} // end function
 
-	public function addDCdata($publisher = '',
-							  $creator = '',
-							  $date = 0,
-							  $language = 'en',
-							  $rights = '',
-							  $coverage = '',
-							  $contributor = '') {
+	public function addDCdata(
+		$publisher = '',
+		$creator = '',
+		$date = 0,
+		$language = 'en',
+		$rights = '',
+		$coverage = '',
+		$contributor = ''
+	) {
 		parent::setVar($publisher, 'dc_data["publisher"]', 'string');
 		parent::setVar($creator, 'dc_data["creator"]', 'string');
 		parent::setVar($date, 'dc_data["date"]', 'int');
 
-		if (preg_match('(^([a-zA-Z]{2})$)',$language) > 0) {
+		if (preg_match('(^([a-zA-Z]{2})$)', $language) > 0) {
 			parent::setVar($language, 'dc_data["language"]', 'string');
 		} // end if
 
@@ -74,11 +90,13 @@ class RSSBuilder extends RSSBase {
 		parent::setVar($contributor, 'dc_data["contributor"]', 'string');
 	} // end function
 
-	public function addSYdata($period = 'daily',
-							  $frequency = 1,
-							  $base = 0) {
+	public function addSYdata(
+		$period = 'daily',
+		$frequency = 1,
+		$base = 0
+	) {
 
-		$periods = array('hourly','daily','weekly','monthly','yearly');
+		$periods = array('hourly', 'daily', 'weekly', 'monthly', 'yearly');
 		if (in_array($period, $periods)) {
 			parent::setVar($period, 'sy_data["period"]', 'string');
 		} // end if
@@ -87,112 +105,135 @@ class RSSBuilder extends RSSBase {
 		parent::setVar($base, 'sy_data["base"]', 'int');
 	} // end function
 
-	public function getEncoding() {
+	public function getEncoding()
+	{
 		return parent::getVar('rss_data["encoding"]');
 	} // end function
 
-	public function getAbout() {
+	public function getAbout()
+	{
 		return parent::getVar('rss_data["about"]');
 	} // end function
 
-	public function getTitle() {
+	public function getTitle()
+	{
 		return parent::getVar('rss_data["title"]');
 	} // end function
 
-	public function getDescription() {
+	public function getDescription()
+	{
 		return parent::getVar('rss_data["description"]');
 	} // end function
 
-	public function getImageLink() {
+	public function getImageLink()
+	{
 		return parent::getVar('rss_data["image_link"]');
 	} // end function
 
-	public function getCategory() {
+	public function getCategory()
+	{
 		return parent::getVar('rss_data["category"]');
 	} // end function
 
-	public function getCache() {
+	public function getCache()
+	{
 		return parent::getVar('rss_data["cache"]');
 	} // end function
 
 
-	public function getRSSItemList() {
+	public function getRSSItemList()
+	{
 		return parent::getVar('rss_itemlist');
 	} // end function
 
 
-	public function getDCPublisher() {
+	public function getDCPublisher()
+	{
 		return parent::getVar('dc_data["publisher"]');
 	} // end function
 
-	public function getDCCreator() {
+	public function getDCCreator()
+	{
 		return parent::getVar('dc_data["creator"]');
 	} // end function
 
-	public function getDCDate() {
+	public function getDCDate()
+	{
 		return parent::getVar('dc_data["date"]');
 	} // end function
 
-	public function getDCLanguage() {
+	public function getDCLanguage()
+	{
 		return parent::getVar('dc_data["language"]');
 	} // end function
 
-	public function getDCRights() {
+	public function getDCRights()
+	{
 		return parent::getVar('dc_data["rights"]');
 	} // end function
 
-	public function getDCCoverage() {
+	public function getDCCoverage()
+	{
 		return parent::getVar('dc_data["coverage"]');
 	} // end function
 
-	public function getDCContributor() {
+	public function getDCContributor()
+	{
 		return parent::getVar('dc_data["contributor"]');
 	} // end function
 
 
-	public function getSYPeriod() {
+	public function getSYPeriod()
+	{
 		return parent::getVar('sy_data["period"]');
 	} // end function
 
-	public function getSYFrequency() {
+	public function getSYFrequency()
+	{
 		return parent::getVar('sy_data["frequency"]');
 	} // end function
 
-	public function getSYBase() {
+	public function getSYBase()
+	{
 		return parent::getVar('sy_data["base"]');
 	} // end function
 
-	public function getFilename() {
+	public function getFilename()
+	{
 		return parent::getVar('filename');
 	} // end function
 
-	protected function setVersionObject($version = '0.91') {
+	protected function setVersionObject($version = '0.91')
+	{
 		if (array_key_exists($version, $this->versions)) {
 			$classname = 'RSS_V_' . $this->versions[$version];
 			$this->version_objects[$version] = new $classname($this);
 		} // end if
 	} // end function
 
-	protected function prepareRSSRequest($version = '0.91') {
+	protected function prepareRSSRequest($version = '0.91')
+	{
 		$this->filename = $this->versions[$version] . '_' . $this->filename;
 		if (!isset($this->version_objects[$version])) {
 			$this->setVersionObject($version);
 		} // end if
 	} // end function
 
-	public function getRSSOutput($version = '0.91') {
+	public function getRSSOutput($version = '0.91')
+	{
 		$this->prepareRSSRequest($version);
 		return $this->version_objects[$version]->getRSSOutput();
 	} // end function
 
-	public function saveRSS($version = '0.91', $path = '') {
+	public function saveRSS($version = '0.91', $path = '')
+	{
 		$this->prepareRSSRequest($version);
 		return $this->version_objects[$version]->saveRSS($path);
 	} // end function
 
-	public function outputRSS($version = '0.91') {
+	public function outputRSS($version = '0.91')
+	{
 		$this->prepareRSSRequest($version);
 		return $this->version_objects[$version]->outputRSS();
 	} // end function
 } // end class
-?>

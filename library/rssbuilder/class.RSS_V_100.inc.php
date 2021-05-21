@@ -1,22 +1,25 @@
 <?php
 require_once 'class.RSSBase.inc.php';
 /**
-* Class for creating an RSS-feed
-* @author Michael Wimmer <flaimo@gmail.com>
-* @category flaimo-php
-* @copyright Copyright © 2002-2008, Michael Wimmer
-* @license GNU General Public License v3
-* @link http://code.google.com/p/flaimo-php/
-* @package RSS
-* @version 2.2.1
-*/
-class RSS_V_100 extends RSS_V_abstract {
+ * Class for creating an RSS-feed
+ * @author Michael Wimmer <flaimo@gmail.com>
+ * @category flaimo-php
+ * @copyright Copyright ï¿½ 2002-2008, Michael Wimmer
+ * @license GNU General Public License v3
+ * @link http://code.google.com/p/flaimo-php/
+ * @package RSS
+ * @version 2.2.1
+ */
+class RSS_V_100 extends RSS_V_abstract
+{
 
-	function __construct(RSSBuilder &$rssdata) {
+	function __construct(RSSBuilder &$rssdata)
+	{
 		parent::__construct($rssdata);
 	} // end constructor
 
-	protected function generateXML() {
+	protected function generateXML()
+	{
 		parent::generateXML();
 		$root = $this->xml->createElement('rdf:RDF');
 		$this->xml->appendChild($root);
@@ -177,4 +180,3 @@ class RSS_V_100 extends RSS_V_abstract {
 		} // end foreach
 	} // function
 } // end class
-?>

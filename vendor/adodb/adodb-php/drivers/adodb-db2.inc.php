@@ -1,4 +1,5 @@
 <?php
+
 /**
   @version   v5.20.20  01-Feb-2021
   @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
@@ -15,12 +16,12 @@
   I ripped out what I believed to be a lot of redundant or obsolete code, but there are
   probably still some remnants of the ODBC support in this file; I'm relying on reviewers
   of this code to point out any other things that can be removed.
-*/
+ */
 
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
 
-  define("_ADODB_DB2_LAYER", 2 );
+define("_ADODB_DB2_LAYER", 2);
 
 /*--------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------*/
@@ -29,7 +30,8 @@ if (!defined('ADODB_DIR')) die();
 
 
 
-class ADODB_db2 extends ADOConnection {
+class ADODB_db2 extends ADOConnection
+{
 	var $databaseType = "db2";
 	var $fmtDate = "'Y-m-d'";
 	var $concat_operator = '||';
@@ -46,7 +48,7 @@ class ADODB_db2 extends ADOConnection {
 	var $binmode = DB2_BINARY;
 
 	var $useFetchArray = false; // setting this to true will make array elements in FETCH_ASSOC mode case-sensitive
-								// breaking backward-compat
+	// breaking backward-compat
 	var $_bindInputArray = false;
 	var $_genIDSQL = "VALUES NEXTVAL FOR %s";
 	var $_genSeqSQL = "CREATE SEQUENCE %s START WITH %s NO MAXVALUE NO CYCLE";
@@ -58,17 +60,17 @@ class ADODB_db2 extends ADOConnection {
 	var $hasInsertID = true;
 
 
-    function _insertid()
-    {
-        return ADOConnection::GetOne('VALUES IDENTITY_VAL_LOCAL()');
-    }
+	function _insertid()
+	{
+		return ADOConnection::GetOne('VALUES IDENTITY_VAL_LOCAL()');
+	}
 
 	function __construct()
 	{
 		$this->_haserrorfunctions = ADODB_PHPVER >= 0x4050;
 	}
 
-		// returns true or false
+	// returns true or false
 	function _connect($argDSN, $argUsername, $argPassword, $argDatabasename)
 	{
 		if (!function_exists('db2_connect')) {
@@ -81,12 +83,12 @@ class ADODB_db2 extends ADOConnection {
 
 		if ($argDatabasename && empty($argDSN)) {
 
-			if (stripos($argDatabasename,'UID=') && stripos($argDatabasename,'PWD=')) $this->_connectionID = db2_connect($argDatabasename,null,null);
-			else $this->_connectionID = db2_connect($argDatabasename,$argUsername,$argPassword);
+			if (stripos($argDatabasename, 'UID=') && stripos($argDatabasename, 'PWD=')) $this->_connectionID = db2_connect($argDatabasename, null, null);
+			else $this->_connectionID = db2_connect($argDatabasename, $argUsername, $argPassword);
 		} else {
 			if ($argDatabasename) $schema = $argDatabasename;
-			if (stripos($argDSN,'UID=') && stripos($argDSN,'PWD=')) $this->_connectionID = db2_connect($argDSN,null,null);
-			else $this->_connectionID = db2_connect($argDSN,$argUsername,$argPassword);
+			if (stripos($argDSN, 'UID=') && stripos($argDSN, 'PWD=')) $this->_connectionID = db2_connect($argDSN, null, null);
+			else $this->_connectionID = db2_connect($argDSN, $argUsername, $argPassword);
 		}
 
 		// For db2_connect(), there is an optional 4th arg.  If present, it must be
@@ -112,12 +114,12 @@ class ADODB_db2 extends ADOConnection {
 
 		if ($argDatabasename && empty($argDSN)) {
 
-			if (stripos($argDatabasename,'UID=') && stripos($argDatabasename,'PWD=')) $this->_connectionID = db2_pconnect($argDatabasename,null,null);
-			else $this->_connectionID = db2_pconnect($argDatabasename,$argUsername,$argPassword);
+			if (stripos($argDatabasename, 'UID=') && stripos($argDatabasename, 'PWD=')) $this->_connectionID = db2_pconnect($argDatabasename, null, null);
+			else $this->_connectionID = db2_pconnect($argDatabasename, $argUsername, $argPassword);
 		} else {
 			if ($argDatabasename) $schema = $argDatabasename;
-			if (stripos($argDSN,'UID=') && stripos($argDSN,'PWD=')) $this->_connectionID = db2_pconnect($argDSN,null,null);
-			else $this->_connectionID = db2_pconnect($argDSN,$argUsername,$argPassword);
+			if (stripos($argDSN, 'UID=') && stripos($argDSN, 'PWD=')) $this->_connectionID = db2_pconnect($argDSN, null, null);
+			else $this->_connectionID = db2_pconnect($argDSN, $argUsername, $argPassword);
 		}
 
 		$this->_errorMsg = @db2_conn_errormsg();
@@ -133,70 +135,70 @@ class ADODB_db2 extends ADOConnection {
 	{
 		if (empty($ts) && $ts !== 0) return 'null';
 		if (is_string($ts)) $ts = ADORecordSet::UnixTimeStamp($ts);
-		return 'TO_DATE('.adodb_date($this->fmtTimeStamp,$ts).",'YYYY-MM-DD HH24:MI:SS')";
+		return 'TO_DATE(' . adodb_date($this->fmtTimeStamp, $ts) . ",'YYYY-MM-DD HH24:MI:SS')";
 	}
 
 	// Format date column in sql string given an input format that understands Y M D
-	function SQLDate($fmt, $col=false)
+	function SQLDate($fmt, $col = false)
 	{
-	// use right() and replace() ?
+		// use right() and replace() ?
 		if (!$col) $col = $this->sysDate;
 
 		/* use TO_CHAR() if $fmt is TO_CHAR() allowed fmt */
-		if ($fmt== 'Y-m-d H:i:s')
-			return 'TO_CHAR('.$col.", 'YYYY-MM-DD HH24:MI:SS')";
+		if ($fmt == 'Y-m-d H:i:s')
+			return 'TO_CHAR(' . $col . ", 'YYYY-MM-DD HH24:MI:SS')";
 
 		$s = '';
 
 		$len = strlen($fmt);
-		for ($i=0; $i < $len; $i++) {
+		for ($i = 0; $i < $len; $i++) {
 			if ($s) $s .= $this->concat_operator;
 			$ch = $fmt[$i];
-			switch($ch) {
-			case 'Y':
-			case 'y':
-				if ($len==1) return "year($col)";
-				$s .= "char(year($col))";
-				break;
-			case 'M':
-				if ($len==1) return "monthname($col)";
-				$s .= "substr(monthname($col),1,3)";
-				break;
-			case 'm':
-				if ($len==1) return "month($col)";
-				$s .= "right(digits(month($col)),2)";
-				break;
-			case 'D':
-			case 'd':
-				if ($len==1) return "day($col)";
-				$s .= "right(digits(day($col)),2)";
-				break;
-			case 'H':
-			case 'h':
-				if ($len==1) return "hour($col)";
-				if ($col != $this->sysDate) $s .= "right(digits(hour($col)),2)";
-				else $s .= "''";
-				break;
-			case 'i':
-			case 'I':
-				if ($len==1) return "minute($col)";
-				if ($col != $this->sysDate)
-					$s .= "right(digits(minute($col)),2)";
+			switch ($ch) {
+				case 'Y':
+				case 'y':
+					if ($len == 1) return "year($col)";
+					$s .= "char(year($col))";
+					break;
+				case 'M':
+					if ($len == 1) return "monthname($col)";
+					$s .= "substr(monthname($col),1,3)";
+					break;
+				case 'm':
+					if ($len == 1) return "month($col)";
+					$s .= "right(digits(month($col)),2)";
+					break;
+				case 'D':
+				case 'd':
+					if ($len == 1) return "day($col)";
+					$s .= "right(digits(day($col)),2)";
+					break;
+				case 'H':
+				case 'h':
+					if ($len == 1) return "hour($col)";
+					if ($col != $this->sysDate) $s .= "right(digits(hour($col)),2)";
 					else $s .= "''";
-				break;
-			case 'S':
-			case 's':
-				if ($len==1) return "second($col)";
-				if ($col != $this->sysDate)
-					$s .= "right(digits(second($col)),2)";
-				else $s .= "''";
-				break;
-			default:
-				if ($ch == '\\') {
-					$i++;
-					$ch = substr($fmt,$i,1);
-				}
-				$s .= $this->qstr($ch);
+					break;
+				case 'i':
+				case 'I':
+					if ($len == 1) return "minute($col)";
+					if ($col != $this->sysDate)
+						$s .= "right(digits(minute($col)),2)";
+					else $s .= "''";
+					break;
+				case 'S':
+				case 's':
+					if ($len == 1) return "second($col)";
+					if ($col != $this->sysDate)
+						$s .= "right(digits(second($col)),2)";
+					else $s .= "''";
+					break;
+				default:
+					if ($ch == '\\') {
+						$i++;
+						$ch = substr($fmt, $i, 1);
+					}
+					$s .= $this->qstr($ch);
 			}
 		}
 		return $s;
@@ -210,7 +212,7 @@ class ADODB_db2 extends ADOConnection {
 
 
 		if ($row) {
-			$info['version'] = $row[0].':'.$row[1];
+			$info['version'] = $row[0] . ':' . $row[1];
 			$info['fixpack'] = $row[1];
 			$info['description'] = '';
 		} else {
@@ -220,10 +222,10 @@ class ADODB_db2 extends ADOConnection {
 		return $info;
 	}
 
-	function CreateSequence($seqname='adodbseq',$start=1)
+	function CreateSequence($seqname = 'adodbseq', $start = 1)
 	{
 		if (empty($this->_genSeqSQL)) return false;
-		$ok = $this->Execute(sprintf($this->_genSeqSQL,$seqname,$start));
+		$ok = $this->Execute(sprintf($this->_genSeqSQL, $seqname, $start));
 		if (!$ok) return false;
 		return true;
 	}
@@ -231,7 +233,7 @@ class ADODB_db2 extends ADOConnection {
 	function DropSequence($seqname = 'adodbseq')
 	{
 		if (empty($this->_dropSeqSQL)) return false;
-		return $this->Execute(sprintf($this->_dropSeqSQL,$seqname));
+		return $this->Execute(sprintf($this->_dropSeqSQL, $seqname));
 	}
 
 	function SelectLimit($sql, $nrows = -1, $offset = -1, $inputArr = false, $secs2cache = 0)
@@ -239,16 +241,16 @@ class ADODB_db2 extends ADOConnection {
 		$nrows = (int) $nrows;
 		$offset = (int) $offset;
 		if ($offset <= 0) {
-		// could also use " OPTIMIZE FOR $nrows ROWS "
+			// could also use " OPTIMIZE FOR $nrows ROWS "
 			if ($nrows >= 0) $sql .=  " FETCH FIRST $nrows ROWS ONLY ";
-			$rs = $this->Execute($sql,$inputArr);
+			$rs = $this->Execute($sql, $inputArr);
 		} else {
 			if ($offset > 0 && $nrows < 0);
 			else {
 				$nrows += $offset;
 				$sql .=  " FETCH FIRST $nrows ROWS ONLY ";
 			}
-			$rs = ADOConnection::SelectLimit($sql,-1,$offset,$inputArr);
+			$rs = ADOConnection::SelectLimit($sql, -1, $offset, $inputArr);
 		}
 
 		return $rs;
@@ -260,12 +262,12 @@ class ADODB_db2 extends ADOConnection {
 
 		Will return false if unable to generate an ID after $MAXLOOPS attempts.
 	*/
-	function GenID($seq='adodbseq',$start=1)
+	function GenID($seq = 'adodbseq', $start = 1)
 	{
 		// if you have to modify the parameter below, your database is overloaded,
 		// or you need to implement generation of id's yourself!
-				$num = $this->GetOne("VALUES NEXTVAL FOR $seq");
-				return $num;
+		$num = $this->GetOne("VALUES NEXTVAL FOR $seq");
+		return $num;
 	}
 
 
@@ -284,15 +286,15 @@ class ADODB_db2 extends ADOConnection {
 		if ($this->_haserrorfunctions) {
 			if ($this->_errorCode !== false) {
 				// bug in 4.0.6, error number can be corrupted string (should be 6 digits)
-				return (strlen($this->_errorCode)<=2) ? 0 : $this->_errorCode;
+				return (strlen($this->_errorCode) <= 2) ? 0 : $this->_errorCode;
 			}
 
 			if (empty($this->_connectionID)) $e = @db2_conn_error();
 			else $e = @db2_conn_error($this->_connectionID);
 
-			 // bug in 4.0.6, error number can be corrupted string (should be 6 digits)
-			 // so we check and patch
-			if (strlen($e)<=2) return 0;
+			// bug in 4.0.6, error number can be corrupted string (should be 6 digits)
+			// so we check and patch
+			if (strlen($e) <= 2) return 0;
 			return $e;
 		} else return ADOConnection::ErrorNo();
 	}
@@ -305,17 +307,17 @@ class ADODB_db2 extends ADOConnection {
 		if ($this->transOff) return true;
 		$this->transCnt += 1;
 		$this->_autocommit = false;
-		return db2_autocommit($this->_connectionID,false);
+		return db2_autocommit($this->_connectionID, false);
 	}
 
-	function CommitTrans($ok=true)
+	function CommitTrans($ok = true)
 	{
 		if ($this->transOff) return true;
 		if (!$ok) return $this->RollbackTrans();
 		if ($this->transCnt) $this->transCnt -= 1;
 		$this->_autocommit = true;
 		$ret = db2_commit($this->_connectionID);
-		db2_autocommit($this->_connectionID,true);
+		db2_autocommit($this->_connectionID, true);
 		return $ret;
 	}
 
@@ -325,21 +327,21 @@ class ADODB_db2 extends ADOConnection {
 		if ($this->transCnt) $this->transCnt -= 1;
 		$this->_autocommit = true;
 		$ret = db2_rollback($this->_connectionID);
-		db2_autocommit($this->_connectionID,true);
+		db2_autocommit($this->_connectionID, true);
 		return $ret;
 	}
 
 	function MetaPrimaryKeys($table, $owner = false)
 	{
-	global $ADODB_FETCH_MODE;
+		global $ADODB_FETCH_MODE;
 
 		if ($this->uCaseTables) $table = strtoupper($table);
 		$schema = '';
-		$this->_findschema($table,$schema);
+		$this->_findschema($table, $schema);
 
 		$savem = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-		$qid = @db2_primarykeys($this->_connectionID,'',$schema,$table);
+		$qid = @db2_primarykeys($this->_connectionID, '', $schema, $table);
 
 		if (!$qid) {
 			$ADODB_FETCH_MODE = $savem;
@@ -353,23 +355,23 @@ class ADODB_db2 extends ADOConnection {
 		$arr = $rs->GetArray();
 		$rs->Close();
 		$arr2 = array();
-		for ($i=0; $i < sizeof($arr); $i++) {
+		for ($i = 0; $i < sizeof($arr); $i++) {
 			if ($arr[$i][3]) $arr2[] = $arr[$i][3];
 		}
 		return $arr2;
 	}
 
-	function MetaForeignKeys($table, $owner = FALSE, $upper = FALSE, $asociative = FALSE )
+	function MetaForeignKeys($table, $owner = FALSE, $upper = FALSE, $asociative = FALSE)
 	{
-	global $ADODB_FETCH_MODE;
+		global $ADODB_FETCH_MODE;
 
 		if ($this->uCaseTables) $table = strtoupper($table);
 		$schema = '';
-		$this->_findschema($table,$schema);
+		$this->_findschema($table, $schema);
 
 		$savem = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-		$qid = @db2_foreign_keys($this->_connectionID,'',$schema,$table);
+		$qid = @db2_foreign_keys($this->_connectionID, '', $schema, $table);
 		if (!$qid) {
 			$ADODB_FETCH_MODE = $savem;
 			return false;
@@ -393,9 +395,9 @@ class ADODB_db2 extends ADOConnection {
 		$foreign_keys = array();
 		while (!$rs->EOF) {
 			if (strtoupper(trim($rs->fields[2])) == $table && (!$schema || strtoupper($rs->fields[1]) == $schema)) {
-				if (!is_array($foreign_keys[$rs->fields[5].'.'.$rs->fields[6]]))
-					$foreign_keys[$rs->fields[5].'.'.$rs->fields[6]] = array();
-				$foreign_keys[$rs->fields[5].'.'.$rs->fields[6]][$rs->fields[7]] = $rs->fields[3];
+				if (!is_array($foreign_keys[$rs->fields[5] . '.' . $rs->fields[6]]))
+					$foreign_keys[$rs->fields[5] . '.' . $rs->fields[6]] = array();
+				$foreign_keys[$rs->fields[5] . '.' . $rs->fields[6]][$rs->fields[7]] = $rs->fields[3];
 			}
 			$rs->MoveNext();
 		}
@@ -407,7 +409,7 @@ class ADODB_db2 extends ADOConnection {
 
 	function MetaTables($ttype = false, $schema = false, $mask = false)
 	{
-	global $ADODB_FETCH_MODE;
+		global $ADODB_FETCH_MODE;
 
 		$savem = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
@@ -426,23 +428,23 @@ class ADODB_db2 extends ADOConnection {
 		$arr2 = array();
 
 		if ($ttype) {
-			$isview = strncmp($ttype,'V',1) === 0;
+			$isview = strncmp($ttype, 'V', 1) === 0;
 		}
-		for ($i=0; $i < sizeof($arr); $i++) {
+		for ($i = 0; $i < sizeof($arr); $i++) {
 			if (!$arr[$i][2]) continue;
 			$type = $arr[$i][3];
 			$owner = $arr[$i][1];
-			$schemaval = ($schema) ? $arr[$i][1].'.' : '';
+			$schemaval = ($schema) ? $arr[$i][1] . '.' : '';
 			if ($ttype) {
 				if ($isview) {
-					if (strncmp($type,'V',1) === 0) $arr2[] = $schemaval.$arr[$i][2];
-				} else if (strncmp($owner,'SYS',3) !== 0) $arr2[] = $schemaval.$arr[$i][2];
-			} else if (strncmp($owner,'SYS',3) !== 0) $arr2[] = $schemaval.$arr[$i][2];
+					if (strncmp($type, 'V', 1) === 0) $arr2[] = $schemaval . $arr[$i][2];
+				} else if (strncmp($owner, 'SYS', 3) !== 0) $arr2[] = $schemaval . $arr[$i][2];
+			} else if (strncmp($owner, 'SYS', 3) !== 0) $arr2[] = $schemaval . $arr[$i][2];
 		}
 		return $arr2;
 	}
 
-/*
+	/*
 See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/db2/htm/db2datetime_data_type_changes.asp
 / SQL data type codes /
 #define	SQL_UNKNOWN_TYPE	0
@@ -472,58 +474,58 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/db2/htm/db2
 */
 	function DB2Types($t)
 	{
-		switch ((integer)$t) {
-		case 1:
-		case 12:
-		case 0:
-		case -95:
-		case -96:
-			return 'C';
-		case -97:
-		case -1: //text
-			return 'X';
-		case -4: //image
-			return 'B';
+		switch ((int)$t) {
+			case 1:
+			case 12:
+			case 0:
+			case -95:
+			case -96:
+				return 'C';
+			case -97:
+			case -1: //text
+				return 'X';
+			case -4: //image
+				return 'B';
 
-		case 9:
-		case 91:
-			return 'D';
+			case 9:
+			case 91:
+				return 'D';
 
-		case 10:
-		case 11:
-		case 92:
-		case 93:
-			return 'T';
+			case 10:
+			case 11:
+			case 92:
+			case 93:
+				return 'T';
 
-		case 4:
-		case 5:
-		case -6:
-			return 'I';
+			case 4:
+			case 5:
+			case -6:
+				return 'I';
 
-		case -11: // uniqidentifier
-			return 'R';
-		case -7: //bit
-			return 'L';
+			case -11: // uniqidentifier
+				return 'R';
+			case -7: //bit
+				return 'L';
 
-		default:
-			return 'N';
+			default:
+				return 'N';
 		}
 	}
 
-	function MetaColumns($table, $normalize=true)
+	function MetaColumns($table, $normalize = true)
 	{
-	global $ADODB_FETCH_MODE;
+		global $ADODB_FETCH_MODE;
 
 		$false = false;
 		if ($this->uCaseTables) $table = strtoupper($table);
 		$schema = '';
-		$this->_findschema($table,$schema);
+		$this->_findschema($table, $schema);
 
 		$savem = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 
-        	$colname = "%";
-	        $qid = db2_columns($this->_connectionID, "", $schema, $table, $colname);
+		$colname = "%";
+		$qid = db2_columns($this->_connectionID, "", $schema, $table, $colname);
 		if (empty($qid)) return $false;
 
 		$rs = new ADORecordSet_db2($qid);
@@ -559,7 +561,7 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/db2/htm/db2
 				// access uses precision to store length for char/varchar
 				if ($fld->type == 'C' or $fld->type == 'X') {
 					if ($rs->fields[4] <= -95) // UNICODE
-						$fld->max_length = $rs->fields[7]/2;
+						$fld->max_length = $rs->fields[7] / 2;
 					else
 						$fld->max_length = $rs->fields[7];
 				} else
@@ -568,14 +570,14 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/db2/htm/db2
 				$fld->scale = $rs->fields[8];
 				$fld->primary_key = false;
 				$retarr[strtoupper($fld->name)] = $fld;
-			} else if (sizeof($retarr)>0)
+			} else if (sizeof($retarr) > 0)
 				break;
 			$rs->MoveNext();
 		}
 		$rs->Close();
 		if (empty($retarr)) $retarr = false;
 
-	      $qid = db2_primary_keys($this->_connectionID, "", $schema, $table);
+		$qid = db2_primary_keys($this->_connectionID, "", $schema, $table);
 		if (empty($qid)) return $false;
 
 		$rs = new ADORecordSet_db2($qid);
@@ -596,7 +598,7 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/db2/htm/db2
 		while (!$rs->EOF) {
 			if (strtoupper(trim($rs->fields[2])) == $table && (!$schema || strtoupper($rs->fields[1]) == $schema)) {
 				$retarr[strtoupper($rs->fields[3])]->primary_key = true;
-			} else if (sizeof($retarr)>0)
+			} else if (sizeof($retarr) > 0)
 				break;
 			$rs->MoveNext();
 		}
@@ -609,17 +611,17 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/db2/htm/db2
 
 	function Prepare($sql)
 	{
-		if (! $this->_bindInputArray) return $sql; // no binding
-		$stmt = db2_prepare($this->_connectionID,$sql);
+		if (!$this->_bindInputArray) return $sql; // no binding
+		$stmt = db2_prepare($this->_connectionID, $sql);
 		if (!$stmt) {
 			// we don't know whether db2 driver is parsing prepared stmts, so just return sql
 			return $sql;
 		}
-		return array($sql,$stmt,false);
+		return array($sql, $stmt, false);
 	}
 
 	/* returns queryID or false */
-	function _query($sql,$inputarr=false)
+	function _query($sql, $inputarr = false)
 	{
 		$last_php_error = $this->resetLastError();
 		$this->_errorMsg = '';
@@ -628,7 +630,7 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/db2/htm/db2
 			if (is_array($sql)) {
 				$stmtid = $sql[1];
 			} else {
-				$stmtid = db2_prepare($this->_connectionID,$sql);
+				$stmtid = db2_prepare($this->_connectionID, $sql);
 
 				if ($stmtid == false) {
 					$this->_errorMsg = $this->getChangedErrorMsg($last_php_error);
@@ -636,14 +638,13 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/db2/htm/db2
 				}
 			}
 
-			if (! db2_execute($stmtid,$inputarr)) {
+			if (!db2_execute($stmtid, $inputarr)) {
 				if ($this->_haserrorfunctions) {
 					$this->_errorMsg = db2_stmt_errormsg();
 					$this->_errorCode = db2_stmt_error();
 				}
 				return false;
 			}
-
 		} else if (is_array($sql)) {
 			$stmtid = $sql[1];
 			if (!db2_execute($stmtid)) {
@@ -654,7 +655,7 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/db2/htm/db2
 				return false;
 			}
 		} else
-			$stmtid = @db2_exec($this->_connectionID,$sql);
+			$stmtid = @db2_exec($this->_connectionID, $sql);
 
 		$this->_lastAffectedRows = 0;
 		if ($stmtid) {
@@ -691,9 +692,9 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/db2/htm/db2
 		$conn->Execute('INSERT INTO blobtable (id, blobcol) VALUES (1, null)');
 		$conn->UpdateBlob('blobtable','blobcol',$blob,'id=1');
 	*/
-	function UpdateBlob($table,$column,$val,$where,$blobtype='BLOB')
+	function UpdateBlob($table, $column, $val, $where, $blobtype = 'BLOB')
 	{
-		return $this->Execute("UPDATE $table SET $column=? WHERE $where",array($val)) != false;
+		return $this->Execute("UPDATE $table SET $column=? WHERE $where", array($val)) != false;
 	}
 
 	// returns true or false
@@ -708,21 +709,21 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/db2/htm/db2
 	{
 		return $this->_lastAffectedRows;
 	}
-
 }
 
 /*--------------------------------------------------------------------------------------
 	 Class Name: Recordset
 --------------------------------------------------------------------------------------*/
 
-class ADORecordSet_db2 extends ADORecordSet {
+class ADORecordSet_db2 extends ADORecordSet
+{
 
 	var $bind = false;
 	var $databaseType = "db2";
 	var $dataProvider = "db2";
 	var $useFetchArray;
 
-	function __construct($id,$mode=false)
+	function __construct($id, $mode = false)
 	{
 		if ($mode === false) {
 			global $ADODB_FETCH_MODE;
@@ -737,10 +738,10 @@ class ADORecordSet_db2 extends ADORecordSet {
 	// returns the field object
 	function FetchField($offset = -1)
 	{
-		$o= new ADOFieldObject();
-		$o->name = @db2_field_name($this->_queryID,$offset);
-		$o->type = @db2_field_type($this->_queryID,$offset);
-		$o->max_length = db2_field_width($this->_queryID,$offset);
+		$o = new ADOFieldObject();
+		$o->name = @db2_field_name($this->_queryID, $offset);
+		$o->type = @db2_field_type($this->_queryID, $offset);
+		$o->max_length = db2_field_width($this->_queryID, $offset);
 		if (ADODB_ASSOC_CASE == 0) $o->name = strtolower($o->name);
 		else if (ADODB_ASSOC_CASE == 1) $o->name = strtoupper($o->name);
 		return $o;
@@ -752,19 +753,19 @@ class ADORecordSet_db2 extends ADORecordSet {
 		if ($this->fetchMode & ADODB_FETCH_ASSOC) return $this->fields[$colname];
 		if (!$this->bind) {
 			$this->bind = array();
-			for ($i=0; $i < $this->_numOfFields; $i++) {
+			for ($i = 0; $i < $this->_numOfFields; $i++) {
 				$o = $this->FetchField($i);
 				$this->bind[strtoupper($o->name)] = $i;
 			}
 		}
 
-		 return $this->fields[$this->bind[strtoupper($colname)]];
+		return $this->fields[$this->bind[strtoupper($colname)]];
 	}
 
 
 	function _initrs()
 	{
-	global $ADODB_COUNTRECS;
+		global $ADODB_COUNTRECS;
 		$this->_numOfRows = ($ADODB_COUNTRECS) ? @db2_num_rows($this->_queryID) : -1;
 		$this->_numOfFields = @db2_num_fields($this->_queryID);
 		// some silly drivers such as db2 as/400 and intersystems cache return _numOfRows = 0
@@ -777,7 +778,7 @@ class ADORecordSet_db2 extends ADORecordSet {
 	}
 
 	// speed up SelectLimit() by switching to ADODB_FETCH_NUM as ADODB_FETCH_ASSOC is emulated
-	function GetArrayLimit($nrows,$offset=-1)
+	function GetArrayLimit($nrows, $offset = -1)
 	{
 		if ($offset <= 0) {
 			$rs = $this->GetArray($nrows);
@@ -839,5 +840,4 @@ class ADORecordSet_db2 extends ADORecordSet {
 	{
 		return @db2_free_result($this->_queryID);
 	}
-
 }

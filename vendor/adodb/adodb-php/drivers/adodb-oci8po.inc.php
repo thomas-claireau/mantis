@@ -22,9 +22,10 @@
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
 
-include_once(ADODB_DIR.'/drivers/adodb-oci8.inc.php');
+include_once(ADODB_DIR . '/drivers/adodb-oci8.inc.php');
 
-class ADODB_oci8po extends ADODB_oci8 {
+class ADODB_oci8po extends ADODB_oci8
+{
 	var $databaseType = 'oci8po';
 	var $dataProvider = 'oci8';
 	var $metaColumnsSQL = "select lower(cname),coltype,width, SCALE, PRECISION, NULLS, DEFAULTVAL from col where tname='%s' order by colno"; //changed by smondino@users.sourceforge. net
@@ -36,24 +37,24 @@ class ADODB_oci8po extends ADODB_oci8 {
 		# oci8po does not support adodb extension: adodb_movenext()
 	}
 
-	function Param($name,$type='C')
+	function Param($name, $type = 'C')
 	{
 		return '?';
 	}
 
-	function Prepare($sql,$cursor=false)
+	function Prepare($sql, $cursor = false)
 	{
-		$sqlarr = explode('?',$sql);
+		$sqlarr = explode('?', $sql);
 		$sql = $sqlarr[0];
 		for ($i = 1, $max = sizeof($sqlarr); $i < $max; $i++) {
-			$sql .=  ':'.($i-1) . $sqlarr[$i];
+			$sql .=  ':' . ($i - 1) . $sqlarr[$i];
 		}
-		return ADODB_oci8::Prepare($sql,$cursor);
+		return ADODB_oci8::Prepare($sql, $cursor);
 	}
 
-	function Execute($sql,$inputarr=false)
+	function Execute($sql, $inputarr = false)
 	{
-		return ADOConnection::Execute($sql,$inputarr);
+		return ADOConnection::Execute($sql, $inputarr);
 	}
 
 	/**
@@ -63,85 +64,85 @@ class ADODB_oci8po extends ADODB_oci8 {
 	 * We can't properly handle prepared statements either due to preprocessing
 	 * of query parameters, so we treat them as regular SQL statements.
 	 */
-	function SelectLimit($sql, $nrows=-1, $offset=-1, $inputarr=false, $secs2cache=0)
+	function SelectLimit($sql, $nrows = -1, $offset = -1, $inputarr = false, $secs2cache = 0)
 	{
-		if(is_array($sql)) {
-//			$sql = $sql[0];
+		if (is_array($sql)) {
+			//			$sql = $sql[0];
 		}
 		return ADOConnection::SelectLimit($sql, $nrows, $offset, $inputarr, $secs2cache);
 	}
 
 	// emulate handling of parameters ? ?, replacing with :bind0 :bind1
-	function _query($sql,$inputarr=false)
+	function _query($sql, $inputarr = false)
 	{
 		if (is_array($inputarr)) {
 			$i = 0;
 			if (is_array($sql)) {
-				foreach($inputarr as $v) {
-					$arr['bind'.$i++] = $v;
+				foreach ($inputarr as $v) {
+					$arr['bind' . $i++] = $v;
 				}
 			} else {
-				$sql = $this->extractBinds($sql,$inputarr);
+				$sql = $this->extractBinds($sql, $inputarr);
 			}
 		}
-		return ADODB_oci8::_query($sql,$inputarr);
+		return ADODB_oci8::_query($sql, $inputarr);
 	}
 	/**
-	* Replaces compatibility bind markers with oracle ones and returns a
-	* valid sql statement
-	*
-	* This replaces a regexp based section of code that has been subject
-	* to numerous tweaks, as more extreme test cases have appeared. This
-	* is now done this like this to help maintainability and avoid the 
-	* need to rely on regexp experienced maintainers
-        *
-	* @param	string		$sql		The sql statement
-	* @param	string[]	$inputarr	The bind array
-	*
-	* @return	string	The modified statement
-	*/	
-	final private function extractBinds($sql,$inputarr)
+	 * Replaces compatibility bind markers with oracle ones and returns a
+	 * valid sql statement
+	 *
+	 * This replaces a regexp based section of code that has been subject
+	 * to numerous tweaks, as more extreme test cases have appeared. This
+	 * is now done this like this to help maintainability and avoid the 
+	 * need to rely on regexp experienced maintainers
+	 *
+	 * @param	string		$sql		The sql statement
+	 * @param	string[]	$inputarr	The bind array
+	 *
+	 * @return	string	The modified statement
+	 */
+	final private function extractBinds($sql, $inputarr)
 	{
 		$inString  = false;
 		$escaped   = 0;
 		$sqlLength = strlen($sql) - 1;
 		$newSql    = '';
 		$bindCount = 0;
-		
+
 		/*
 		* inputarr is the passed in bind list, which is associative, but
 		* we only want the keys here
 		*/
 		$inputKeys = array_keys($inputarr);
-		
-		
-		for ($i=0;$i<=$sqlLength;$i++)
-		{
+
+
+		for ($i = 0; $i <= $sqlLength; $i++) {
 			/*
 			* find the next character of the string
 			*/
-			$c = $sql{$i};
+			$c = $sql{
+				$i};
 
-			if ($c == "'" && !$inString && $escaped==0)
+			if ($c == "'" && !$inString && $escaped == 0)
 				/*
 				* Found the start of a string inside the statement
 				*/
 				$inString = true;
-			elseif ($c == "\\" && $escaped==0)
+			elseif ($c == "\\" && $escaped == 0)
 				/*
 				* The next character will be escaped
 				*/
 				$escaped = 1;
-			elseif ($c == "'" && $inString && $escaped==0)
+			elseif ($c == "'" && $inString && $escaped == 0)
 				/*
 				* We found the end of the string
 				*/
 				$inString = false;
-			
+
 			if ($escaped == 2)
 				$escaped = 0;
 
-			if ($escaped==0 && !$inString && $c == '?')
+			if ($escaped == 0 && !$inString && $c == '?')
 				/*
 				* We found a bind symbol, replace it with the oracle equivalent
 				*/
@@ -151,7 +152,7 @@ class ADODB_oci8po extends ADODB_oci8 {
 				* Add the current character the pile
 				*/
 				$newSql .= $c;
-			
+
 			if ($escaped == 1)
 				/*
 				* We have just found an escape character, make sure we ignore the
@@ -159,9 +160,8 @@ class ADODB_oci8po extends ADODB_oci8 {
 				*/
 				$escaped = 2;
 		}
-		
+
 		return $newSql;
-			
 	}
 }
 
@@ -169,13 +169,14 @@ class ADODB_oci8po extends ADODB_oci8 {
 		 Class Name: Recordset
 --------------------------------------------------------------------------------------*/
 
-class ADORecordset_oci8po extends ADORecordset_oci8 {
+class ADORecordset_oci8po extends ADORecordset_oci8
+{
 
 	var $databaseType = 'oci8po';
 
-	function __construct($queryID,$mode=false)
+	function __construct($queryID, $mode = false)
 	{
-		parent::__construct($queryID,$mode);
+		parent::__construct($queryID, $mode);
 	}
 
 	function Fields($colname)
@@ -184,12 +185,12 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 
 		if (!$this->bind) {
 			$this->bind = array();
-			for ($i=0; $i < $this->_numOfFields; $i++) {
+			for ($i = 0; $i < $this->_numOfFields; $i++) {
 				$o = $this->FetchField($i);
 				$this->bind[strtoupper($o->name)] = $i;
 			}
 		}
-		 return $this->fields[$this->bind[strtoupper($colname)]];
+		return $this->fields[$this->bind[strtoupper($colname)]];
 	}
 
 	// lowercase field names...
@@ -215,15 +216,15 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 	// 10% speedup to move MoveNext to child class
 	function MoveNext()
 	{
-		$ret = @oci_fetch_array($this->_queryID,$this->fetchMode);
-		if($ret !== false) {
-		global $ADODB_ANSI_PADDING_OFF;
+		$ret = @oci_fetch_array($this->_queryID, $this->fetchMode);
+		if ($ret !== false) {
+			global $ADODB_ANSI_PADDING_OFF;
 			$this->fields = $ret;
 			$this->_currentRow++;
 			$this->_updatefields();
 
 			if (!empty($ADODB_ANSI_PADDING_OFF)) {
-				foreach($this->fields as $k => $v) {
+				foreach ($this->fields as $k => $v) {
 					if (is_string($v)) $this->fields[$k] = rtrim($v);
 				}
 			}
@@ -237,18 +238,18 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 	}
 
 	/* Optimize SelectLimit() by using OCIFetch() instead of OCIFetchInto() */
-	function GetArrayLimit($nrows,$offset=-1)
+	function GetArrayLimit($nrows, $offset = -1)
 	{
 		if ($offset <= 0) {
 			$arr = $this->GetArray($nrows);
 			return $arr;
 		}
-		for ($i=1; $i < $offset; $i++)
+		for ($i = 1; $i < $offset; $i++)
 			if (!@OCIFetch($this->_queryID)) {
 				$arr = array();
 				return $arr;
 			}
-		$ret = @oci_fetch_array($this->_queryID,$this->fetchMode);
+		$ret = @oci_fetch_array($this->_queryID, $this->fetchMode);
 		if ($ret === false) {
 			$arr = array();
 			return $arr;
@@ -269,18 +270,17 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 	{
 		global $ADODB_ANSI_PADDING_OFF;
 
-		$ret = @oci_fetch_array($this->_queryID,$this->fetchMode);
+		$ret = @oci_fetch_array($this->_queryID, $this->fetchMode);
 		if ($ret) {
 			$this->fields = $ret;
 			$this->_updatefields();
 
 			if (!empty($ADODB_ANSI_PADDING_OFF)) {
-				foreach($this->fields as $k => $v) {
+				foreach ($this->fields as $k => $v) {
 					if (is_string($v)) $this->fields[$k] = rtrim($v);
 				}
 			}
 		}
 		return $ret !== false;
 	}
-
 }

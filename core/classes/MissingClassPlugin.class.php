@@ -31,13 +31,15 @@
  *
  * For Plugin API internal use only.
  */
-final class MissingClassPlugin extends InvalidPlugin {
-	function register() {
+final class MissingClassPlugin extends InvalidPlugin
+{
+	function register()
+	{
 		$this->name = $this->basename;
-		$this->description = lang_get( 'plugin_missing_class_description' );
+		$this->description = lang_get('plugin_missing_class_description');
 
 		$this->status = self::STATUS_MISSING_BASE_CLASS;
-		$this->status_message = lang_get( 'plugin_missing_class_status_message' );
+		$this->status_message = lang_get('plugin_missing_class_status_message');
 		$this->removable = false;
 	}
 }

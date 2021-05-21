@@ -27,7 +27,8 @@
  * @package MantisBT
  * @subpackage classes
  */
-class TimelineEvent {
+class TimelineEvent
+{
 	protected $timestamp;
 	protected $user_id;
 
@@ -35,7 +36,8 @@ class TimelineEvent {
 	 * @param integer $p_timestamp   Timestamp representing the time the event occurred.
 	 * @param integer $p_user_id     A user identifier.
 	 */
-	public function __construct( $p_timestamp, $p_user_id ) {
+	public function __construct($p_timestamp, $p_user_id)
+	{
 		$this->timestamp = $p_timestamp;
 		$this->user_id = $p_user_id;
 	}
@@ -45,7 +47,8 @@ class TimelineEvent {
 	 * This normally implements access checks for the event.
 	 * @return boolean
 	 */
-	public function skip() {
+	public function skip()
+	{
 		return false;
 	}
 
@@ -53,7 +56,8 @@ class TimelineEvent {
 	 * Returns html string to display
 	 * @return string
 	 */
-	public function html() {
+	public function html()
+	{
 		return '';
 	}
 
@@ -62,9 +66,10 @@ class TimelineEvent {
 	 * @param integer $p_timestamp Integer representing timestamp to format.
 	 * @return string
 	 */
-	public function format_timestamp( $p_timestamp ) {
-		$t_normal_date_format = config_get( 'normal_date_format' );
-		return date( $t_normal_date_format, $p_timestamp );
+	public function format_timestamp($p_timestamp)
+	{
+		$t_normal_date_format = config_get('normal_date_format');
+		return date($t_normal_date_format, $p_timestamp);
 	}
 
 	/**
@@ -72,14 +77,15 @@ class TimelineEvent {
 	 * @param string $p_action_icon Icon name for Font Awesome
 	 * @return string
 	 */
-	public function html_start( $p_action_icon = 'fa-check' ) {
-		$t_avatar = Avatar::get( $this->user_id, 40 );
+	public function html_start($p_action_icon = 'fa-check')
+	{
+		$t_avatar = Avatar::get($this->user_id, 40);
 		$t_html = '<div class="profile-activity clearfix">';
 
-		if( !empty( $t_avatar ) ) {
-			$t_html .= prepare_avatar( $t_avatar, 'profile-activity', 40 );
+		if (!empty($t_avatar)) {
+			$t_html .= prepare_avatar($t_avatar, 'profile-activity', 40);
 		} else {
-			$t_html .= icon_get( $p_action_icon, 'pull-left thumbicon btn-primary no-hover' );
+			$t_html .= icon_get($p_action_icon, 'pull-left thumbicon btn-primary no-hover');
 		}
 		return $t_html;
 	}
@@ -88,10 +94,11 @@ class TimelineEvent {
 	 * Returns html string representing the ending block of a timeline entry
 	 * @return string
 	 */
-	public function html_end() {
+	public function html_end()
+	{
 		$t_html = '<div class="time">'
-			. icon_get( 'fa-clock-o', 'ace-icon bigger-110' )
-			. ' ' . $this->format_timestamp( $this->timestamp )
+			. icon_get('fa-clock-o', 'ace-icon bigger-110')
+			. ' ' . $this->format_timestamp($this->timestamp)
 			. '</div>';
 		$t_html .= '</div>';
 		return $t_html;

@@ -33,7 +33,8 @@
  *
  * For Plugin API internal use only.
  */
-class InvalidPlugin extends MantisPlugin {
+class InvalidPlugin extends MantisPlugin
+{
 	/**
 	 * The reference, invalid Plugin.
 	 *
@@ -51,9 +52,10 @@ class InvalidPlugin extends MantisPlugin {
 	 */
 	public $removable = true;
 
-	function register() {
+	function register()
+	{
 		$this->name = $this->basename;
-		$this->description = lang_get( 'plugin_invalid_description' );
+		$this->description = lang_get('plugin_invalid_description');
 
 		$this->status = self::STATUS_INVALID;
 	}
@@ -64,7 +66,8 @@ class InvalidPlugin extends MantisPlugin {
 	 *
 	 * @param MantisPlugin $p_plugin Reference, invalid plugin
 	 */
-	public function setInvalidPlugin( MantisPlugin $p_plugin ) {
+	public function setInvalidPlugin(MantisPlugin $p_plugin)
+	{
 		$this->ref_plugin = $p_plugin;
 	}
 }

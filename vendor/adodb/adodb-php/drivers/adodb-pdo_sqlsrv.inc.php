@@ -45,5 +45,4 @@ class ADODB_pdo_sqlsrv extends ADODB_pdo
 	{
 		return ADOConnection::ServerInfo();
 	}
-
 }

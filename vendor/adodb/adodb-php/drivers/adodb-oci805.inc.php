@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @version   v5.20.20  01-Feb-2021
  * @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
@@ -12,24 +13,25 @@
  * Latest version is available at http://adodb.org/
  *
  * Oracle 8.0.5 driver
-*/
+ */
 
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
 
-include_once(ADODB_DIR.'/drivers/adodb-oci8.inc.php');
+include_once(ADODB_DIR . '/drivers/adodb-oci8.inc.php');
 
-class ADODB_oci805 extends ADODB_oci8 {
+class ADODB_oci805 extends ADODB_oci8
+{
 	var $databaseType = "oci805";
 	var $connectSID = true;
 
-	function SelectLimit($sql,$nrows=-1,$offset=-1, $inputarr=false,$secs2cache=0)
+	function SelectLimit($sql, $nrows = -1, $offset = -1, $inputarr = false, $secs2cache = 0)
 	{
 		// seems that oracle only supports 1 hint comment in 8i
-		if (strpos($sql,'/*+') !== false)
-			$sql = str_replace('/*+ ','/*+FIRST_ROWS ',$sql);
+		if (strpos($sql, '/*+') !== false)
+			$sql = str_replace('/*+ ', '/*+FIRST_ROWS ', $sql);
 		else
-			$sql = preg_replace('/^[ \t\n]*select/i','SELECT /*+FIRST_ROWS*/',$sql);
+			$sql = preg_replace('/^[ \t\n]*select/i', 'SELECT /*+FIRST_ROWS*/', $sql);
 
 		/*
 			The following is only available from 8.1.5 because order by in inline views not
@@ -42,14 +44,15 @@ class ADODB_oci805 extends ADODB_oci8 {
 		}
 		*/
 
-		return ADOConnection::SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
+		return ADOConnection::SelectLimit($sql, $nrows, $offset, $inputarr, $secs2cache);
 	}
 }
 
-class ADORecordset_oci805 extends ADORecordset_oci8 {
+class ADORecordset_oci805 extends ADORecordset_oci8
+{
 	var $databaseType = "oci805";
-	function __construct($id,$mode=false)
+	function __construct($id, $mode = false)
 	{
-		parent::__construct($id,$mode);
+		parent::__construct($id, $mode);
 	}
 }

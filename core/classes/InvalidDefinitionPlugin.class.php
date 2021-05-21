@@ -30,36 +30,39 @@
  *
  * For Plugin API internal use only.
  */
-class InvalidDefinitionPlugin extends InvalidPlugin {
+class InvalidDefinitionPlugin extends InvalidPlugin
+{
 
-	function register() {
+	function register()
+	{
 		$this->name = $this->basename;
-		$this->description = lang_get( 'plugin_invalid_description' );
+		$this->description = lang_get('plugin_invalid_description');
 
 		$this->status = self::STATUS_INCOMPLETE_DEFINITION;
 	}
 
-	public function setInvalidPlugin( MantisPlugin $p_plugin ) {
-		parent::setInvalidPlugin( $p_plugin );
+	public function setInvalidPlugin(MantisPlugin $p_plugin)
+	{
+		parent::setInvalidPlugin($p_plugin);
 
 		$t_missing = array();
 
 		# Add the reference plugin's name, if defined
-		if( $p_plugin->name ) {
+		if ($p_plugin->name) {
 			$this->name .= " ($p_plugin->name)";
 		} else {
 			$t_missing[] = 'name';
 		}
 
-		if( !$p_plugin->version ) {
+		if (!$p_plugin->version) {
 			$t_missing[] = 'version';
 		}
 
-		if( !empty( $t_missing ) ) {
+		if (!empty($t_missing)) {
 			$this->status_message = sprintf(
-					lang_get( 'plugin_invalid_status_message' ),
-					implode( ', ', $t_missing )
-				);
+				lang_get('plugin_invalid_status_message'),
+				implode(', ', $t_missing)
+			);
 		}
 	}
 }

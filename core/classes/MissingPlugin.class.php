@@ -30,12 +30,14 @@
  *
  * For Plugin API internal use only.
  */
-final class MissingPlugin extends InvalidPlugin {
-	function register() {
+final class MissingPlugin extends InvalidPlugin
+{
+	function register()
+	{
 		$this->name = $this->basename;
-		$this->description = lang_get( 'plugin_missing_description' );
+		$this->description = lang_get('plugin_missing_description');
 
 		$this->status = self::STATUS_MISSING_PLUGIN;
-		$this->status_message = lang_get( 'plugin_missing_status_message' );
+		$this->status_message = lang_get('plugin_missing_status_message');
 	}
 }

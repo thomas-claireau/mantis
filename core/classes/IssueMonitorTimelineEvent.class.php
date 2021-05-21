@@ -27,7 +27,8 @@
  * @package MantisBT
  * @subpackage classes
  */
-class IssueMonitorTimelineEvent extends TimelineEvent {
+class IssueMonitorTimelineEvent extends TimelineEvent
+{
 	private $issue_id;
 	private $monitor;
 
@@ -37,8 +38,9 @@ class IssueMonitorTimelineEvent extends TimelineEvent {
 	 * @param integer $p_issue_id  A issue identifier.
 	 * @param boolean $p_monitor   Whether issue was being monitored or unmonitored.
 	 */
-	public function __construct( $p_timestamp, $p_user_id, $p_issue_id, $p_monitor ) {
-		parent::__construct( $p_timestamp, $p_user_id );
+	public function __construct($p_timestamp, $p_user_id, $p_issue_id, $p_monitor)
+	{
+		parent::__construct($p_timestamp, $p_user_id);
 
 		$this->issue_id = $p_issue_id;
 		$this->monitor = $p_monitor;
@@ -48,11 +50,12 @@ class IssueMonitorTimelineEvent extends TimelineEvent {
 	 * Returns html string to display
 	 * @return string
 	 */
-	public function html() {
-		$t_string = $this->monitor ? lang_get( 'timeline_issue_monitor' ) : lang_get( 'timeline_issue_unmonitor' );
+	public function html()
+	{
+		$t_string = $this->monitor ? lang_get('timeline_issue_monitor') : lang_get('timeline_issue_unmonitor');
 
-		$t_html = $this->html_start( 'fa-eye' );
-		$t_html .= '<div class="action">' . sprintf( $t_string, prepare_user_name( $this->user_id ), string_get_bug_view_link( $this->issue_id ) ) . '</div>';
+		$t_html = $this->html_start('fa-eye');
+		$t_html .= '<div class="action">' . sprintf($t_string, prepare_user_name($this->user_id), string_get_bug_view_link($this->issue_id)) . '</div>';
 		$t_html .= $this->html_end();
 
 		return $t_html;
