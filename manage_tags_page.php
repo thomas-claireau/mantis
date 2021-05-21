@@ -140,7 +140,7 @@ print_manage_menu('manage_tags_page.php');
 				<div class="widget-toolbox padding-8 clearfix">
 					<?php print_small_button('#tagcreate', lang_get('tag_create')) ?>
 				</div>
-			<?php } ?>
+			<?php  } ?>
 			<div class="widget-main no-padding">
 				<div class="table-responsive">
 					<table class="table table-striped table-bordered table-condensed table-hover">
@@ -162,9 +162,9 @@ print_manage_menu('manage_tags_page.php');
 								<tr>
 									<?php if ($t_can_edit) { ?>
 										<td><a href="tag_view_page.php?tag_id=<?php echo $t_tag_row['id'] ?>"><?php echo $t_tag_name ?></a></td>
-									<?php } else { ?>
+									<?php  } else { ?>
 										<td><?php echo $t_tag_name ?></td>
-									<?php } ?>
+									<?php  } ?>
 									<td><?php echo string_display_line(user_get_name($t_tag_row['user_id'])) ?></td>
 									<td><?php echo date(config_get('normal_date_format'), $t_tag_row['date_created']) ?></td>
 									<td><?php echo date(config_get('normal_date_format'), $t_tag_row['date_updated']) ?></td>
@@ -187,7 +187,7 @@ print_manage_menu('manage_tags_page.php');
 														print_page_links('manage_tags_page.php', 1, $t_page_count, (int)$f_page_number, $f_filter); ?>
 					</div>
 				</div>
-			<?php } ?>
+			<?php  } ?>
 		</div>
 	</div>
 

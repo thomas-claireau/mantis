@@ -26,12 +26,14 @@
  * A middleware class that handles checks if MatnisBT is offline or not.
  * If offline, then fail API calls.
  */
-class OfflineMiddleware {
-	public function __invoke( \Slim\Http\Request $request, \Slim\Http\Response $response, callable $next ) {
-		if( mci_is_mantis_offline() ) {
-			return $response->withStatus( HTTP_STATUS_UNAVAILABLE, 'Mantis Offline' );
+class OfflineMiddleware
+{
+	public function __invoke(\Slim\Http\Request $request, \Slim\Http\Response $response, callable $next)
+	{
+		if (mci_is_mantis_offline()) {
+			return $response->withStatus(HTTP_STATUS_UNAVAILABLE, 'Mantis Offline');
 		}
 
-		return $next( $request, $response );
+		return $next($request, $response);
 	}
 }

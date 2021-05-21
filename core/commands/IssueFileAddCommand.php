@@ -14,12 +14,12 @@
 # You should have received a copy of the GNU General Public License
 # along with MantisBT.  If not, see <http://www.gnu.org/licenses/>.
 
-require_api( 'authentication_api.php' );
-require_api( 'bug_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'config_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'user_api.php' );
+require_api('authentication_api.php');
+require_api('bug_api.php');
+require_api('constant_inc.php');
+require_api('config_api.php');
+require_api('helper_api.php');
+require_api('user_api.php');
 
 use Mantis\Exceptions\ClientException;
 
@@ -53,7 +53,8 @@ use Mantis\Exceptions\ClientException;
 /**
  * A command that adds an issue attachment.
  */
-class IssueFileAddCommand extends Command {
+class IssueFileAddCommand extends Command
+{
 	/**
 	 * The issue to add the note to.
 	 *
@@ -81,58 +82,64 @@ class IssueFileAddCommand extends Command {
 	 *
 	 * @param array $p_data The command data.
 	 */
-	function __construct( array $p_data ) {
-		parent::__construct( $p_data );
+	function __construct(array $p_data)
+	{
+		parent::__construct($p_data);
 	}
 
 	/**
 	 * Validate the data.
 	 */
-	function validate() {
-		$t_issue_id = helper_parse_issue_id( $this->query( 'issue_id' ) );
+	function validate()
+	{
+		$t_issue_id = helper_parse_issue_id($this->query('issue_id'));
 
-		$this->issue = bug_get( $t_issue_id, true );
-		if( bug_is_readonly( $t_issue_id ) ) {
+		$this->issue = bug_get($t_issue_id, true);
+		if (bug_is_readonly($t_issue_id)) {
 			throw new ClientException(
-				sprintf( "Issue '%d' is read-only.", $t_issue_id ),
+				sprintf("Issue '%d' is read-only.", $t_issue_id),
 				ERROR_BUG_READ_ONLY_ACTION_DENIED,
-				array( $t_issue_id ) );
+				array($t_issue_id)
+			);
 		}
 
 		$this->parseFiles();
 
-		$t_files_included = !empty( $this->files );
+		$t_files_included = !empty($this->files);
 
-		if( !$t_files_included ) {
+		if (!$t_files_included) {
 			throw new ClientException(
 				'Files not provided',
 				ERROR_INVALID_FIELD_VALUE,
-				array( 'files' ) );
+				array('files')
+			);
 		}
 
 		$this->user_id = auth_get_current_user_id();
 
 		# Parse reporter id or default it.
-		$t_reporter = $this->payload( 'reporter' );
-		if( $t_reporter !== null ) {
+		$t_reporter = $this->payload('reporter');
+		if ($t_reporter !== null) {
 			$this->reporterId = user_get_id_by_user_info(
-				$t_reporter, /* throw_if_id_doesnt_exist */ true );
+				$t_reporter, /* throw_if_id_doesnt_exist */
+				true
+			);
 		} else {
 			$this->reporterId = $this->user_id;
 		}
 
-		if( $this->reporterId != $this->user_id ) {
+		if ($this->reporterId != $this->user_id) {
 			# Make sure that active user has access level required to specify a different reporter.
 			# This feature is only available in the API and not Web UI.
-			$t_specify_reporter_access_level = config_get( 'webservice_specify_reporter_on_add_access_level_threshold' );
-			if( !access_has_bug_level( $t_specify_reporter_access_level, $t_issue_id ) ) {
-				throw new ClientException( 'Access denied to override reporter', ERROR_ACCESS_DENIED );
+			$t_specify_reporter_access_level = config_get('webservice_specify_reporter_on_add_access_level_threshold');
+			if (!access_has_bug_level($t_specify_reporter_access_level, $t_issue_id)) {
+				throw new ClientException('Access denied to override reporter', ERROR_ACCESS_DENIED);
 			}
 		}
 
 		# Can reporter attach files
-		if( !file_allow_bug_upload( $this->issue->id, $this->reporterId ) ) {
-			throw new ClientException( 'access denied for uploading files', ERROR_ACCESS_DENIED );
+		if (!file_allow_bug_upload($this->issue->id, $this->reporterId)) {
+			throw new ClientException('access denied for uploading files', ERROR_ACCESS_DENIED);
 		}
 	}
 
@@ -141,8 +148,9 @@ class IssueFileAddCommand extends Command {
 	 *
 	 * @returns array Command response
 	 */
-	protected function process() {
-		if( $this->issue->project_id != helper_get_current_project() ) {
+	protected function process()
+	{
+		if ($this->issue->project_id != helper_get_current_project()) {
 			# in case the current project is not the same project of the bug we are
 			# viewing, override the current project. This to avoid problems with
 			# categories and handlers lists etc.
@@ -151,7 +159,7 @@ class IssueFileAddCommand extends Command {
 		}
 
 		# Handle the file upload
-		file_attach_files( $this->issue->id, $this->files );
+		file_attach_files($this->issue->id, $this->files);
 
 		return array();
 	}
@@ -160,23 +168,24 @@ class IssueFileAddCommand extends Command {
 	 * Parse files from payload.
 	 * @return void
 	 */
-	private function parseFiles() {
-		$this->files = $this->payload( 'files', array() );
-		if( !is_array( $this->files ) ) {
+	private function parseFiles()
+	{
+		$this->files = $this->payload('files', array());
+		if (!is_array($this->files)) {
 			$this->files = array();
 		}
 
-		$t_files_required_fields = array( 'name', 'tmp_name' );
-		foreach( $this->files as $t_file ) {
-			foreach( $t_files_required_fields as $t_field ) {
-				if( !isset( $t_file[$t_field] ) ) {
+		$t_files_required_fields = array('name', 'tmp_name');
+		foreach ($this->files as $t_file) {
+			foreach ($t_files_required_fields as $t_field) {
+				if (!isset($t_file[$t_field])) {
 					throw new ClientException(
-						sprintf( "File field '%s' is missing.", $t_field ),
+						sprintf("File field '%s' is missing.", $t_field),
 						ERROR_EMPTY_FIELD,
-						array( $t_field ) );
+						array($t_field)
+					);
 				}
 			}
 		}
 	}
 }
-

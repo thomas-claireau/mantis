@@ -33,14 +33,14 @@
  * @uses utility_api.php
  */
 
-require_api( 'authentication_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'database_api.php' );
-require_api( 'error_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'user_api.php' );
-require_api( 'utility_api.php' );
+require_api('authentication_api.php');
+require_api('constant_inc.php');
+require_api('database_api.php');
+require_api('error_api.php');
+require_api('helper_api.php');
+require_api('lang_api.php');
+require_api('user_api.php');
+require_api('utility_api.php');
 
 use Mantis\Exceptions\ClientException;
 
@@ -56,26 +56,28 @@ use Mantis\Exceptions\ClientException;
  *
  * @throws ClientException if user is protected
  */
-function profile_create( $p_user_id, $p_platform, $p_os, $p_os_build, $p_description ) {
+function profile_create($p_user_id, $p_platform, $p_os, $p_os_build, $p_description)
+{
 	$p_user_id = (int)$p_user_id;
 
-	profile_validate_before_update( $p_user_id, $p_platform, $p_os, $p_os_build );
+	profile_validate_before_update($p_user_id, $p_platform, $p_os, $p_os_build);
 
 	# Add profile
 	$t_query = new DbQuery();
-	$t_query->sql( 'INSERT INTO {user_profile}
+	$t_query->sql(
+		'INSERT INTO {user_profile}
 		( user_id, platform, os, os_build, description )
 		VALUES
 		( :user_id, :platform, :os, :os_build, :description )'
 	);
-	$t_query->bind( 'user_id',  $p_user_id );
-	$t_query->bind( 'platform',  $p_platform );
-	$t_query->bind( 'os',  $p_os );
-	$t_query->bind( 'os_build',  $p_os_build );
-	$t_query->bind( 'description',  $p_description );
+	$t_query->bind('user_id',  $p_user_id);
+	$t_query->bind('platform',  $p_platform);
+	$t_query->bind('os',  $p_os);
+	$t_query->bind('os_build',  $p_os_build);
+	$t_query->bind('description',  $p_description);
 	$t_query->execute();
 
-	return db_insert_id( db_get_table( 'user_profile' ) );
+	return db_insert_id(db_get_table('user_profile'));
 }
 
 /**
@@ -91,16 +93,17 @@ function profile_create( $p_user_id, $p_platform, $p_os, $p_os_build, $p_descrip
  *
  * @throws ClientException if user is protected
  */
-function profile_delete( $p_user_id, $p_profile_id ) {
-	if( ALL_USERS != $p_user_id ) {
-		user_ensure_unprotected( $p_user_id );
+function profile_delete($p_user_id, $p_profile_id)
+{
+	if (ALL_USERS != $p_user_id) {
+		user_ensure_unprotected($p_user_id);
 	}
 
 	# Delete the profile
 	$t_query = new DbQuery();
-	$t_query->sql( 'DELETE FROM {user_profile} WHERE id=:profile_id AND user_id=:user_id' );
-	$t_query->bind( 'profile_id',  $p_profile_id );
-	$t_query->bind( 'user_id',  $p_user_id );
+	$t_query->sql('DELETE FROM {user_profile} WHERE id=:profile_id AND user_id=:user_id');
+	$t_query->bind('profile_id',  $p_profile_id);
+	$t_query->bind('user_id',  $p_user_id);
 	$t_query->execute();
 }
 
@@ -117,24 +120,26 @@ function profile_delete( $p_user_id, $p_profile_id ) {
  *
  * @throws ClientException if user is protected
  */
-function profile_update( $p_user_id, $p_profile_id, $p_platform, $p_os, $p_os_build, $p_description ) {
-	profile_validate_before_update( $p_user_id, $p_platform, $p_os, $p_os_build );
+function profile_update($p_user_id, $p_profile_id, $p_platform, $p_os, $p_os_build, $p_description)
+{
+	profile_validate_before_update($p_user_id, $p_platform, $p_os, $p_os_build);
 
 	# Update profile
 	$t_query = new DbQuery();
-	$t_query->sql( 'UPDATE {user_profile}
+	$t_query->sql(
+		'UPDATE {user_profile}
 		SET platform=:platform, 
 			os=:os,
 			os_build=:os_build,
 			description=:description
 		WHERE id=:profile_id AND user_id=:user_id'
 	);
-	$t_query->bind( 'platform',  $p_platform );
-	$t_query->bind( 'os',  $p_os );
-	$t_query->bind( 'os_build',  $p_os_build );
-	$t_query->bind( 'description',  $p_description );
-	$t_query->bind( 'profile_id',  $p_profile_id );
-	$t_query->bind( 'user_id',  $p_user_id );
+	$t_query->bind('platform',  $p_platform);
+	$t_query->bind('os',  $p_os);
+	$t_query->bind('os_build',  $p_os_build);
+	$t_query->bind('description',  $p_description);
+	$t_query->bind('profile_id',  $p_profile_id);
+	$t_query->bind('user_id',  $p_user_id);
 	$t_query->execute();
 }
 
@@ -149,27 +154,28 @@ function profile_update( $p_user_id, $p_profile_id, $p_platform, $p_os, $p_os_bu
  *
  * @throws ClientException
  */
-function profile_validate_before_update( $p_user_id, $p_platform, $p_os, $p_os_build ) {
-	if( ALL_USERS != $p_user_id ) {
-		user_ensure_unprotected( $p_user_id );
+function profile_validate_before_update($p_user_id, $p_platform, $p_os, $p_os_build)
+{
+	if (ALL_USERS != $p_user_id) {
+		user_ensure_unprotected($p_user_id);
 	}
 
 	# platform cannot be blank
-	if( is_blank( $p_platform ) ) {
-		error_parameters( lang_get( 'platform' ) );
-		trigger_error( ERROR_EMPTY_FIELD, ERROR );
+	if (is_blank($p_platform)) {
+		error_parameters(lang_get('platform'));
+		trigger_error(ERROR_EMPTY_FIELD, ERROR);
 	}
 
 	# os cannot be blank
-	if( is_blank( $p_os ) ) {
-		error_parameters( lang_get( 'os' ) );
-		trigger_error( ERROR_EMPTY_FIELD, ERROR );
+	if (is_blank($p_os)) {
+		error_parameters(lang_get('os'));
+		trigger_error(ERROR_EMPTY_FIELD, ERROR);
 	}
 
 	# os_build cannot be blank
-	if( is_blank( $p_os_build ) ) {
-		error_parameters( lang_get( 'version' ) );
-		trigger_error( ERROR_EMPTY_FIELD, ERROR );
+	if (is_blank($p_os_build)) {
+		error_parameters(lang_get('version'));
+		trigger_error(ERROR_EMPTY_FIELD, ERROR);
 	}
 }
 
@@ -181,18 +187,19 @@ function profile_validate_before_update( $p_user_id, $p_platform, $p_os, $p_os_b
  *
  * @throws ClientException if the profile ID does not exist
  */
-function profile_get_row( $p_profile_id ) {
+function profile_get_row($p_profile_id)
+{
 	$t_query = new DbQuery();
-	$t_query->sql( 'SELECT * FROM {user_profile} WHERE id=:profile_id' );
-	$t_query->bind( 'profile_id',  $p_profile_id );
+	$t_query->sql('SELECT * FROM {user_profile} WHERE id=:profile_id');
+	$t_query->bind('profile_id',  $p_profile_id);
 	$t_query->execute();
 
 	$t_row = $t_query->fetch();
-	if( !$t_row ) {
+	if (!$t_row) {
 		throw new ClientException(
 			"Profile #$p_profile_id not found",
 			ERROR_USER_PROFILE_NOT_FOUND,
-			array( $p_profile_id )
+			array($p_profile_id)
 		);
 	}
 
@@ -207,14 +214,15 @@ function profile_get_row( $p_profile_id ) {
  *
  * @throws ClientException if the profile ID does not exist
  */
-function profile_get_name( $p_profile_id ) {
-	$t_profile = profile_get_row( $p_profile_id );
+function profile_get_name($p_profile_id)
+{
+	$t_profile = profile_get_row($p_profile_id);
 	/**
 	 * @var string $v_platform
 	 * @var string $v_os
 	 * @var string $v_os_build
 	 */
-	extract( $t_profile, EXTR_PREFIX_ALL, 'v' );
+	extract($t_profile, EXTR_PREFIX_ALL, 'v');
 	return "$v_platform $v_os $v_os_build";
 }
 
@@ -225,15 +233,16 @@ function profile_get_name( $p_profile_id ) {
  * @param boolean $p_all_users Include profiles for all users.
  * @return array
  */
-function profile_get_all_rows( $p_user_id, $p_all_users = false ) {
+function profile_get_all_rows($p_user_id, $p_all_users = false)
+{
 	$t_query = new DbQuery();
-	$t_query->sql( 'SELECT * FROM {user_profile} WHERE user_id=:user_id' );
-	if( $p_all_users && ALL_USERS != $p_user_id ) {
-		$t_query->append_sql( ' OR user_id=' . ALL_USERS );
+	$t_query->sql('SELECT * FROM {user_profile} WHERE user_id=:user_id');
+	if ($p_all_users && ALL_USERS != $p_user_id) {
+		$t_query->append_sql(' OR user_id=' . ALL_USERS);
 	}
-	$t_query->append_sql( ' ORDER BY platform, os, os_build' );
+	$t_query->append_sql(' ORDER BY platform, os, os_build');
 
-	$t_query->bind( 'user_id',  $p_user_id );
+	$t_query->bind('user_id',  $p_user_id);
 	$t_query->execute();
 
 	return $t_query->fetch_all();
@@ -246,8 +255,9 @@ function profile_get_all_rows( $p_user_id, $p_all_users = false ) {
  * @param integer $p_user_id A valid user identifier.
  * @return array
  */
-function profile_get_all_for_user( $p_user_id ) {
-	return profile_get_all_rows( $p_user_id, $p_user_id != ALL_USERS );
+function profile_get_all_for_user($p_user_id)
+{
+	return profile_get_all_rows($p_user_id, $p_user_id != ALL_USERS);
 }
 
 /**
@@ -258,10 +268,11 @@ function profile_get_all_for_user( $p_user_id ) {
  * @param integer $p_user_id A valid user identifier.
  * @return array
  */
-function profile_get_field_all_for_user( $p_field, $p_user_id = null ) {
-	$c_user_id = ( $p_user_id === null ) ? auth_get_current_user_id() : $p_user_id;
+function profile_get_field_all_for_user($p_field, $p_user_id = null)
+{
+	$c_user_id = ($p_user_id === null) ? auth_get_current_user_id() : $p_user_id;
 
-	switch( $p_field ) {
+	switch ($p_field) {
 		case 'id':
 		case 'user_id':
 		case 'platform':
@@ -271,20 +282,21 @@ function profile_get_field_all_for_user( $p_field, $p_user_id = null ) {
 			$c_field = $p_field;
 			break;
 		default:
-			trigger_error( ERROR_GENERIC, ERROR );
+			trigger_error(ERROR_GENERIC, ERROR);
 	}
 
 	$t_query = new DbQuery();
 	/** @noinspection PhpUndefinedVariableInspection */
-	$t_query->sql( "SELECT DISTINCT $c_field 
+	$t_query->sql(
+		"SELECT DISTINCT $c_field 
 		FROM {user_profile}
 		WHERE user_id=:user_id OR user_id=" . ALL_USERS . "
 		ORDER BY $c_field"
 	);
-	$t_query->bind( 'user_id',  $c_user_id );
+	$t_query->bind('user_id',  $c_user_id);
 	$t_query->execute();
 
-	return array_column( $t_query->fetch_all(), $p_field );
+	return array_column($t_query->fetch_all(), $p_field);
 }
 
 /**
@@ -293,12 +305,14 @@ function profile_get_field_all_for_user( $p_field, $p_user_id = null ) {
  * @param integer $p_project_id A valid project identifier.
  * @return array
  */
-function profile_get_all_for_project( $p_project_id ) {
+function profile_get_all_for_project($p_project_id)
+{
 	$t_query = new DbQuery();
-	$t_query->sql( 'SELECT DISTINCT(up.id), up.user_id, up.platform, up.os, up.os_build
+	$t_query->sql(
+		'SELECT DISTINCT(up.id), up.user_id, up.platform, up.os, up.os_build
 		FROM {user_profile} up
 		JOIN {bug} b ON b.profile_id = up.id
-		WHERE ' . helper_project_specific_where( $p_project_id ) . '
+		WHERE ' . helper_project_specific_where($p_project_id) . '
 		ORDER BY up.platform, up.os, up.os_build'
 	);
 	$t_query->execute();
@@ -312,8 +326,9 @@ function profile_get_all_for_project( $p_project_id ) {
  * @param integer $p_user_id A valid user identifier.
  * @return string
  */
-function profile_get_default( $p_user_id ) {
-	return (int)user_pref_get_pref( $p_user_id, 'default_profile' );
+function profile_get_default($p_user_id)
+{
+	return (int)user_pref_get_pref($p_user_id, 'default_profile');
 }
 
 /**
@@ -323,7 +338,8 @@ function profile_get_default( $p_user_id ) {
  * @return boolean
  * @throws ClientException if the profile ID does not exist
  */
-function profile_is_global( $p_profile_id ) {
-	$t_row = profile_get_row( $p_profile_id );
+function profile_is_global($p_profile_id)
+{
+	$t_row = profile_get_row($p_profile_id);
 	return $t_row['user_id'] == ALL_USERS;
 }

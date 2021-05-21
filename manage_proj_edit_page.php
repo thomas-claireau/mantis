@@ -198,7 +198,7 @@ print_manage_menu('manage_proj_edit_page.php');
 											</label>
 										</td>
 										<td>
-											<?php # Newline after opening textarea tag is intentional, see #25839 
+											<?php  # Newline after opening textarea tag is intentional, see #25839 
 											?>
 											<textarea class="form-control" id="project-description" name="description" cols="70" rows="5">
 <?php echo string_textarea($t_row['description']) ?>
@@ -235,7 +235,7 @@ print_manage_menu('manage_proj_edit_page.php');
 				</fieldset>
 			</form>
 		</div>
-	<?php } ?>
+	<?php  } ?>
 </div>
 
 <?php
@@ -407,7 +407,7 @@ if (config_get_global('subprojects_enabled') == ON) {
 		# If there are no subprojects, clear floats to h2 overlap on div border
 	?>
 		<br />
-<?php }
+<?php  }
 } # are sub-projects enabled?
 ?>
 

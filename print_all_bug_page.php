@@ -108,7 +108,7 @@ layout_page_header();
 </table>
 
 <form method="post" action="view_all_set.php">
-	<?php # CSRF protection not required here - form does not result in modifications 
+	<?php  # CSRF protection not required here - form does not result in modifications 
 	?>
 	<input type="hidden" name="type" value="1" />
 	<input type="hidden" name="print" value="1" />
@@ -183,7 +183,7 @@ if (filter_is_temporary($t_filter)) {
 }
 ?>
 <form method="post" action="<?php echo $t_form_url ?>">
-	<?php # CSRF protection not required here - form does not result in modifications 
+	<?php  # CSRF protection not required here - form does not result in modifications 
 	?>
 
 	<table id="buglist" class="table table-striped table-bordered table-condensed no-margin">

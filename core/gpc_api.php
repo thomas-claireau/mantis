@@ -32,10 +32,10 @@
  * @uses http_api.php
  */
 
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'error_api.php' );
-require_api( 'http_api.php' );
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('error_api.php');
+require_api('http_api.php');
 
 # Determines (once-off) whether the client is accessing this script via a
 # secure connection. If they are, we want to use the Secure cookie flag to
@@ -55,17 +55,18 @@ $g_cookie_secure_flag_enabled = http_is_protocol_https();
  * @param mixed  $p_default  Default value.
  * @return null
  */
-function gpc_get( $p_var_name, $p_default = null ) {
-	if( isset( $_POST[$p_var_name] ) ) {
+function gpc_get($p_var_name, $p_default = null)
+{
+	if (isset($_POST[$p_var_name])) {
 		$t_result = $_POST[$p_var_name];
-	} else if( isset( $_GET[$p_var_name] ) ) {
+	} else if (isset($_GET[$p_var_name])) {
 		$t_result = $_GET[$p_var_name];
-	} else if( func_num_args() > 1 ) {
+	} else if (func_num_args() > 1) {
 		# check for a default passed in (allowing null)
 		$t_result = $p_default;
 	} else {
-		error_parameters( $p_var_name );
-		trigger_error( ERROR_GPC_VAR_NOT_FOUND, ERROR );
+		error_parameters($p_var_name);
+		trigger_error(ERROR_GPC_VAR_NOT_FOUND, ERROR);
 		$t_result = null;
 	}
 
@@ -77,10 +78,11 @@ function gpc_get( $p_var_name, $p_default = null ) {
  * @param string $p_var_name Variable name to check if set by http request.
  * @return boolean
  */
-function gpc_isset( $p_var_name ) {
-	if( isset( $_POST[$p_var_name] ) ) {
+function gpc_isset($p_var_name)
+{
+	if (isset($_POST[$p_var_name])) {
 		return true;
-	} else if( isset( $_GET[$p_var_name] ) ) {
+	} else if (isset($_GET[$p_var_name])) {
 		return true;
 	}
 
@@ -95,21 +97,22 @@ function gpc_isset( $p_var_name ) {
  * @param string $p_default  Default value of the string if not set(optional).
  * @return string|null
  */
-function gpc_get_string( $p_var_name, $p_default = null ) {
+function gpc_get_string($p_var_name, $p_default = null)
+{
 	# Don't pass along a default unless one was given to us
 	#  otherwise we prevent an error being triggered
 	$t_args = func_get_args();
-	$t_result = call_user_func_array( 'gpc_get', $t_args );
+	$t_result = call_user_func_array('gpc_get', $t_args);
 
-	if( is_array( $t_result ) ) {
-		error_parameters( $p_var_name );
-		trigger_error( ERROR_GPC_ARRAY_UNEXPECTED, ERROR );
+	if (is_array($t_result)) {
+		error_parameters($p_var_name);
+		trigger_error(ERROR_GPC_ARRAY_UNEXPECTED, ERROR);
 	}
 
-	if( $t_result === null ) {
+	if ($t_result === null) {
 		return null;
 	} else {
-		return str_replace( "\0", '', $t_result );
+		return str_replace("\0", '', $t_result);
 	}
 }
 
@@ -121,20 +124,21 @@ function gpc_get_string( $p_var_name, $p_default = null ) {
  * @param integer $p_default  Default integer value if not set (optional).
  * @return integer|null
  */
-function gpc_get_int( $p_var_name, $p_default = null ) {
+function gpc_get_int($p_var_name, $p_default = null)
+{
 	# Don't pass along a default unless one was given to us
 	#  otherwise we prevent an error being triggered
 	$t_args = func_get_args();
-	$t_result = call_user_func_array( 'gpc_get', $t_args );
+	$t_result = call_user_func_array('gpc_get', $t_args);
 
-	if( is_array( $t_result ) ) {
-		error_parameters( $p_var_name );
-		trigger_error( ERROR_GPC_ARRAY_UNEXPECTED, ERROR );
+	if (is_array($t_result)) {
+		error_parameters($p_var_name);
+		trigger_error(ERROR_GPC_ARRAY_UNEXPECTED, ERROR);
 	}
-	$t_val = str_replace( ' ', '', trim( $t_result ) );
-	if( !preg_match( '/^-?([0-9])*$/', $t_val ) ) {
-		error_parameters( $p_var_name );
-		trigger_error( ERROR_GPC_NOT_NUMBER, ERROR );
+	$t_val = str_replace(' ', '', trim($t_result));
+	if (!preg_match('/^-?([0-9])*$/', $t_val)) {
+		error_parameters($p_var_name);
+		trigger_error(ERROR_GPC_NOT_NUMBER, ERROR);
 	}
 
 	return (int)$t_val;
@@ -147,18 +151,19 @@ function gpc_get_int( $p_var_name, $p_default = null ) {
  * @param boolean $p_default  Default boolean value if not set (optional).
  * @return boolean|null
  */
-function gpc_get_bool( $p_var_name, $p_default = false ) {
-	$t_result = gpc_get( $p_var_name, $p_default );
+function gpc_get_bool($p_var_name, $p_default = false)
+{
+	$t_result = gpc_get($p_var_name, $p_default);
 
-	if( $t_result === $p_default ) {
+	if ($t_result === $p_default) {
 		return (bool)$p_default;
 	} else {
-		if( is_array( $t_result ) ) {
-			error_parameters( $p_var_name );
-			trigger_error( ERROR_GPC_ARRAY_UNEXPECTED, ERROR );
+		if (is_array($t_result)) {
+			error_parameters($p_var_name);
+			trigger_error(ERROR_GPC_ARRAY_UNEXPECTED, ERROR);
 		}
 
-		return gpc_string_to_bool( $t_result );
+		return gpc_string_to_bool($t_result);
 	}
 }
 
@@ -168,28 +173,29 @@ function gpc_get_bool( $p_var_name, $p_default = false ) {
  * @param integer $p_custom_field_type Custom field type.
  * @return boolean
  */
-function gpc_isset_custom_field( $p_var_name, $p_custom_field_type ) {
+function gpc_isset_custom_field($p_var_name, $p_custom_field_type)
+{
 	$t_field_name = 'custom_field_' . $p_var_name;
 
-	switch( $p_custom_field_type ) {
+	switch ($p_custom_field_type) {
 		case CUSTOM_FIELD_TYPE_DATE:
 			# date field is three dropdowns that default to 0
 			# Dropdowns are always present, so check if they are set
-			return gpc_isset( $t_field_name . '_day' ) &&
-				gpc_get_int( $t_field_name . '_day', 0 ) != 0 &&
-				gpc_isset( $t_field_name . '_month' ) &&
-				gpc_get_int( $t_field_name . '_month', 0 ) != 0 &&
-				gpc_isset( $t_field_name . '_year' ) &&
-				gpc_get_int( $t_field_name . '_year', 0 ) != 0 ;
+			return gpc_isset($t_field_name . '_day') &&
+				gpc_get_int($t_field_name . '_day', 0) != 0 &&
+				gpc_isset($t_field_name . '_month') &&
+				gpc_get_int($t_field_name . '_month', 0) != 0 &&
+				gpc_isset($t_field_name . '_year') &&
+				gpc_get_int($t_field_name . '_year', 0) != 0;
 		case CUSTOM_FIELD_TYPE_STRING:
 		case CUSTOM_FIELD_TYPE_NUMERIC:
 		case CUSTOM_FIELD_TYPE_FLOAT:
 		case CUSTOM_FIELD_TYPE_ENUM:
 		case CUSTOM_FIELD_TYPE_EMAIL:
 		case CUSTOM_FIELD_TYPE_TEXTAREA:
-			return gpc_isset( $t_field_name ) && !is_blank( gpc_get_string( $t_field_name ) );
+			return gpc_isset($t_field_name) && !is_blank(gpc_get_string($t_field_name));
 		default:
-			return gpc_isset( $t_field_name );
+			return gpc_isset($t_field_name);
 	}
 }
 
@@ -202,37 +208,38 @@ function gpc_isset_custom_field( $p_var_name, $p_custom_field_type ) {
  * @param mixed   $p_default           Default value.
  * @return string
  */
-function gpc_get_custom_field( $p_var_name, $p_custom_field_type, $p_default = null ) {
-	switch( $p_custom_field_type ) {
+function gpc_get_custom_field($p_var_name, $p_custom_field_type, $p_default = null)
+{
+	switch ($p_custom_field_type) {
 		case CUSTOM_FIELD_TYPE_MULTILIST:
 		case CUSTOM_FIELD_TYPE_CHECKBOX:
 			# ensure that the default is an array, if set
-			if( ( $p_default !== null ) && !is_array( $p_default ) ) {
-				$p_default = array( $p_default );
+			if (($p_default !== null) && !is_array($p_default)) {
+				$p_default = array($p_default);
 			}
-			$t_values = gpc_get_string_array( $p_var_name, $p_default );
-			if( is_array( $t_values ) ) {
-				return implode( '|', $t_values );
+			$t_values = gpc_get_string_array($p_var_name, $p_default);
+			if (is_array($t_values)) {
+				return implode('|', $t_values);
 			} else {
 				return '';
 			}
 			break;
 		case CUSTOM_FIELD_TYPE_DATE:
-			$t_day = gpc_get_int( $p_var_name . '_day', 0 );
-			$t_month = gpc_get_int( $p_var_name . '_month', 0 );
-			$t_year = gpc_get_int( $p_var_name . '_year', 0 );
-			if( ( $t_year == 0 ) || ( $t_month == 0 ) || ( $t_day == 0 ) ) {
-				if( $p_default == null ) {
+			$t_day = gpc_get_int($p_var_name . '_day', 0);
+			$t_month = gpc_get_int($p_var_name . '_month', 0);
+			$t_year = gpc_get_int($p_var_name . '_year', 0);
+			if (($t_year == 0) || ($t_month == 0) || ($t_day == 0)) {
+				if ($p_default == null) {
 					return '';
 				} else {
 					return $p_default;
 				}
 			} else {
-				return strtotime( $t_year . '-' . $t_month . '-' . $t_day );
+				return strtotime($t_year . '-' . $t_month . '-' . $t_day);
 			}
 			break;
 		default:
-			return gpc_get_string( $p_var_name, $p_default );
+			return gpc_get_string($p_var_name, $p_default);
 	}
 }
 
@@ -244,27 +251,28 @@ function gpc_get_custom_field( $p_var_name, $p_custom_field_type, $p_default = n
  * @param array  $p_default  Default value of the string array if not set.
  * @return array
  */
-function gpc_get_string_array( $p_var_name, array $p_default = null ) {
+function gpc_get_string_array($p_var_name, array $p_default = null)
+{
 	# Don't pass along a default unless one was given to us
 	# otherwise we prevent an error being triggered
 	$t_args = func_get_args();
-	$t_result = call_user_func_array( 'gpc_get', $t_args );
+	$t_result = call_user_func_array('gpc_get', $t_args);
 
 	# If the result isn't the default we were given or an array, error
-	if( !((( 1 < func_num_args() ) && ( $t_result === $p_default ) ) || is_array( $t_result ) ) ) {
-		error_parameters( $p_var_name );
-		trigger_error( ERROR_GPC_ARRAY_EXPECTED, ERROR );
+	if (!(((1 < func_num_args()) && ($t_result === $p_default)) || is_array($t_result))) {
+		error_parameters($p_var_name);
+		trigger_error(ERROR_GPC_ARRAY_EXPECTED, ERROR);
 	}
 
-	if( !is_array( $t_result ) ) {
+	if (!is_array($t_result)) {
 		return $t_result;
 	}
 	$t_array = array();
-	foreach( $t_result as $t_key => $t_value ) {
-		if( $t_value === null ) {
+	foreach ($t_result as $t_key => $t_value) {
+		if ($t_value === null) {
 			$t_array[$t_key] = null;
 		} else {
-			$t_array[$t_key] = str_replace( "\0", '', $t_value );
+			$t_array[$t_key] = str_replace("\0", '', $t_value);
 		}
 	}
 	return $t_array;
@@ -278,19 +286,20 @@ function gpc_get_string_array( $p_var_name, array $p_default = null ) {
  * @param array  $p_default  Default value of the integer array if not set.
  * @return array
  */
-function gpc_get_int_array( $p_var_name, array $p_default = null ) {
+function gpc_get_int_array($p_var_name, array $p_default = null)
+{
 	# Don't pass along a default unless one was given to us
 	# otherwise we prevent an error being triggered
 	$t_args = func_get_args();
-	$t_result = call_user_func_array( 'gpc_get', $t_args );
+	$t_result = call_user_func_array('gpc_get', $t_args);
 
 	# If the result isn't the default we were given or an array, error
-	if( !((( 1 < func_num_args() ) && ( $t_result === $p_default ) ) || is_array( $t_result ) ) ) {
-		error_parameters( $p_var_name );
-		trigger_error( ERROR_GPC_ARRAY_EXPECTED, ERROR );
+	if (!(((1 < func_num_args()) && ($t_result === $p_default)) || is_array($t_result))) {
+		error_parameters($p_var_name);
+		trigger_error(ERROR_GPC_ARRAY_EXPECTED, ERROR);
 	}
-	if( is_array( $t_result ) ) {
-		foreach( $t_result as $t_key => $t_value ) {
+	if (is_array($t_result)) {
+		foreach ($t_result as $t_key => $t_value) {
 			$t_result[$t_key] = (int)$t_value;
 		}
 	}
@@ -305,21 +314,22 @@ function gpc_get_int_array( $p_var_name, array $p_default = null ) {
  * @param array  $p_default  Default value of the boolean array if not set.
  * @return array
  */
-function gpc_get_bool_array( $p_var_name, array $p_default = null ) {
+function gpc_get_bool_array($p_var_name, array $p_default = null)
+{
 	# Don't pass along a default unless one was given to us
 	# otherwise we prevent an error being triggered
 	$t_args = func_get_args();
-	$t_result = call_user_func_array( 'gpc_get', $t_args );
+	$t_result = call_user_func_array('gpc_get', $t_args);
 
 	# If the result isn't the default we were given or an array, error
-	if( !((( 1 < func_num_args() ) && ( $t_result === $p_default ) ) || is_array( $t_result ) ) ) {
-		error_parameters( $p_var_name );
-		trigger_error( ERROR_GPC_ARRAY_EXPECTED, ERROR );
+	if (!(((1 < func_num_args()) && ($t_result === $p_default)) || is_array($t_result))) {
+		error_parameters($p_var_name);
+		trigger_error(ERROR_GPC_ARRAY_EXPECTED, ERROR);
 	}
 
-	if( is_array( $t_result ) ) {
-		foreach( $t_result as $t_key => $t_value ) {
-			$t_result[$t_key] = gpc_string_to_bool( $t_value );
+	if (is_array($t_result)) {
+		foreach ($t_result as $t_key => $t_value) {
+			$t_result[$t_key] = gpc_string_to_bool($t_value);
 		}
 	}
 
@@ -334,15 +344,16 @@ function gpc_get_bool_array( $p_var_name, array $p_default = null ) {
  * @param string $p_default  Default value if not set.
  * @return string
  */
-function gpc_get_cookie( $p_var_name, $p_default = null ) {
-	if( isset( $_COOKIE[$p_var_name] ) ) {
+function gpc_get_cookie($p_var_name, $p_default = null)
+{
+	if (isset($_COOKIE[$p_var_name])) {
 		$t_result = $_COOKIE[$p_var_name];
-	} else if( func_num_args() > 1 ) {
+	} else if (func_num_args() > 1) {
 		# check for a default passed in (allowing null)
 		$t_result = $p_default;
 	} else {
-		error_parameters( $p_var_name );
-		trigger_error( ERROR_GPC_VAR_NOT_FOUND, ERROR );
+		error_parameters($p_var_name);
+		trigger_error(ERROR_GPC_VAR_NOT_FOUND, ERROR);
 	}
 
 	return $t_result;
@@ -366,25 +377,26 @@ function gpc_get_cookie( $p_var_name, $p_default = null ) {
  * @param boolean $p_httponly Default true.
  * @return boolean - true on success, false on failure
  */
-function gpc_set_cookie( $p_name, $p_value, $p_expire = false, $p_path = null, $p_domain = null, $p_httponly = true ) {
+function gpc_set_cookie($p_name, $p_value, $p_expire = false, $p_path = null, $p_domain = null, $p_httponly = true)
+{
 	global $g_cookie_secure_flag_enabled;
 
-	if( false === $p_expire ) {
+	if (false === $p_expire) {
 		$p_expire = 0;
-	} else if( true === $p_expire ) {
-		$t_cookie_length = config_get_global( 'cookie_time_length' );
+	} else if (true === $p_expire) {
+		$t_cookie_length = config_get_global('cookie_time_length');
 		$p_expire = time() + $t_cookie_length;
 	}
 
-	if( null === $p_path ) {
-		$p_path = config_get_global( 'cookie_path' );
+	if (null === $p_path) {
+		$p_path = config_get_global('cookie_path');
 	}
 
-	if( null === $p_domain ) {
-		$p_domain = config_get_global( 'cookie_domain' );
+	if (null === $p_domain) {
+		$p_domain = config_get_global('cookie_domain');
 	}
 
-	return setcookie( $p_name, $p_value, $p_expire, $p_path, $p_domain, $g_cookie_secure_flag_enabled, true );
+	return setcookie($p_name, $p_value, $p_expire, $p_path, $p_domain, $g_cookie_secure_flag_enabled, true);
 }
 
 /**
@@ -394,21 +406,22 @@ function gpc_set_cookie( $p_name, $p_value, $p_expire = false, $p_path = null, $
  * @param string $p_domain Cookie domain.
  * @return boolean
  */
-function gpc_clear_cookie( $p_name, $p_path = null, $p_domain = null ) {
-	if( null === $p_path ) {
-		$p_path = config_get_global( 'cookie_path' );
+function gpc_clear_cookie($p_name, $p_path = null, $p_domain = null)
+{
+	if (null === $p_path) {
+		$p_path = config_get_global('cookie_path');
 	}
-	if( null === $p_domain ) {
-		$p_domain = config_get_global( 'cookie_domain' );
+	if (null === $p_domain) {
+		$p_domain = config_get_global('cookie_domain');
 	}
 
-	if( isset( $_COOKIE[$p_name] ) ) {
-		unset( $_COOKIE[$p_name] );
+	if (isset($_COOKIE[$p_name])) {
+		unset($_COOKIE[$p_name]);
 	}
 
 	# don't try to send cookie if headers are send (guideweb)
-	if( !headers_sent() ) {
-		return setcookie( $p_name, '', -1, $p_path, $p_domain );
+	if (!headers_sent()) {
+		return setcookie($p_name, '', -1, $p_path, $p_domain);
 	} else {
 		return false;
 	}
@@ -423,16 +436,17 @@ function gpc_clear_cookie( $p_name, $p_path = null, $p_domain = null ) {
  * @param mixed  $p_default  Default value.
  * @return mixed
  */
-function gpc_get_file( $p_var_name, $p_default = null ) {
-	if( isset( $_FILES[$p_var_name] ) ) {
+function gpc_get_file($p_var_name, $p_default = null)
+{
+	if (isset($_FILES[$p_var_name])) {
 		# FILES are not escaped even if magic_quotes is ON, this applies to Windows paths.
 		$t_result = $_FILES[$p_var_name];
-	} else if( func_num_args() > 1 ) {
+	} else if (func_num_args() > 1) {
 		# check for a default passed in (allowing null)
 		$t_result = $p_default;
 	} else {
-		error_parameters( $p_var_name );
-		trigger_error( ERROR_GPC_VAR_NOT_FOUND, ERROR );
+		error_parameters($p_var_name);
+		trigger_error(ERROR_GPC_VAR_NOT_FOUND, ERROR);
 	}
 
 	return $t_result;
@@ -444,14 +458,15 @@ function gpc_get_file( $p_var_name, $p_default = null ) {
  * @param string $p_var_name The name of the parameter.
  * @return void
  */
-function gpc_make_array( $p_var_name ) {
-	if( isset( $_POST[$p_var_name] ) && !is_array( $_POST[$p_var_name] ) ) {
+function gpc_make_array($p_var_name)
+{
+	if (isset($_POST[$p_var_name]) && !is_array($_POST[$p_var_name])) {
 		$_POST[$p_var_name] = array(
 			$_POST[$p_var_name],
 		);
 	}
 
-	if( isset( $_GET[$p_var_name] ) && !is_array( $_GET[$p_var_name] ) ) {
+	if (isset($_GET[$p_var_name]) && !is_array($_GET[$p_var_name])) {
 		$_GET[$p_var_name] = array(
 			$_GET[$p_var_name],
 		);
@@ -463,9 +478,10 @@ function gpc_make_array( $p_var_name ) {
  * @param string $p_string A string to convert to a boolean value.
  * @return boolean
  */
-function gpc_string_to_bool( $p_string ) {
-	$t_value = trim( strtolower( $p_string ) );
-	switch ( $t_value ) {
+function gpc_string_to_bool($p_string)
+{
+	$t_value = trim(strtolower($p_string));
+	switch ($t_value) {
 		case 'off':
 		case 'no':
 		case 'n':

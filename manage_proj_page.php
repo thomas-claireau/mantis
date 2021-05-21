@@ -209,7 +209,7 @@ print_manage_menu('manage_proj_page.php');
 										<td><?php echo lang_get('assign_to') ?></td>
 										<?php if ($t_can_update_global_cat) { ?>
 											<td class="center"><?php echo lang_get('actions') ?></td>
-										<?php } ?>
+										<?php  } ?>
 									</tr>
 								</thead>
 
@@ -235,7 +235,7 @@ print_manage_menu('manage_proj_page.php');
 													echo '</div>';
 													?>
 												</td>
-											<?php } ?>
+											<?php  } ?>
 										</tr>
 									<?php
 									} # end for loop
@@ -258,7 +258,7 @@ print_manage_menu('manage_proj_page.php');
 							<input type="submit" name="add_and_edit_category" class="btn btn-primary btn-sm btn-white btn-round" value="<?php echo lang_get('add_and_edit_category_button') ?>" />
 						</div>
 					</form>
-				<?php } ?>
+				<?php  } ?>
 			</div>
 		</div>
 	</div>

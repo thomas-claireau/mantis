@@ -37,18 +37,18 @@
  * @uses utility_api.php
  */
 
-require_api( 'access_api.php' );
-require_api( 'authentication_api.php' );
-require_api( 'bug_api.php' );
-require_api( 'bugnote_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'email_api.php' );
-require_api( 'event_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'user_api.php' );
-require_api( 'utility_api.php' );
+require_api('access_api.php');
+require_api('authentication_api.php');
+require_api('bug_api.php');
+require_api('bugnote_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('email_api.php');
+require_api('event_api.php');
+require_api('helper_api.php');
+require_api('lang_api.php');
+require_api('user_api.php');
+require_api('utility_api.php');
 
 $g_cache_html_valid_tags = '';
 $g_cache_html_valid_tags_single_line = '';
@@ -59,17 +59,18 @@ $g_cache_html_valid_tags_single_line = '';
  * @param string $p_string String to be processed.
  * @return string
  */
-function string_preserve_spaces_at_bol( $p_string ) {
-	$t_lines = explode( "\n", $p_string );
-	$t_line_count = count( $t_lines );
-	for( $i = 0;$i < $t_line_count;$i++ ) {
+function string_preserve_spaces_at_bol($p_string)
+{
+	$t_lines = explode("\n", $p_string);
+	$t_line_count = count($t_lines);
+	for ($i = 0; $i < $t_line_count; $i++) {
 		$t_count = 0;
 		$t_prefix = '';
 
-		$t_char = mb_substr( $t_lines[$i], $t_count, 1 );
+		$t_char = mb_substr($t_lines[$i], $t_count, 1);
 		$t_spaces = 0;
-		while( ( $t_char == ' ' ) || ( $t_char == "\t" ) ) {
-			if( $t_char == ' ' ) {
+		while (($t_char == ' ') || ($t_char == "\t")) {
+			if ($t_char == ' ') {
 				$t_spaces++;
 			} else {
 				$t_spaces += 4;
@@ -78,16 +79,16 @@ function string_preserve_spaces_at_bol( $p_string ) {
 			# 1 tab = 4 spaces, can be configurable.
 
 			$t_count++;
-			$t_char = mb_substr( $t_lines[$i], $t_count, 1 );
+			$t_char = mb_substr($t_lines[$i], $t_count, 1);
 		}
 
-		for( $j = 0;$j < $t_spaces;$j++ ) {
+		for ($j = 0; $j < $t_spaces; $j++) {
 			$t_prefix .= '&#160;';
 		}
 
-		$t_lines[$i] = $t_prefix . mb_substr( $t_lines[$i], $t_count );
+		$t_lines[$i] = $t_prefix . mb_substr($t_lines[$i], $t_count);
 	}
-	return implode( "\n", $t_lines );
+	return implode("\n", $t_lines);
 }
 
 /**
@@ -95,8 +96,9 @@ function string_preserve_spaces_at_bol( $p_string ) {
  * @param string $p_string String to be processed.
  * @return string
  */
-function string_no_break( $p_string ) {
-	if( strpos( $p_string, ' ' ) !== false ) {
+function string_no_break($p_string)
+{
+	if (strpos($p_string, ' ') !== false) {
 		return '<span class="nowrap">' . $p_string . '</span>';
 	} else {
 		return $p_string;
@@ -111,30 +113,31 @@ function string_no_break( $p_string ) {
  * @param integer $p_wrap   Number of characters to wrap text at.
  * @return string
  */
-function string_nl2br( $p_string, $p_wrap = 100 ) {
-	$t_pieces = preg_split( '/(<pre[^>]*>.*?<\/pre>)/is', $p_string, -1, PREG_SPLIT_DELIM_CAPTURE );
-	if( isset( $t_pieces[1] ) ) {
+function string_nl2br($p_string, $p_wrap = 100)
+{
+	$t_pieces = preg_split('/(<pre[^>]*>.*?<\/pre>)/is', $p_string, -1, PREG_SPLIT_DELIM_CAPTURE);
+	if (isset($t_pieces[1])) {
 		$t_output = '';
-		foreach( $t_pieces as $t_piece ) {
-			if( preg_match( '/(<pre[^>]*>.*?<\/pre>)/is', $t_piece ) ) {
-				$t_piece = preg_replace( '/<br[^>]*?>/', '', $t_piece );
+		foreach ($t_pieces as $t_piece) {
+			if (preg_match('/(<pre[^>]*>.*?<\/pre>)/is', $t_piece)) {
+				$t_piece = preg_replace('/<br[^>]*?>/', '', $t_piece);
 
 				# @@@ thraxisp - this may want to be replaced by html_entity_decode (or equivalent)
 				#     if other encoded characters are a problem
-				$t_piece = preg_replace( '/&#160;/', ' ', $t_piece );
-				if( ON == config_get( 'wrap_in_preformatted_text' ) ) {
+				$t_piece = preg_replace('/&#160;/', ' ', $t_piece);
+				if (ON == config_get('wrap_in_preformatted_text')) {
 					# Use PCRE_UTF8 modifier to ensure a correct char count
-					$t_output .= preg_replace( '/([^\n]{' . $p_wrap . ',}?[\s]+)(?!<\/pre>)/u', "$1", $t_piece );
+					$t_output .= preg_replace('/([^\n]{' . $p_wrap . ',}?[\s]+)(?!<\/pre>)/u', "$1", $t_piece);
 				} else {
 					$t_output .= $t_piece;
 				}
 			} else {
-				$t_output .= nl2br( $t_piece );
+				$t_output .= nl2br($t_piece);
 			}
 		}
 		return $t_output;
 	} else {
-		return nl2br( $p_string );
+		return nl2br($p_string);
 	}
 }
 
@@ -143,8 +146,9 @@ function string_nl2br( $p_string, $p_wrap = 100 ) {
  * @param string $p_string String to be processed.
  * @return string
  */
-function string_display( $p_string ) {
-	return event_signal( 'EVENT_DISPLAY_TEXT', $p_string, true );
+function string_display($p_string)
+{
+	return event_signal('EVENT_DISPLAY_TEXT', $p_string, true);
 }
 
 /**
@@ -152,8 +156,9 @@ function string_display( $p_string ) {
  * @param string $p_string String to be processed.
  * @return string
  */
-function string_display_line( $p_string ) {
-	return event_signal( 'EVENT_DISPLAY_TEXT', $p_string, false );
+function string_display_line($p_string)
+{
+	return event_signal('EVENT_DISPLAY_TEXT', $p_string, false);
 }
 
 /**
@@ -162,8 +167,9 @@ function string_display_line( $p_string ) {
  * @param string $p_string String to be processed.
  * @return string
  */
-function string_display_links( $p_string ) {
-	return event_signal( 'EVENT_DISPLAY_FORMATTED', $p_string, true );
+function string_display_links($p_string)
+{
+	return event_signal('EVENT_DISPLAY_FORMATTED', $p_string, true);
 }
 
 /**
@@ -172,8 +178,9 @@ function string_display_links( $p_string ) {
  * @param string $p_string String to be processed.
  * @return string
  */
-function string_display_line_links( $p_string ) {
-	return event_signal( 'EVENT_DISPLAY_FORMATTED', $p_string, false );
+function string_display_line_links($p_string)
+{
+	return event_signal('EVENT_DISPLAY_FORMATTED', $p_string, false);
 }
 
 /**
@@ -181,14 +188,15 @@ function string_display_line_links( $p_string ) {
  * @param string $p_string String to be processed.
  * @return string
  */
-function string_rss_links( $p_string ) {
+function string_rss_links($p_string)
+{
 	# rss can not start with &#160; which spaces will be replaced into by string_display().
-	$t_string = trim( $p_string );
+	$t_string = trim($p_string);
 
-	$t_string = event_signal( 'EVENT_DISPLAY_RSS', $t_string );
+	$t_string = event_signal('EVENT_DISPLAY_RSS', $t_string);
 
 	# another escaping to escape the special characters created by the generated links
-	return string_html_specialchars( $t_string );
+	return string_html_specialchars($t_string);
 }
 
 /**
@@ -196,8 +204,9 @@ function string_rss_links( $p_string ) {
  * @param string $p_string String to be processed.
  * @return string
  */
-function string_email( $p_string ) {
-	return string_strip_hrefs( $p_string );
+function string_email($p_string)
+{
+	return string_strip_hrefs($p_string);
 }
 
 /**
@@ -206,8 +215,9 @@ function string_email( $p_string ) {
  * @param string $p_string String to be processed.
  * @return string
  */
-function string_email_links( $p_string ) {
-	return event_signal( 'EVENT_DISPLAY_EMAIL', $p_string );
+function string_email_links($p_string)
+{
+	return event_signal('EVENT_DISPLAY_EMAIL', $p_string);
 }
 
 /**
@@ -215,8 +225,9 @@ function string_email_links( $p_string ) {
  * @param string $p_string String to be processed.
  * @return string
  */
-function string_textarea( $p_string ) {
-	return string_html_specialchars( $p_string );
+function string_textarea($p_string)
+{
+	return string_html_specialchars($p_string);
 }
 
 /**
@@ -224,8 +235,9 @@ function string_textarea( $p_string ) {
  * @param string $p_string String to be processed.
  * @return string
  */
-function string_attribute( $p_string ) {
-	return string_html_specialchars( $p_string );
+function string_attribute($p_string)
+{
+	return string_html_specialchars($p_string);
 }
 
 /**
@@ -233,8 +245,9 @@ function string_attribute( $p_string ) {
  * @param string $p_string String to be processed.
  * @return string
  */
-function string_url( $p_string ) {
-	return rawurlencode( $p_string );
+function string_url($p_string)
+{
+	return rawurlencode($p_string);
 }
 
 /**
@@ -243,72 +256,76 @@ function string_url( $p_string ) {
  * @param boolean $p_return_absolute Whether to return the absolute URL to this Mantis instance.
  * @return string
  */
-function string_sanitize_url( $p_url, $p_return_absolute = false ) {
-	$t_url = strip_tags( urldecode( $p_url ) );
+function string_sanitize_url($p_url, $p_return_absolute = false)
+{
+	$t_url = strip_tags(urldecode($p_url));
 
-	$t_path = rtrim( config_get_global( 'path' ), '/' );
-	$t_short_path = rtrim( config_get_global( 'short_path' ), '/' );
+	$t_path = rtrim(config_get_global('path'), '/');
+	$t_short_path = rtrim(config_get_global('short_path'), '/');
 
 	$t_pattern = '(?:/*(?P<script>[^\?#]*))(?:\?(?P<query>[^#]*))?(?:#(?P<anchor>[^#]*))?';
 
 	# Break the given URL into pieces for path, script, query, and anchor
 	$t_type = 0;
-	if( preg_match( '@^(?P<path>' . preg_quote( $t_path, '@' ) . ')' . $t_pattern . '$@', $t_url, $t_matches ) ) {
+	if (preg_match('@^(?P<path>' . preg_quote($t_path, '@') . ')' . $t_pattern . '$@', $t_url, $t_matches)) {
 		$t_type = 1;
-	} else if( !empty( $t_short_path )
-			&& preg_match( '@^(?P<path>' . preg_quote( $t_short_path, '@' ) . ')' . $t_pattern . '$@', $t_url, $t_matches )
+	} else if (
+		!empty($t_short_path)
+		&& preg_match('@^(?P<path>' . preg_quote($t_short_path, '@') . ')' . $t_pattern . '$@', $t_url, $t_matches)
 	) {
 		$t_type = 2;
-	} else if( preg_match( '@^(?P<path>)' . $t_pattern . '$@', $t_url, $t_matches ) ) {
+	} else if (preg_match('@^(?P<path>)' . $t_pattern . '$@', $t_url, $t_matches)) {
 		$t_type = 3;
 	}
 
 	# Check for URL's pointing to other domains
-	if( 0 == $t_type || empty( $t_matches['script'] ) ||
-		3 == $t_type && preg_match( '@(?:[^:]*)?:/*@', $t_url ) > 0 ) {
+	if (
+		0 == $t_type || empty($t_matches['script']) ||
+		3 == $t_type && preg_match('@(?:[^:]*)?:/*@', $t_url) > 0
+	) {
 
-		return ( $p_return_absolute ? $t_path . '/' : '' ) . 'index.php';
+		return ($p_return_absolute ? $t_path . '/' : '') . 'index.php';
 	}
 
 	# Start extracting regex matches
 	# Encode backslashes to prevent unwanted escaping of a leading '/' allowing
 	# redirection to external sites
-	$t_script = strtr( $t_matches['script'], array( '\\' => '%5C' ) );
+	$t_script = strtr($t_matches['script'], array('\\' => '%5C'));
 	$t_script_path = $t_matches['path'];
 
 	# Clean/encode query params
 	$t_query = '';
-	if( isset( $t_matches['query'] ) ) {
+	if (isset($t_matches['query'])) {
 		$t_pairs = array();
-		parse_str( html_entity_decode( $t_matches['query'] ), $t_pairs );
+		parse_str(html_entity_decode($t_matches['query']), $t_pairs);
 
 		$t_clean_pairs = array();
-		foreach( $t_pairs as $t_key => $t_value ) {
-			if( is_array( $t_value ) ) {
-				foreach( $t_value as $t_value_each ) {
-					$t_clean_pairs[] .= rawurlencode( $t_key ) . '[]=' . rawurlencode( $t_value_each );
+		foreach ($t_pairs as $t_key => $t_value) {
+			if (is_array($t_value)) {
+				foreach ($t_value as $t_value_each) {
+					$t_clean_pairs[] .= rawurlencode($t_key) . '[]=' . rawurlencode($t_value_each);
 				}
 			} else {
-				$t_clean_pairs[] = rawurlencode( $t_key ) . '=' . rawurlencode( $t_value );
+				$t_clean_pairs[] = rawurlencode($t_key) . '=' . rawurlencode($t_value);
 			}
 		}
 
-		if( !empty( $t_clean_pairs ) ) {
-			$t_query = '?' . implode( '&', $t_clean_pairs );
+		if (!empty($t_clean_pairs)) {
+			$t_query = '?' . implode('&', $t_clean_pairs);
 		}
 	}
 
 	# encode link anchor
 	$t_anchor = '';
-	if( isset( $t_matches['anchor'] ) ) {
-		$t_anchor = '#' . rawurlencode( $t_matches['anchor'] );
+	if (isset($t_matches['anchor'])) {
+		$t_anchor = '#' . rawurlencode($t_matches['anchor']);
 	}
 
 	# Return an appropriate re-combined URL string
-	if( $p_return_absolute ) {
+	if ($p_return_absolute) {
 		return $t_path . '/' . $t_script . $t_query . $t_anchor;
 	} else {
-		return ( !empty( $t_script_path ) ? $t_script_path . '/' : '' ) . $t_script . $t_query . $t_anchor;
+		return (!empty($t_script_path) ? $t_script_path . '/' : '') . $t_script . $t_query . $t_anchor;
 	}
 }
 
@@ -331,30 +348,31 @@ function string_sanitize_url( $p_url, $p_return_absolute = false ) {
  * @param boolean $p_fqdn           Whether to return an absolute or relative link.
  * @return string
  */
-function string_process_bug_link( $p_string, $p_include_anchor = true, $p_detail_info = true, $p_fqdn = false ) {
+function string_process_bug_link($p_string, $p_include_anchor = true, $p_detail_info = true, $p_fqdn = false)
+{
 	static $s_bug_link_callback = array();
 
-	$t_tag = config_get( 'bug_link_tag' );
+	$t_tag = config_get('bug_link_tag');
 
 	# bail if the link tag is blank
-	if( '' == $t_tag || $p_string == '' ) {
+	if ('' == $t_tag || $p_string == '') {
 		return $p_string;
 	}
 
-	if( !isset( $s_bug_link_callback[$p_include_anchor][$p_detail_info][$p_fqdn] ) ) {
-		if( $p_include_anchor ) {
+	if (!isset($s_bug_link_callback[$p_include_anchor][$p_detail_info][$p_fqdn])) {
+		if ($p_include_anchor) {
 			$s_bug_link_callback[$p_include_anchor][$p_detail_info][$p_fqdn] =
-				function( $p_array ) use( $p_detail_info, $p_fqdn ) {
+				function ($p_array) use ($p_detail_info, $p_fqdn) {
 					$c_bug_id = (int)$p_array[2];
-					if( bug_exists( $c_bug_id ) ) {
-						$t_project_id = bug_get_field( $c_bug_id, 'project_id' );
-						$t_view_bug_threshold = config_get( 'view_bug_threshold', null, null, $t_project_id );
-						if( access_has_bug_level( $t_view_bug_threshold, $c_bug_id ) ) {
+					if (bug_exists($c_bug_id)) {
+						$t_project_id = bug_get_field($c_bug_id, 'project_id');
+						$t_view_bug_threshold = config_get('view_bug_threshold', null, null, $t_project_id);
+						if (access_has_bug_level($t_view_bug_threshold, $c_bug_id)) {
 							return $p_array[1] .
 								string_get_bug_view_link(
 									$c_bug_id,
-									(boolean)$p_detail_info,
-									(boolean)$p_fqdn
+									(bool)$p_detail_info,
+									(bool)$p_fqdn
 								);
 						}
 					}
@@ -362,12 +380,12 @@ function string_process_bug_link( $p_string, $p_include_anchor = true, $p_detail
 				}; # end of bug link callback closure
 		} else {
 			$s_bug_link_callback[$p_include_anchor][$p_detail_info][$p_fqdn] =
-				function( $p_array ) {
+				function ($p_array) {
 					$c_bug_id = (int)$p_array[2];
-					if( bug_exists( $c_bug_id ) ) {
+					if (bug_exists($c_bug_id)) {
 						# Create link regardless of user's access to the bug
 						return $p_array[1] .
-							string_get_bug_view_url_with_fqdn( $c_bug_id );
+							string_get_bug_view_url_with_fqdn($c_bug_id);
 					}
 					return $p_array[0];
 				}; # end of bug link callback closure
@@ -375,7 +393,7 @@ function string_process_bug_link( $p_string, $p_include_anchor = true, $p_detail
 	}
 
 	$p_string = preg_replace_callback(
-		'/(^|[^\w&])' . preg_quote( $t_tag, '/' ) . '(\d+)\b/',
+		'/(^|[^\w&])' . preg_quote($t_tag, '/') . '(\d+)\b/',
 		$s_bug_link_callback[$p_include_anchor][$p_detail_info][$p_fqdn],
 		$p_string
 	);
@@ -401,41 +419,45 @@ function string_process_bug_link( $p_string, $p_include_anchor = true, $p_detail
  * @param boolean $p_fqdn           Whether to return an absolute or relative link.
  * @return string
  */
-function string_process_bugnote_link( $p_string, $p_include_anchor = true, $p_detail_info = true, $p_fqdn = false ) {
+function string_process_bugnote_link($p_string, $p_include_anchor = true, $p_detail_info = true, $p_fqdn = false)
+{
 	static $s_bugnote_link_callback = array();
 
-	$t_tag = config_get( 'bugnote_link_tag' );
+	$t_tag = config_get('bugnote_link_tag');
 
 	# bail if the link tag is blank
-	if( '' == $t_tag || $p_string == '' ) {
+	if ('' == $t_tag || $p_string == '') {
 		return $p_string;
 	}
 
-	if( !isset( $s_bugnote_link_callback[$p_include_anchor][$p_detail_info][$p_fqdn] ) ) {
-		if( $p_include_anchor ) {
+	if (!isset($s_bugnote_link_callback[$p_include_anchor][$p_detail_info][$p_fqdn])) {
+		if ($p_include_anchor) {
 			$s_bugnote_link_callback[$p_include_anchor][$p_detail_info][$p_fqdn] =
-				function( $p_array ) use( $p_detail_info, $p_fqdn ) {
+				function ($p_array) use ($p_detail_info, $p_fqdn) {
 					global $g_project_override;
 					$c_bugnote_id = (int)$p_array[2];
-					if( bugnote_exists( $c_bugnote_id ) ) {
-						$t_bug_id = bugnote_get_field( $c_bugnote_id, 'bug_id' );
-						if( bug_exists( $t_bug_id ) ) {
-							$g_project_override = bug_get_field( $t_bug_id, 'project_id' );
-							if(   access_compare_level(
-										user_get_access_level( auth_get_current_user_id(),
-										bug_get_field( $t_bug_id, 'project_id' ) ),
-										config_get( 'private_bugnote_threshold' )
-								   )
-								|| bugnote_get_field( $c_bugnote_id, 'reporter_id' ) == auth_get_current_user_id()
-								|| bugnote_get_field( $c_bugnote_id, 'view_state' ) == VS_PUBLIC
+					if (bugnote_exists($c_bugnote_id)) {
+						$t_bug_id = bugnote_get_field($c_bugnote_id, 'bug_id');
+						if (bug_exists($t_bug_id)) {
+							$g_project_override = bug_get_field($t_bug_id, 'project_id');
+							if (
+								access_compare_level(
+									user_get_access_level(
+										auth_get_current_user_id(),
+										bug_get_field($t_bug_id, 'project_id')
+									),
+									config_get('private_bugnote_threshold')
+								)
+								|| bugnote_get_field($c_bugnote_id, 'reporter_id') == auth_get_current_user_id()
+								|| bugnote_get_field($c_bugnote_id, 'view_state') == VS_PUBLIC
 							) {
 								$g_project_override = null;
 								return $p_array[1] .
 									string_get_bugnote_view_link(
 										$t_bug_id,
 										$c_bugnote_id,
-										(boolean)$p_detail_info,
-										(boolean)$p_fqdn
+										(bool)$p_detail_info,
+										(bool)$p_fqdn
 									);
 							}
 							$g_project_override = null;
@@ -445,13 +467,13 @@ function string_process_bugnote_link( $p_string, $p_include_anchor = true, $p_de
 				}; # end of bugnote link callback closure
 		} else {
 			$s_bugnote_link_callback[$p_include_anchor][$p_detail_info][$p_fqdn] =
-				function( $p_array ) {
+				function ($p_array) {
 					$c_bugnote_id = (int)$p_array[2];
-					if( bugnote_exists( $c_bugnote_id ) ) {
-						$t_bug_id = bugnote_get_field( $c_bugnote_id, 'bug_id' );
-						if( $t_bug_id && bug_exists( $t_bug_id ) ) {
+					if (bugnote_exists($c_bugnote_id)) {
+						$t_bug_id = bugnote_get_field($c_bugnote_id, 'bug_id');
+						if ($t_bug_id && bug_exists($t_bug_id)) {
 							return $p_array[1] .
-								string_get_bugnote_view_url_with_fqdn( $t_bug_id, $c_bugnote_id );
+								string_get_bugnote_view_url_with_fqdn($t_bug_id, $c_bugnote_id);
 						}
 					}
 					return $p_array[0];
@@ -459,7 +481,7 @@ function string_process_bugnote_link( $p_string, $p_include_anchor = true, $p_de
 		}
 	}
 	$p_string = preg_replace_callback(
-		'/(^|[^\w])' . preg_quote( $t_tag, '/' ) . '(\d+)\b/',
+		'/(^|[^\w])' . preg_quote($t_tag, '/') . '(\d+)\b/',
 		$s_bugnote_link_callback[$p_include_anchor][$p_detail_info][$p_fqdn],
 		$p_string
 	);
@@ -472,16 +494,17 @@ function string_process_bugnote_link( $p_string, $p_include_anchor = true, $p_de
  * @param string $p_string String to be processed.
  * @return string
  */
-function string_insert_hrefs( $p_string ) {
+function string_insert_hrefs($p_string)
+{
 	static $s_url_regex = null;
 	static $s_email_regex = null;
 
-	if( !config_get( 'html_make_links' ) ) {
+	if (!config_get('html_make_links')) {
 		return $p_string;
 	}
 
 	# Initialize static variables
-	if( is_null( $s_url_regex ) ) {
+	if (is_null($s_url_regex)) {
 		# URL protocol. The regex accepts a small subset from the list of valid
 		# IANA permanent and provisional schemes defined in
 		# http://www.iana.org/assignments/uri-schemes/uri-schemes.xhtml
@@ -503,15 +526,15 @@ function string_insert_hrefs( $p_string ) {
 		$s_url_regex = "/(${t_url_protocol}(${t_url_part1}*?${t_url_part2}+))/su";
 
 		# e-mail regex
-		$s_email_regex = substr_replace( email_regex_simple(), '(?:mailto:)?', 1, 0 );
+		$s_email_regex = substr_replace(email_regex_simple(), '(?:mailto:)?', 1, 0);
 	}
 
 	# Find any URL in a string and replace it with a clickable link
 	$p_string = preg_replace_callback(
 		$s_url_regex,
-		function ( $p_match ) {
-			$t_url_href = 'href="' . rtrim( $p_match[1], '.' ) . '"';
-			if( config_get( 'html_make_links' ) == LINKS_NEW_WINDOW ) {
+		function ($p_match) {
+			$t_url_href = 'href="' . rtrim($p_match[1], '.') . '"';
+			if (config_get('html_make_links') == LINKS_NEW_WINDOW) {
 				$t_url_target = ' target="_blank"';
 			} else {
 				$t_url_target = '';
@@ -527,8 +550,8 @@ function string_insert_hrefs( $p_string ) {
 	# http://user:password@example.com/ to be not treated as an email.
 	$p_string = string_process_exclude_anchors(
 		$p_string,
-		function( $p_string ) use ( $s_email_regex ) {
-			return preg_replace( $s_email_regex, '<a href="mailto:\0">\0</a>', $p_string );
+		function ($p_string) use ($s_email_regex) {
+			return preg_replace($s_email_regex, '<a href="mailto:\0">\0</a>', $p_string);
 		}
 	);
 
@@ -543,17 +566,18 @@ function string_insert_hrefs( $p_string ) {
  * @param callable $p_callback Function to apply
  * @return string
  */
-function string_process_exclude_anchors( $p_string, $p_callback ) {
+function string_process_exclude_anchors($p_string, $p_callback)
+{
 	static $s_anchor_regex = '/(<a[^>]*>.*?<\/a>)/is';
 
-	$t_pieces = preg_split( $s_anchor_regex, $p_string, null, PREG_SPLIT_DELIM_CAPTURE );
+	$t_pieces = preg_split($s_anchor_regex, $p_string, null, PREG_SPLIT_DELIM_CAPTURE);
 
 	$t_string = '';
-	foreach( $t_pieces as $t_piece ) {
-		if( preg_match( $s_anchor_regex, $t_piece ) ) {
+	foreach ($t_pieces as $t_piece) {
+		if (preg_match($s_anchor_regex, $t_piece)) {
 			$t_string .= $t_piece;
 		} else {
-			$t_string .= $p_callback( $t_piece );
+			$t_string .= $p_callback($t_piece);
 		}
 	}
 
@@ -565,13 +589,14 @@ function string_process_exclude_anchors( $p_string, $p_callback ) {
  * @param string $p_string String to be processed.
  * @return string
  */
-function string_strip_hrefs( $p_string ) {
+function string_strip_hrefs($p_string)
+{
 	# First grab mailto: hrefs.  We don't care whether the URL is actually
 	# correct - just that it's inside an href attribute.
-	$p_string = preg_replace( '/<a\s[^\>]*href="mailto:([^\"]+)"[^\>]*>[^\<]*<\/a>/si', '\1', $p_string );
+	$p_string = preg_replace('/<a\s[^\>]*href="mailto:([^\"]+)"[^\>]*>[^\<]*<\/a>/si', '\1', $p_string);
 
 	# Then grab any other href
-	$p_string = preg_replace( '/<a\s[^\>]*href="([^\"]+)"[^\>]*>[^\<]*<\/a>/si', '\1', $p_string );
+	$p_string = preg_replace('/<a\s[^\>]*href="([^\"]+)"[^\>]*>[^\<]*<\/a>/si', '\1', $p_string);
 	return $p_string;
 }
 
@@ -583,35 +608,36 @@ function string_strip_hrefs( $p_string ) {
  * @param boolean $p_multiline Whether the string being processed is a multi-line string.
  * @return string
  */
-function string_restore_valid_html_tags( $p_string, $p_multiline = true ) {
+function string_restore_valid_html_tags($p_string, $p_multiline = true)
+{
 	global $g_cache_html_valid_tags_single_line, $g_cache_html_valid_tags;
 
-	if( is_blank( ( $p_multiline ? $g_cache_html_valid_tags : $g_cache_html_valid_tags_single_line ) ) ) {
-		$t_html_valid_tags = config_get_global( $p_multiline ? 'html_valid_tags' : 'html_valid_tags_single_line' );
+	if (is_blank(($p_multiline ? $g_cache_html_valid_tags : $g_cache_html_valid_tags_single_line))) {
+		$t_html_valid_tags = config_get_global($p_multiline ? 'html_valid_tags' : 'html_valid_tags_single_line');
 
-		if( OFF === $t_html_valid_tags || is_blank( $t_html_valid_tags ) ) {
+		if (OFF === $t_html_valid_tags || is_blank($t_html_valid_tags)) {
 			return $p_string;
 		}
 
-		$t_tags = explode( ',', $t_html_valid_tags );
-		foreach( $t_tags as $t_key => $t_value ) {
-			if( !is_blank( $t_value ) ) {
-				$t_tags[$t_key] = trim( $t_value );
+		$t_tags = explode(',', $t_html_valid_tags);
+		foreach ($t_tags as $t_key => $t_value) {
+			if (!is_blank($t_value)) {
+				$t_tags[$t_key] = trim($t_value);
 			}
 		}
-		$t_tags = implode( '|', $t_tags );
-		if( $p_multiline ) {
+		$t_tags = implode('|', $t_tags);
+		if ($p_multiline) {
 			$g_cache_html_valid_tags = $t_tags;
 		} else {
 			$g_cache_html_valid_tags_single_line = $t_tags;
 		}
 	} else {
-		$t_tags = ( $p_multiline ? $g_cache_html_valid_tags : $g_cache_html_valid_tags_single_line );
+		$t_tags = ($p_multiline ? $g_cache_html_valid_tags : $g_cache_html_valid_tags_single_line);
 	}
 
-	$p_string = preg_replace( '/&lt;(' . $t_tags . ')\s*&gt;/ui', '<\\1>', $p_string );
-	$p_string = preg_replace( '/&lt;\/(' . $t_tags . ')\s*&gt;/ui', '</\\1>', $p_string );
-	return preg_replace( '/&lt;(' . $t_tags . ')\s*\/&gt;/ui', '<\\1 />', $p_string );
+	$p_string = preg_replace('/&lt;(' . $t_tags . ')\s*&gt;/ui', '<\\1>', $p_string);
+	$p_string = preg_replace('/&lt;\/(' . $t_tags . ')\s*&gt;/ui', '</\\1>', $p_string);
+	return preg_replace('/&lt;(' . $t_tags . ')\s*\/&gt;/ui', '<\\1 />', $p_string);
 }
 
 /**
@@ -620,8 +646,9 @@ function string_restore_valid_html_tags( $p_string, $p_multiline = true ) {
  * @param string  $p_action  A valid action being performed - currently one of view, update or report.
  * @return string
  */
-function string_get_bug_page( $p_action ) {
-	switch( $p_action ) {
+function string_get_bug_page($p_action)
+{
+	switch ($p_action) {
 		case 'view':
 			return 'bug_view_page.php';
 		case 'update':
@@ -630,7 +657,7 @@ function string_get_bug_page( $p_action ) {
 			return 'bug_report_page.php';
 	}
 
-	trigger_error( ERROR_GENERIC, ERROR );
+	trigger_error(ERROR_GENERIC, ERROR);
 }
 
 /**
@@ -640,29 +667,30 @@ function string_get_bug_page( $p_action ) {
  * @param boolean $p_fqdn        Whether to return an absolute or relative link.
  * @return string
  */
-function string_get_bug_view_link( $p_bug_id, $p_detail_info = true, $p_fqdn = false ) {
-	if( bug_exists( $p_bug_id ) ) {
+function string_get_bug_view_link($p_bug_id, $p_detail_info = true, $p_fqdn = false)
+{
+	if (bug_exists($p_bug_id)) {
 		$t_link = '<a href="';
-		if( $p_fqdn ) {
-			$t_link .= config_get_global( 'path' );
+		if ($p_fqdn) {
+			$t_link .= config_get_global('path');
 		} else {
-			$t_link .= config_get_global( 'short_path' );
+			$t_link .= config_get_global('short_path');
 		}
-		$t_link .= string_get_bug_view_url( $p_bug_id ) . '"';
-		if( $p_detail_info ) {
-			$t_summary = string_attribute( bug_get_field( $p_bug_id, 'summary' ) );
-			$t_project_id = bug_get_field( $p_bug_id, 'project_id' );
-			$t_status = string_attribute( get_enum_element( 'status', bug_get_field( $p_bug_id, 'status' ), $t_project_id ) );
+		$t_link .= string_get_bug_view_url($p_bug_id) . '"';
+		if ($p_detail_info) {
+			$t_summary = string_attribute(bug_get_field($p_bug_id, 'summary'));
+			$t_project_id = bug_get_field($p_bug_id, 'project_id');
+			$t_status = string_attribute(get_enum_element('status', bug_get_field($p_bug_id, 'status'), $t_project_id));
 			$t_link .= ' title="[' . $t_status . '] ' . $t_summary . '"';
 
-			$t_resolved = bug_get_field( $p_bug_id, 'status' ) >= config_get( 'bug_resolved_status_threshold', null, null, $t_project_id );
-			if( $t_resolved ) {
+			$t_resolved = bug_get_field($p_bug_id, 'status') >= config_get('bug_resolved_status_threshold', null, null, $t_project_id);
+			if ($t_resolved) {
 				$t_link .= ' class="resolved"';
 			}
 		}
-		$t_link .= '>' . bug_format_id( $p_bug_id ) . '</a>';
+		$t_link .= '>' . bug_format_id($p_bug_id) . '</a>';
 	} else {
-		$t_link = bug_format_id( $p_bug_id );
+		$t_link = bug_format_id($p_bug_id);
 	}
 
 	return $t_link;
@@ -676,27 +704,28 @@ function string_get_bug_view_link( $p_bug_id, $p_detail_info = true, $p_fqdn = f
  * @param boolean $p_fqdn        Whether to return an absolute or relative link.
  * @return string
  */
-function string_get_bugnote_view_link( $p_bug_id, $p_bugnote_id, $p_detail_info = true, $p_fqdn = false ) {
+function string_get_bugnote_view_link($p_bug_id, $p_bugnote_id, $p_detail_info = true, $p_fqdn = false)
+{
 	$t_bug_id = (int)$p_bug_id;
 
-	if( bug_exists( $t_bug_id ) && bugnote_exists( $p_bugnote_id ) ) {
+	if (bug_exists($t_bug_id) && bugnote_exists($p_bugnote_id)) {
 		$t_link = '<a href="';
-		if( $p_fqdn ) {
-			$t_link .= config_get_global( 'path' );
+		if ($p_fqdn) {
+			$t_link .= config_get_global('path');
 		} else {
-			$t_link .= config_get_global( 'short_path' );
+			$t_link .= config_get_global('short_path');
 		}
 
-		$t_link .= string_get_bugnote_view_url( $p_bug_id, $p_bugnote_id ) . '"';
-		if( $p_detail_info ) {
-			$t_reporter = string_attribute( user_get_name( bugnote_get_field( $p_bugnote_id, 'reporter_id' ) ) );
-			$t_update_date = string_attribute( date( config_get( 'normal_date_format' ), ( bugnote_get_field( $p_bugnote_id, 'last_modified' ) ) ) );
-			$t_link .= ' title="' . bug_format_id( $t_bug_id ) . ': [' . $t_update_date . '] ' . $t_reporter . '"';
+		$t_link .= string_get_bugnote_view_url($p_bug_id, $p_bugnote_id) . '"';
+		if ($p_detail_info) {
+			$t_reporter = string_attribute(user_get_name(bugnote_get_field($p_bugnote_id, 'reporter_id')));
+			$t_update_date = string_attribute(date(config_get('normal_date_format'), (bugnote_get_field($p_bugnote_id, 'last_modified'))));
+			$t_link .= ' title="' . bug_format_id($t_bug_id) . ': [' . $t_update_date . '] ' . $t_reporter . '"';
 		}
 
-		$t_link .= '>' . bug_format_id( $t_bug_id ) . ':' . bugnote_format_id( $p_bugnote_id ) . '</a>';
+		$t_link .= '>' . bug_format_id($t_bug_id) . ':' . bugnote_format_id($p_bugnote_id) . '</a>';
 	} else {
-		$t_link = bugnote_format_id( $t_bug_id ) . ':' . bugnote_format_id( $p_bugnote_id );
+		$t_link = bugnote_format_id($t_bug_id) . ':' . bugnote_format_id($p_bugnote_id);
 	}
 
 	return $t_link;
@@ -707,7 +736,8 @@ function string_get_bugnote_view_link( $p_bug_id, $p_bugnote_id, $p_detail_info 
  * @param integer $p_bug_id A bug identifier.
  * @return string
  */
-function string_get_bug_view_url( $p_bug_id ) {
+function string_get_bug_view_url($p_bug_id)
+{
 	return 'view.php?id=' . $p_bug_id;
 }
 
@@ -717,7 +747,8 @@ function string_get_bug_view_url( $p_bug_id ) {
  * @param integer $p_bugnote_id A bugnote identifier.
  * @return string
  */
-function string_get_bugnote_view_url( $p_bug_id, $p_bugnote_id ) {
+function string_get_bugnote_view_url($p_bug_id, $p_bugnote_id)
+{
 	return 'view.php?id=' . $p_bug_id . '#c' . $p_bugnote_id;
 }
 
@@ -730,8 +761,9 @@ function string_get_bugnote_view_url( $p_bug_id, $p_bugnote_id ) {
  * @param integer $p_bugnote_id A bug note identifier.
  * @return string
  */
-function string_get_bugnote_view_url_with_fqdn( $p_bug_id, $p_bugnote_id ) {
-	return config_get_global( 'path' ) . string_get_bug_view_url( $p_bug_id ) . '#c' . $p_bugnote_id;
+function string_get_bugnote_view_url_with_fqdn($p_bug_id, $p_bugnote_id)
+{
+	return config_get_global('path') . string_get_bug_view_url($p_bug_id) . '#c' . $p_bugnote_id;
 }
 
 /**
@@ -741,8 +773,9 @@ function string_get_bugnote_view_url_with_fqdn( $p_bug_id, $p_bugnote_id ) {
  * @param integer $p_bug_id  A bug identifier.
  * @return string
  */
-function string_get_bug_view_url_with_fqdn( $p_bug_id ) {
-	return config_get_global( 'path' ) . string_get_bug_view_url( $p_bug_id );
+function string_get_bug_view_url_with_fqdn($p_bug_id)
+{
+	return config_get_global('path') . string_get_bug_view_url($p_bug_id);
 }
 
 /**
@@ -750,9 +783,10 @@ function string_get_bug_view_url_with_fqdn( $p_bug_id ) {
  * @param integer $p_bug_id  A bug identifier.
  * @return string
  */
-function string_get_bug_update_link( $p_bug_id ) {
-	$t_summary = string_attribute( bug_get_field( $p_bug_id, 'summary' ) );
-	return '<a href="' . helper_mantis_url( string_get_bug_update_url( $p_bug_id ) ) . '" title="' . $t_summary . '">' . bug_format_id( $p_bug_id ) . '</a>';
+function string_get_bug_update_link($p_bug_id)
+{
+	$t_summary = string_attribute(bug_get_field($p_bug_id, 'summary'));
+	return '<a href="' . helper_mantis_url(string_get_bug_update_url($p_bug_id)) . '" title="' . $t_summary . '">' . bug_format_id($p_bug_id) . '</a>';
 }
 
 /**
@@ -760,7 +794,8 @@ function string_get_bug_update_link( $p_bug_id ) {
  * @param integer $p_bug_id  A bug identifier.
  * @return string
  */
-function string_get_bug_update_url( $p_bug_id ) {
+function string_get_bug_update_url($p_bug_id)
+{
 	return string_get_bug_update_page() . '?bug_id=' . $p_bug_id;
 }
 
@@ -768,24 +803,27 @@ function string_get_bug_update_url( $p_bug_id ) {
  * return the name of a bug UPDATE page
  * @return string
  */
-function string_get_bug_update_page() {
-	return string_get_bug_page( 'update' );
+function string_get_bug_update_page()
+{
+	return string_get_bug_page('update');
 }
 
 /**
  * return an href anchor that links to a bug REPORT page
  * @return string
  */
-function string_get_bug_report_link() {
-	return '<a href="' . helper_mantis_url( string_get_bug_report_url() ) . '">' . lang_get( 'report_bug_link' ) . '</a>';
+function string_get_bug_report_link()
+{
+	return '<a href="' . helper_mantis_url(string_get_bug_report_url()) . '">' . lang_get('report_bug_link') . '</a>';
 }
 
 /**
  * return the name of a bug REPORT page
  * @return string
  */
-function string_get_bug_report_url() {
-	return string_get_bug_page( 'report' );
+function string_get_bug_report_url()
+{
+	return string_get_bug_page('report');
 }
 
 /**
@@ -794,8 +832,9 @@ function string_get_bug_report_url() {
  * @param string  $p_confirm_hash The confirmation hash value to include in the link.
  * @return string
  */
-function string_get_confirm_hash_url( $p_user_id, $p_confirm_hash ) {
-	return config_get_global( 'path' ) . 'verify.php?id=' . string_url( $p_user_id ) . '&confirm_hash=' . string_url( $p_confirm_hash );
+function string_get_confirm_hash_url($p_user_id, $p_confirm_hash)
+{
+	return config_get_global('path') . 'verify.php?id=' . string_url($p_user_id) . '&confirm_hash=' . string_url($p_confirm_hash);
 }
 
 /**
@@ -803,8 +842,9 @@ function string_get_confirm_hash_url( $p_user_id, $p_confirm_hash ) {
  * @param integer $p_date A date value to process.
  * @return string
  */
-function string_format_complete_date( $p_date ) {
-	return date( config_get( 'complete_date_format' ), $p_date );
+function string_format_complete_date($p_date)
+{
+	return date(config_get('complete_date_format'), $p_date);
 }
 
 /**
@@ -815,27 +855,28 @@ function string_format_complete_date( $p_date ) {
  *                          If not set, defaults to max_dropdown_length configuration variable.
  * @return string
  */
-function string_shorten( $p_string, $p_max = null ) {
-	if( $p_max === null ) {
-		$t_max = config_get( 'max_dropdown_length' );
+function string_shorten($p_string, $p_max = null)
+{
+	if ($p_max === null) {
+		$t_max = config_get('max_dropdown_length');
 	} else {
 		$t_max = (int)$p_max;
 	}
 
-	if( ( $t_max > 0 ) && ( mb_strlen( $p_string ) > $t_max ) ) {
+	if (($t_max > 0) && (mb_strlen($p_string) > $t_max)) {
 		$t_pattern = '/([\s|.|,|\-|_|\/|\?]+)/';
-		$t_bits = preg_split( $t_pattern, $p_string, -1, PREG_SPLIT_DELIM_CAPTURE );
+		$t_bits = preg_split($t_pattern, $p_string, -1, PREG_SPLIT_DELIM_CAPTURE);
 
 		$t_string = '';
-		$t_last = $t_bits[count( $t_bits ) - 1];
-		$t_last_len = strlen( $t_last );
+		$t_last = $t_bits[count($t_bits) - 1];
+		$t_last_len = strlen($t_last);
 
-		if( count( $t_bits ) == 1 ) {
-			$t_string .= mb_substr( $t_last, 0, $t_max - 3 );
+		if (count($t_bits) == 1) {
+			$t_string .= mb_substr($t_last, 0, $t_max - 3);
 			$t_string .= '...';
 		} else {
-			foreach( $t_bits as $t_bit ) {
-				if( ( mb_strlen( $t_string ) + mb_strlen( $t_bit ) + $t_last_len + 3 <= $t_max ) || ( strpos( $t_bit, '.,-/?' ) > 0 ) ) {
+			foreach ($t_bits as $t_bit) {
+				if ((mb_strlen($t_string) + mb_strlen($t_bit) + $t_last_len + 3 <= $t_max) || (strpos($t_bit, '.,-/?') > 0)) {
 					$t_string .= $t_bit;
 				} else {
 					break;
@@ -855,8 +896,9 @@ function string_shorten( $p_string, $p_max = null ) {
  * @param string $p_string The string to process.
  * @return string
  */
-function string_normalize( $p_string ) {
-	return preg_replace( '/ +/', ' ', trim( $p_string ) );
+function string_normalize($p_string)
+{
+	return preg_replace('/ +/', ' ', trim($p_string));
 }
 
 /**
@@ -864,7 +906,8 @@ function string_normalize( $p_string ) {
  * @param string $p_string The string to process.
  * @return string
  */
-function string_get_field_name( $p_string ) {
+function string_get_field_name($p_string)
+{
 	$t_map = array(
 		'attachment_count' => 'attachments',
 		'category_id' => 'category',
@@ -877,10 +920,10 @@ function string_get_field_name( $p_string ) {
 	);
 
 	$t_string = $p_string;
-	if( isset( $t_map[$p_string] ) ) {
+	if (isset($t_map[$p_string])) {
 		$t_string = $t_map[$p_string];
 	}
-	return lang_get_defaulted( $t_string );
+	return lang_get_defaulted($t_string);
 }
 
 /**
@@ -889,8 +932,9 @@ function string_get_field_name( $p_string ) {
  * @param string $p_string The string to process.
  * @return string
  */
-function string_html_entities( $p_string ) {
-	return htmlentities( $p_string, ENT_COMPAT, 'utf-8' );
+function string_html_entities($p_string)
+{
+	return htmlentities($p_string, ENT_COMPAT, 'utf-8');
 }
 
 /**
@@ -898,11 +942,12 @@ function string_html_entities( $p_string ) {
  * @param string $p_string The string to process.
  * @return string
  */
-function string_html_specialchars( $p_string ) {
+function string_html_specialchars($p_string)
+{
 	# achumakov: @ added to avoid warning output in unsupported codepages
 	# e.g. 8859-2, windows-1257, Korean, which are treated as 8859-1.
 	# This is VERY important for Eastern European, Baltic and Korean languages
-	return preg_replace( '/&amp;(#[0-9]+|[a-z]+);/i', '&$1;', @htmlspecialchars( $p_string, ENT_COMPAT, 'utf-8' ) );
+	return preg_replace('/&amp;(#[0-9]+|[a-z]+);/i', '&$1;', @htmlspecialchars($p_string, ENT_COMPAT, 'utf-8'));
 }
 
 /**
@@ -910,9 +955,10 @@ function string_html_specialchars( $p_string ) {
  * @param string $p_string The string to process.
  * @return string
  */
-function string_prepare_header( $p_string ) {
-	$t_string= explode( "\n", $p_string, 2 );
-	$t_string= explode( "\r", $t_string[0], 2 );
+function string_prepare_header($p_string)
+{
+	$t_string = explode("\n", $p_string, 2);
+	$t_string = explode("\r", $t_string[0], 2);
 	return $t_string[0];
 }
 
@@ -928,40 +974,41 @@ function string_prepare_header( $p_string ) {
  * @see http://www.php.net/str_pad
  * @see utf8_substr
  */
-function utf8_str_pad( $input, $length, $padStr = ' ', $type = STR_PAD_RIGHT ) {
+function utf8_str_pad($input, $length, $padStr = ' ', $type = STR_PAD_RIGHT)
+{
 
-    $inputLen = mb_strlen($input);
-    if ($length <= $inputLen) {
-        return $input;
-    }
+	$inputLen = mb_strlen($input);
+	if ($length <= $inputLen) {
+		return $input;
+	}
 
-    $padStrLen = mb_strlen($padStr);
-    $padLen = $length - $inputLen;
+	$padStrLen = mb_strlen($padStr);
+	$padLen = $length - $inputLen;
 
-    if ($type == STR_PAD_RIGHT) {
-        $repeatTimes = ceil($padLen / $padStrLen);
-        return mb_substr($input . str_repeat($padStr, $repeatTimes), 0, $length);
-    }
+	if ($type == STR_PAD_RIGHT) {
+		$repeatTimes = ceil($padLen / $padStrLen);
+		return mb_substr($input . str_repeat($padStr, $repeatTimes), 0, $length);
+	}
 
-    if ($type == STR_PAD_LEFT) {
-        $repeatTimes = ceil($padLen / $padStrLen);
-        return mb_substr(str_repeat($padStr, $repeatTimes), 0, floor($padLen)) . $input;
-    }
+	if ($type == STR_PAD_LEFT) {
+		$repeatTimes = ceil($padLen / $padStrLen);
+		return mb_substr(str_repeat($padStr, $repeatTimes), 0, floor($padLen)) . $input;
+	}
 
-    if ($type == STR_PAD_BOTH) {
+	if ($type == STR_PAD_BOTH) {
 
-        $padLen/= 2;
-        $padAmountLeft = floor($padLen);
-        $padAmountRight = ceil($padLen);
-        $repeatTimesLeft = ceil($padAmountLeft / $padStrLen);
-        $repeatTimesRight = ceil($padAmountRight / $padStrLen);
+		$padLen /= 2;
+		$padAmountLeft = floor($padLen);
+		$padAmountRight = ceil($padLen);
+		$repeatTimesLeft = ceil($padAmountLeft / $padStrLen);
+		$repeatTimesRight = ceil($padAmountRight / $padStrLen);
 
-        $paddingLeft = mb_substr(str_repeat($padStr, $repeatTimesLeft), 0, $padAmountLeft);
-        $paddingRight = mb_substr(str_repeat($padStr, $repeatTimesRight), 0, $padAmountLeft);
-        return $paddingLeft . $input . $paddingRight;
-    }
+		$paddingLeft = mb_substr(str_repeat($padStr, $repeatTimesLeft), 0, $padAmountLeft);
+		$paddingRight = mb_substr(str_repeat($padStr, $repeatTimesRight), 0, $padAmountLeft);
+		return $paddingLeft . $input . $paddingRight;
+	}
 
-    trigger_error('utf8_str_pad: Unknown padding type (' . $type . ')',E_USER_ERROR);
+	trigger_error('utf8_str_pad: Unknown padding type (' . $type . ')', E_USER_ERROR);
 }
 
 /**
@@ -970,10 +1017,11 @@ function utf8_str_pad( $input, $length, $padStr = ' ', $type = STR_PAD_RIGHT ) {
  * @return integer number of UTF-8 characters in string
  * @deprecated mb_strlen() should be used in preference to this function
  */
-function utf8_strlen( $p_string ) {
-    error_parameters( __FUNCTION__ . '()', 'mb_strlen()' );
-    trigger_error( ERROR_DEPRECATED_SUPERSEDED, DEPRECATED );
-    return mb_strlen( $p_string );
+function utf8_strlen($p_string)
+{
+	error_parameters(__FUNCTION__ . '()', 'mb_strlen()');
+	trigger_error(ERROR_DEPRECATED_SUPERSEDED, DEPRECATED);
+	return mb_strlen($p_string);
 }
 
 /**
@@ -984,10 +1032,11 @@ function utf8_strlen( $p_string ) {
  * @return mixed string or FALSE if failure
  * @deprecated mb_substr() should be used in preference to this function
  */
-function utf8_substr( $p_string, $p_offset, $p_length = NULL ) {
-    error_parameters( __FUNCTION__ . '()', 'mb_substr()' );
-    trigger_error( ERROR_DEPRECATED_SUPERSEDED, DEPRECATED );
-    return mb_substr( $p_string, $p_offset, $p_length );
+function utf8_substr($p_string, $p_offset, $p_length = NULL)
+{
+	error_parameters(__FUNCTION__ . '()', 'mb_substr()');
+	trigger_error(ERROR_DEPRECATED_SUPERSEDED, DEPRECATED);
+	return mb_substr($p_string, $p_offset, $p_length);
 }
 
 /**
@@ -996,8 +1045,9 @@ function utf8_substr( $p_string, $p_offset, $p_length = NULL ) {
  * @return string with all alphabetic characters converted to lowercase
  * @deprecated mb_strtolower() should be used in preference to this function
  */
-function utf8_strtolower( $p_string ) {
-    error_parameters( __FUNCTION__ . '()', 'mb_strtolower()' );
-    trigger_error( ERROR_DEPRECATED_SUPERSEDED, DEPRECATED );
-    return mb_strtolower( $p_string );
+function utf8_strtolower($p_string)
+{
+	error_parameters(__FUNCTION__ . '()', 'mb_strtolower()');
+	trigger_error(ERROR_DEPRECATED_SUPERSEDED, DEPRECATED);
+	return mb_strtolower($p_string);
 }

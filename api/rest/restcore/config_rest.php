@@ -22,9 +22,9 @@
  * @link http://www.mantisbt.org
  */
 
-$g_app->group('/config', function() use ( $g_app ) {
-	$g_app->get( '', 'rest_config_get' );
-	$g_app->get( '/', 'rest_config_get' );
+$g_app->group('/config', function () use ($g_app) {
+	$g_app->get('', 'rest_config_get');
+	$g_app->get('/', 'rest_config_get');
 });
 
 /**
@@ -35,18 +35,18 @@ $g_app->group('/config', function() use ( $g_app ) {
  * @param array $p_args Arguments
  * @return \Slim\Http\Response The augmented response.
  */
-function rest_config_get( \Slim\Http\Request $p_request, \Slim\Http\Response $p_response, array $p_args ) {
+function rest_config_get(\Slim\Http\Request $p_request, \Slim\Http\Response $p_response, array $p_args)
+{
 	$t_data = array(
 		'query' => array(
-			'option' => $p_request->getParam( 'option' ),
-			'project_id' => $p_request->getParam( 'project_id' ),
-			'user_id' => $p_request->getParam( 'user_id' ),
+			'option' => $p_request->getParam('option'),
+			'project_id' => $p_request->getParam('project_id'),
+			'user_id' => $p_request->getParam('user_id'),
 		)
 	);
 
-	$t_command = new ConfigsGetCommand( $t_data );
-	$t_result = $t_command->execute( $t_data );
+	$t_command = new ConfigsGetCommand($t_data);
+	$t_result = $t_command->execute($t_data);
 
-	return $p_response->withStatus( HTTP_STATUS_SUCCESS )->withJson( $t_result );
+	return $p_response->withStatus(HTTP_STATUS_SUCCESS)->withJson($t_result);
 }
-

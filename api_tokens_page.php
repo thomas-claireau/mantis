@@ -152,7 +152,7 @@ print_account_menu('api_tokens_page.php');
 												</form>
 											</td>
 										</tr>
-									<?php } ?>
+									<?php  } ?>
 								</tbody>
 							</table>
 						</div>

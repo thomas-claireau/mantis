@@ -137,7 +137,7 @@ $t_definition = custom_field_get_definition($f_field_id);
 												<input type="text" id="custom-field-default-value" name="default_value" class="input-sm" size="32" maxlength="255" value="<?php echo string_attribute($t_definition['default_value']) ?>" />
 											</div>
 											<div class="textarea">
-												<?php # Newline after opening textarea tag is intentional, see #25839 
+												<?php  # Newline after opening textarea tag is intentional, see #25839 
 												?>
 												<textarea id="custom-field-default-value-textarea" name="default_value" class="form-control" cols="80" rows="10" disabled="disabled">
 <?php echo string_attribute($t_definition['default_value']) ?>

@@ -31,12 +31,12 @@
  * @uses tokens_api.php
  */
 
-require_api( 'bug_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'current_user_api.php' );
-require_api( 'database_api.php' );
-require_api( 'tokens_api.php' );
+require_api('bug_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('current_user_api.php');
+require_api('database_api.php');
+require_api('tokens_api.php');
 
 /**
  * Determine if last visited feature is enabled
@@ -44,8 +44,9 @@ require_api( 'tokens_api.php' );
  * @return boolean true: enabled; false: otherwise.
  * @access public
  */
-function last_visited_enabled() {
-	return !( 0 == config_get( 'recently_visited_count' ) || current_user_is_anonymous() );
+function last_visited_enabled()
+{
+	return !(0 == config_get('recently_visited_count') || current_user_is_anonymous());
 }
 
 /**
@@ -57,22 +58,23 @@ function last_visited_enabled() {
  * @access public
  * @return void
  */
-function last_visited_issue( $p_issue_id, $p_user_id = null ) {
-	if( !last_visited_enabled() ) {
+function last_visited_issue($p_issue_id, $p_user_id = null)
+{
+	if (!last_visited_enabled()) {
 		return;
 	}
 
-	$t_value = token_get_value( TOKEN_LAST_VISITED, $p_user_id );
-	if( is_null( $t_value ) ) {
+	$t_value = token_get_value(TOKEN_LAST_VISITED, $p_user_id);
+	if (is_null($t_value)) {
 		$t_value = $p_issue_id;
 	} else {
-		$t_ids = explode( ',', $p_issue_id . ',' . $t_value );
-		$t_ids = array_unique( $t_ids );
-		$t_ids = array_slice( $t_ids, 0, config_get( 'recently_visited_count' ) );
-		$t_value = implode( ',', $t_ids );
+		$t_ids = explode(',', $p_issue_id . ',' . $t_value);
+		$t_ids = array_unique($t_ids);
+		$t_ids = array_slice($t_ids, 0, config_get('recently_visited_count'));
+		$t_value = implode(',', $t_ids);
 	}
 
-	token_set( TOKEN_LAST_VISITED, $t_value, TOKEN_EXPIRY_LAST_VISITED, $p_user_id );
+	token_set(TOKEN_LAST_VISITED, $t_value, TOKEN_EXPIRY_LAST_VISITED, $p_user_id);
 }
 
 /**
@@ -83,21 +85,22 @@ function last_visited_issue( $p_issue_id, $p_user_id = null ) {
  * @return array An array of issue ids or an empty array if none found.
  * @access public
  */
-function last_visited_get_array( $p_user_id = null ) {
-	if( !last_visited_enabled() ) {
+function last_visited_get_array($p_user_id = null)
+{
+	if (!last_visited_enabled()) {
 		return array();
 	}
 
-	$t_value = token_get_value( TOKEN_LAST_VISITED, $p_user_id );
+	$t_value = token_get_value(TOKEN_LAST_VISITED, $p_user_id);
 
-	if( is_null( $t_value ) ) {
+	if (is_null($t_value)) {
 		return array();
 	}
 
 	# we don't slice the array here to optimise for performance.  If the user reduces the number of recently
 	# visited to track, then he/she will get the extra entries until visiting an issue.
-	$t_ids = explode( ',', $t_value );
+	$t_ids = explode(',', $t_value);
 
-	bug_cache_array_rows( $t_ids );
+	bug_cache_array_rows($t_ids);
 	return $t_ids;
 }

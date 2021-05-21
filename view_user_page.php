@@ -113,7 +113,7 @@ $t_timeline_view_class = ($t_timeline_view_threshold_access) ? "col-md-7" : "col
 										<?php echo string_display_line($u_realname); ?>
 									</td>
 								</tr>
-							<?php } ?>
+							<?php  } ?>
 							<?php
 							if ($t_can_see_email) { ?>
 								<tr>
@@ -128,7 +128,7 @@ $t_timeline_view_class = ($t_timeline_view_threshold_access) ? "col-md-7" : "col
 										?>
 									</td>
 								</tr>
-							<?php } ?>
+							<?php  } ?>
 							<?php
 							if ($t_can_manage) { ?>
 								<tr>
@@ -171,7 +171,7 @@ $t_timeline_view_class = ($t_timeline_view_threshold_access) ? "col-md-7" : "col
 										<?php echo date($t_date_format, $u_last_visit); ?>
 									</td>
 								</tr>
-							<?php } ?>
+							<?php  } ?>
 						</fieldset>
 					</table>
 				</div>
@@ -185,7 +185,7 @@ $t_timeline_view_class = ($t_timeline_view_threshold_access) ? "col-md-7" : "col
 								<input type="submit" class="btn btn-primary btn-white btn-round" value="<?php echo lang_get('manage_user') ?>" /></span>
 							</fieldset>
 						</form>
-					<?php } ?>
+					<?php  } ?>
 					<?php if ($t_can_impersonate) { ?>
 						<form id="manage-user-impersonate-form" method="post" action="manage_user_impersonate.php" class="pull-right">
 							<fieldset>
@@ -194,9 +194,9 @@ $t_timeline_view_class = ($t_timeline_view_threshold_access) ? "col-md-7" : "col
 								<span><input type="submit" class="btn btn-primary btn-white btn-round" value="<?php echo lang_get('impersonate_user_button') ?>" /></span>
 							</fieldset>
 						</form>
-					<?php } ?>
+					<?php  } ?>
 				</div>
-			<?php } ?>
+			<?php  } ?>
 		</div>
 	</div>
 </div>
@@ -213,7 +213,7 @@ if ($t_timeline_view_threshold_access) {
 		<?php include($g_core_path . 'timeline_inc.php'); ?>
 		<div class="space-10"></div>
 	</div>
-<?php } ?>
+<?php  } ?>
 
 <?php
 layout_page_end();

@@ -30,13 +30,13 @@
 global $g_bypass_headers;
 $g_bypass_headers = 1;
 
-require_once( dirname( dirname( __FILE__ ) ) . '/core.php' );
+require_once(dirname(dirname(__FILE__)) . '/core.php');
 
 # Make sure this script doesn't run via the webserver
-if( php_sapi_name() != 'cli' ) {
-	echo basename( __FILE__ ) . " is not allowed to run through the webserver.\n";
-	exit( 1 );
+if (php_sapi_name() != 'cli') {
+	echo basename(__FILE__) . " is not allowed to run through the webserver.\n";
+	exit(1);
 }
 
-event_signal( 'EVENT_CRONJOB' );
-exit( 0 );
+event_signal('EVENT_CRONJOB');
+exit(0);

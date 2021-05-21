@@ -14,11 +14,11 @@
 # You should have received a copy of the GNU General Public License
 # along with MantisBT.  If not, see <http://www.gnu.org/licenses/>.
 
-require_api( 'authentication_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'config_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'user_api.php' );
+require_api('authentication_api.php');
+require_api('constant_inc.php');
+require_api('config_api.php');
+require_api('helper_api.php');
+require_api('user_api.php');
 
 use Mantis\Exceptions\ClientException;
 
@@ -32,7 +32,8 @@ use Mantis\Exceptions\ClientException;
  *   }
  * }
  */
-class UserResetPasswordCommand extends Command {
+class UserResetPasswordCommand extends Command
+{
 	/**
 	 * Constants for execute() method's return value.
 	 */
@@ -49,33 +50,36 @@ class UserResetPasswordCommand extends Command {
 	 *
 	 * @param array $p_data The command data.
 	 */
-	function __construct( array $p_data ) {
-		parent::__construct( $p_data );
+	function __construct(array $p_data)
+	{
+		parent::__construct($p_data);
 	}
 
 	/**
 	 * Validate the data.
 	 * @throws ClientException
 	 */
-	function validate() {
+	function validate()
+	{
 		# Ensure user has the required access level to reset passwords
-		if( !access_has_global_level( config_get_global( 'manage_user_threshold' ) ) ) {
-			throw new ClientException( 'Access denied to reset user password', ERROR_ACCESS_DENIED );
+		if (!access_has_global_level(config_get_global('manage_user_threshold'))) {
+			throw new ClientException('Access denied to reset user password', ERROR_ACCESS_DENIED);
 		}
 
-		$this->user_id_reset = (int)$this->query( 'id', null );
+		$this->user_id_reset = (int)$this->query('id', null);
 
 		# Make sure the account exists
-		$t_user = user_get_row( $this->user_id_reset );
-		if( $t_user === false ) {
-			throw new ClientException( 'Invalid user id', ERROR_INVALID_FIELD_VALUE, array( 'id' ) );
+		$t_user = user_get_row($this->user_id_reset);
+		if ($t_user === false) {
+			throw new ClientException('Invalid user id', ERROR_INVALID_FIELD_VALUE, array('id'));
 		}
 
 		# Mantis can't reset protected accounts' passwords, but if the
 		# account is locked, we allow the operation as Unlock
-		if( auth_can_set_password( $this->user_id_reset )
-			&& user_is_protected( $this->user_id_reset )
-			&& user_is_login_request_allowed( $this->user_id_reset )
+		if (
+			auth_can_set_password($this->user_id_reset)
+			&& user_is_protected($this->user_id_reset)
+			&& user_is_login_request_allowed($this->user_id_reset)
 		) {
 			throw new ClientException(
 				'Password reset not allowed for protected accounts',
@@ -85,17 +89,20 @@ class UserResetPasswordCommand extends Command {
 
 		# Ensure that the account to be reset is of equal or lower access than
 		# the current user.
-		if( !access_has_global_level( $t_user['access_level'] ) ) {
-			throw new ClientException( 'Access denied to reset user password with higher access level', ERROR_ACCESS_DENIED );
+		if (!access_has_global_level($t_user['access_level'])) {
+			throw new ClientException('Access denied to reset user password with higher access level', ERROR_ACCESS_DENIED);
 		}
 
 		# Check that we are not resetting the last administrator account
-		$t_admin_threshold = config_get_global( 'admin_site_threshold' );
-		if( user_is_administrator( $this->user_id_reset ) &&
-			user_count_level( $t_admin_threshold, /* enabled */ true ) <= 1 ) {
+		$t_admin_threshold = config_get_global('admin_site_threshold');
+		if (
+			user_is_administrator($this->user_id_reset) &&
+			user_count_level($t_admin_threshold, /* enabled */ true) <= 1
+		) {
 			throw new ClientException(
 				'Resetting last administrator not allowed',
-				ERROR_USER_CHANGE_LAST_ADMIN );
+				ERROR_USER_CHANGE_LAST_ADMIN
+			);
 		}
 	}
 
@@ -105,17 +112,19 @@ class UserResetPasswordCommand extends Command {
 	 * @returns array Command response
 	 * @throws ClientException
 	 */
-	protected function process() {
+	protected function process()
+	{
 		# If the password can be changed, reset it
-		if( auth_can_set_password( $this->user_id_reset )
-			&& user_reset_password( $this->user_id_reset )
+		if (
+			auth_can_set_password($this->user_id_reset)
+			&& user_reset_password($this->user_id_reset)
 		) {
-			return array( 'action' => self::RESULT_RESET );
+			return array('action' => self::RESULT_RESET);
 		}
 
 		# Password can't be changed, unlock the account
 		# the account (i.e. reset failed login count)
-		user_reset_failed_login_count_to_zero( $this->user_id_reset );
-		return array( 'action' =>  self::RESULT_UNLOCK );
+		user_reset_failed_login_count_to_zero($this->user_id_reset);
+		return array('action' =>  self::RESULT_UNLOCK);
 	}
 }

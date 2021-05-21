@@ -151,7 +151,7 @@ if ($t_global_profile) {
 									</label>
 								</th>
 								<td>
-									<?php # Newline after opening textarea tag is intentional, see #25839 
+									<?php  # Newline after opening textarea tag is intentional, see #25839 
 									?>
 									<textarea id="description" name="description" class="form-control" cols="60" rows="8">
 <?php echo string_textarea($v_description) ?>

@@ -161,5 +161,5 @@ $t_timeline_view_class = ($t_timeline_view_threshold_access) ? "col-md-7" : "col
 		?>
 		<div class="space-10"></div>
 	</div>
-<?php }
+<?php  }
 layout_page_end();

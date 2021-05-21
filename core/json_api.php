@@ -29,9 +29,9 @@
 /**
  * requires url_api
  */
-require_once( 'url_api.php' );
-require_once( 'database_api.php' );
-require_once( 'lang_api.php' );
+require_once('url_api.php');
+require_once('database_api.php');
+require_once('lang_api.php');
 
 /**
  * Get a chunk of JSON from a given URL.
@@ -39,13 +39,14 @@ require_once( 'lang_api.php' );
  * @param string $p_member Optional top-level member to retrieve.
  * @return mixed JSON class structure, false in case of non-existent member
  */
-function json_url( $p_url, $p_member = null ) {
-	$t_data = url_get( $p_url );
-	$t_json = json_decode( $t_data );
+function json_url($p_url, $p_member = null)
+{
+	$t_data = url_get($p_url);
+	$t_json = json_decode($t_data);
 
-	if( is_null( $p_member ) ) {
+	if (is_null($p_member)) {
 		return $t_json;
-	} else if( property_exists( $t_json, $p_member ) ) {
+	} else if (property_exists($t_json, $p_member)) {
 		return $t_json->$p_member;
 	} else {
 		return false;
@@ -62,18 +63,19 @@ function json_url( $p_url, $p_member = null ) {
  * @param integer $p_line    Contains the line number the error was raised at, as an integer.
  * @return void
  */
-function json_error_handler( $p_type, $p_error, $p_file, $p_line ) {
+function json_error_handler($p_type, $p_error, $p_file, $p_line)
+{
 	# flush any language overrides to return to user's natural default
-	if( function_exists( 'db_is_connected' ) ) {
-		if( db_is_connected() ) {
-			lang_push( lang_get_default() );
+	if (function_exists('db_is_connected')) {
+		if (db_is_connected()) {
+			lang_push(lang_get_default());
 		}
 	}
 
 	$t_error_code = ERROR_GENERIC; # default
 
 	# build an appropriate error string
-	switch( $p_type ) {
+	switch ($p_type) {
 		case E_WARNING:
 			$t_error_type = 'SYSTEM WARNING';
 			$t_error_description = $p_error;
@@ -85,12 +87,12 @@ function json_error_handler( $p_type, $p_error, $p_file, $p_line ) {
 		case E_USER_ERROR:
 			$t_error_type = 'APPLICATION ERROR #' . $p_error;
 			$t_error_code = $p_error;
-			$t_error_description = error_string( $p_error );
+			$t_error_description = error_string($p_error);
 			break;
 		case E_USER_WARNING:
 			$t_error_type = 'APPLICATION WARNING #' . $p_error;
 			$t_error_code = $p_error;
-			$t_error_description = error_string( $p_error );
+			$t_error_description = error_string($p_error);
 			break;
 		case E_USER_NOTICE:
 			# used for debugging
@@ -103,7 +105,7 @@ function json_error_handler( $p_type, $p_error, $p_file, $p_line ) {
 			$t_error_description = $p_error;
 	}
 
-	json_output_raw( array(
+	json_output_raw(array(
 		'status' => 'ERROR',
 		'error' => array(
 			'code' => $t_error_code,
@@ -111,7 +113,7 @@ function json_error_handler( $p_type, $p_error, $p_file, $p_line ) {
 			'message' => $t_error_description
 		),
 		'contents' => $t_error_description
-	) );
+	));
 }
 /**
  * Outputs the specified contents inside a json response with OK status
@@ -120,11 +122,12 @@ function json_error_handler( $p_type, $p_error, $p_file, $p_line ) {
  * @param string $p_contents The contents to encode.
  * @return void
  */
-function json_output_response ( $p_contents = '' ) {
-	json_output_raw( array(
+function json_output_response($p_contents = '')
+{
+	json_output_raw(array(
 		'status' => 'OK',
 		'contents' => $p_contents
-	) );
+	));
 }
 
 /**
@@ -132,8 +135,9 @@ function json_output_response ( $p_contents = '' ) {
  * @param mixed $p_contents Raw data to json encode.
  * @return void
  */
-function json_output_raw( $p_contents ) {
-	header( 'Content-Type: application/json' );
-	echo json_encode( $p_contents );
+function json_output_raw($p_contents)
+{
+	header('Content-Type: application/json');
+	echo json_encode($p_contents);
 	exit();
 }

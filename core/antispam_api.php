@@ -14,8 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with MantisBT.  If not, see <http://www.gnu.org/licenses/>.
 
-require_api( 'access_api.php' );
-require_api( 'history_api.php' );
+require_api('access_api.php');
+require_api('history_api.php');
 
 use Mantis\Exceptions\ClientException;
 
@@ -37,30 +37,31 @@ use Mantis\Exceptions\ClientException;
  * user is determined to demonstrate spammy behavior, this method will trigger an
  * error and exit the script.
  */
-function antispam_check() {
-	if( !auth_signup_enabled() ) {
+function antispam_check()
+{
+	if (!auth_signup_enabled()) {
 		return;
 	}
 
-	if( access_get_global_level() > auth_signup_access_level() ) {
+	if (access_get_global_level() > auth_signup_access_level()) {
 		return;
 	}
 
-	$t_antispam_max_event_count = config_get( 'antispam_max_event_count' );
-	if( $t_antispam_max_event_count == 0 ) {
+	$t_antispam_max_event_count = config_get('antispam_max_event_count');
+	if ($t_antispam_max_event_count == 0) {
 		return;
 	}
 
 	# Make sure user has at least one more event to add before exceeding the limit, which will happen
 	# after this method returns.
-	$t_antispam_time_window_in_seconds = config_get( 'antispam_time_window_in_seconds' );
-	if( history_count_user_recent_events( $t_antispam_time_window_in_seconds ) < $t_antispam_max_event_count ) {
+	$t_antispam_time_window_in_seconds = config_get('antispam_time_window_in_seconds');
+	if (history_count_user_recent_events($t_antispam_time_window_in_seconds) < $t_antispam_max_event_count) {
 		return;
 	}
 
 	throw new ClientException(
 		"Hit rate limit threshold",
 		ERROR_SPAM_SUSPECTED,
-		array( $t_antispam_max_event_count, $t_antispam_time_window_in_seconds )
+		array($t_antispam_max_event_count, $t_antispam_time_window_in_seconds)
 	);
 }

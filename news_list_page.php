@@ -104,7 +104,7 @@ layout_page_begin('main_page.php');
 							if (VS_PRIVATE == $v_view_state) {
 							?>
 								<span class="label label-info"><?php echo lang_get('private'); ?></span>
-							<?php } ?>
+							<?php  } ?>
 						</p>
 				<?php
 					}  	# end for loop

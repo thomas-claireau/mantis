@@ -26,16 +26,17 @@
  * @uses crypto_api.php
  */
 
-require_api( 'crypto_api.php' );
+require_api('crypto_api.php');
 
 /**
  * Checks if specified user can create API tokens.
  * @param integer|null $p_user_id User id or null for current logged in user.
  * @return bool true: can create tokens, false: otherwise.
  */
-function api_token_can_create( $p_user_id = null ) {
-	$t_user_id = is_null( $p_user_id ) ? auth_get_current_user_id() : $p_user_id;
-	return !user_is_protected( $t_user_id );
+function api_token_can_create($p_user_id = null)
+{
+	$t_user_id = is_null($p_user_id) ? auth_get_current_user_id() : $p_user_id;
+	return !user_is_protected($t_user_id);
 }
 
 /**
@@ -46,29 +47,30 @@ function api_token_can_create( $p_user_id = null ) {
  * @return string The plain token.
  * @access public
  */
-function api_token_create( $p_token_name, $p_user_id ) {
-	if( is_blank( $p_token_name ) ) {
-		error_parameters( lang_get( 'api_token_name' ) );
-		trigger_error( ERROR_EMPTY_FIELD, ERROR );
+function api_token_create($p_token_name, $p_user_id)
+{
+	if (is_blank($p_token_name)) {
+		error_parameters(lang_get('api_token_name'));
+		trigger_error(ERROR_EMPTY_FIELD, ERROR);
 	}
 
-	$t_token_name = trim( $p_token_name );
-	if( mb_strlen( $t_token_name ) > DB_FIELD_SIZE_API_TOKEN_NAME ) {
-		error_parameters( lang_get( 'api_token_name' ), DB_FIELD_SIZE_API_TOKEN_NAME );
-		trigger_error( ERROR_FIELD_TOO_LONG, ERROR );
+	$t_token_name = trim($p_token_name);
+	if (mb_strlen($t_token_name) > DB_FIELD_SIZE_API_TOKEN_NAME) {
+		error_parameters(lang_get('api_token_name'), DB_FIELD_SIZE_API_TOKEN_NAME);
+		trigger_error(ERROR_FIELD_TOO_LONG, ERROR);
 	}
 
-	api_token_name_ensure_unique( $t_token_name, $p_user_id );
+	api_token_name_ensure_unique($t_token_name, $p_user_id);
 
-	$t_plain_token = crypto_generate_uri_safe_nonce( API_TOKEN_LENGTH );
-	$t_hash = api_token_hash( $t_plain_token );
+	$t_plain_token = crypto_generate_uri_safe_nonce(API_TOKEN_LENGTH);
+	$t_hash = api_token_hash($t_plain_token);
 	$t_date_created = db_now();
 
 	db_param_push();
 	$t_query = 'INSERT INTO {api_token}
 					( user_id, name, hash, date_created )
 					VALUES ( ' . db_param() . ', ' . db_param() . ', ' . db_param() . ', ' . db_param() . ' )';
-	db_query( $t_query, array( $p_user_id, (string)$t_token_name, $t_hash, $t_date_created ) );
+	db_query($t_query, array($p_user_id, (string)$t_token_name, $t_hash, $t_date_created));
 
 	return $t_plain_token;
 }
@@ -79,8 +81,9 @@ function api_token_create( $p_token_name, $p_user_id ) {
  * @return string The one way hash for the token
  * @access public
  */
-function api_token_hash( $p_token ) {
-	return hash( 'sha256', $p_token );
+function api_token_hash($p_token)
+{
+	return hash('sha256', $p_token);
 }
 
 /**
@@ -91,12 +94,13 @@ function api_token_hash( $p_token ) {
  *
  * @return bool True if unique, False if token already exists
  */
-function api_token_name_is_unique( $p_token_name, $p_user_id ) {
+function api_token_name_is_unique($p_token_name, $p_user_id)
+{
 	db_param_push();
 	$t_query = 'SELECT * FROM {api_token} WHERE user_id=' . db_param() . ' AND name=' . db_param();
-	$t_result = db_query( $t_query, array( $p_user_id, $p_token_name ) );
+	$t_result = db_query($t_query, array($p_user_id, $p_token_name));
 
-	$t_row = db_fetch_array( $t_result );
+	$t_row = db_fetch_array($t_result);
 
 	return $t_row === false;
 }
@@ -108,10 +112,11 @@ function api_token_name_is_unique( $p_token_name, $p_user_id ) {
  * @param string $p_token_name The token name.
  * @param string $p_user_id The user id.
  */
-function api_token_name_ensure_unique( $p_token_name, $p_user_id ) {
-	if ( !api_token_name_is_unique( $p_token_name, $p_user_id ) ) {
-		error_parameters( $p_token_name );
-		trigger_error( ERROR_API_TOKEN_NAME_NOT_UNIQUE, ERROR );
+function api_token_name_ensure_unique($p_token_name, $p_user_id)
+{
+	if (!api_token_name_is_unique($p_token_name, $p_user_id)) {
+		error_parameters($p_token_name);
+		trigger_error(ERROR_API_TOKEN_NAME_NOT_UNIQUE, ERROR);
 	}
 }
 
@@ -122,24 +127,25 @@ function api_token_name_ensure_unique( $p_token_name, $p_user_id ) {
  * @return int|bool user id or false if no match found.
  * @access public
  */
-function api_token_get_user( $p_token ) {
+function api_token_get_user($p_token)
+{
 	# If the supplied token doesn't look like a valid one, then fail the check w/o doing db lookups.
 	# This is likely called from code that supports both tokens and passwords.
-	if( is_blank( $p_token ) || mb_strlen( $p_token ) != API_TOKEN_LENGTH ) {
+	if (is_blank($p_token) || mb_strlen($p_token) != API_TOKEN_LENGTH) {
 		return false;
 	}
 
-	$t_encrypted_token = api_token_hash( $p_token );
+	$t_encrypted_token = api_token_hash($p_token);
 
 	db_param_push();
 
 	# TODO: add an index on just the API token hash
 	$t_query = 'SELECT * FROM {api_token} WHERE hash=' . db_param();
-	$t_result = db_query( $t_query, array( $t_encrypted_token ) );
+	$t_result = db_query($t_query, array($t_encrypted_token));
 
-	$t_row = db_fetch_array( $t_result );
-	if( $t_row ) {
-		api_token_touch( $t_row['id'] );
+	$t_row = db_fetch_array($t_result);
+	if ($t_row) {
+		api_token_touch($t_row['id']);
 		return $t_row['user_id'];
 	}
 
@@ -153,30 +159,31 @@ function api_token_get_user( $p_token ) {
  * @return boolean true valid username and token, false otherwise.
  * @access public
  */
-function api_token_validate( $p_username, $p_token ) {
+function api_token_validate($p_username, $p_token)
+{
 	# If the supplied token doesn't look like a valid one, then fail the check w/o doing db lookups.
 	# This is likely called from code that supports both tokens and passwords.
-	if( is_blank( $p_token ) || mb_strlen( $p_token ) != API_TOKEN_LENGTH ) {
+	if (is_blank($p_token) || mb_strlen($p_token) != API_TOKEN_LENGTH) {
 		return false;
 	}
 
-	$t_user_id = user_get_id_by_name( $p_username );
+	$t_user_id = user_get_id_by_name($p_username);
 
 	# If user is not found in the database, they don't have api tokens, we won't bother with worrying about
 	# auto-creation scenario here.
-	if( $t_user_id === false ) {
+	if ($t_user_id === false) {
 		return false;
 	}
 
-	$t_encrypted_token = api_token_hash( $p_token );
+	$t_encrypted_token = api_token_hash($p_token);
 
 	db_param_push();
 	$t_query = 'SELECT * FROM {api_token} WHERE user_id=' . db_param() . ' AND hash=' . db_param();
-	$t_result = db_query( $t_query, array( $t_user_id, $t_encrypted_token ) );
+	$t_result = db_query($t_query, array($t_user_id, $t_encrypted_token));
 
-	$t_row = db_fetch_array( $t_result );
-	if( $t_row ) {
-		api_token_touch( $t_row['id'] );
+	$t_row = db_fetch_array($t_result);
+	if ($t_row) {
+		api_token_touch($t_row['id']);
 		return true;
 	}
 
@@ -189,14 +196,14 @@ function api_token_validate( $p_username, $p_token ) {
  * @return array Array of API token rows for owned by the user, can be empty.
  * @access public
  */
-function api_token_get_all( $p_user_id ) {
+function api_token_get_all($p_user_id)
+{
 	db_param_push();
 	$t_query = 'SELECT * FROM {api_token} WHERE user_id=' . db_param() . ' ORDER BY date_used DESC, date_created ASC';
-	$t_result = db_query( $t_query, array( $p_user_id ) );
+	$t_result = db_query($t_query, array($p_user_id));
 
 	$t_rows = array();
-	while ( ( $t_row = db_fetch_array( $t_result ) ) !== false )
-	{
+	while (($t_row = db_fetch_array($t_result)) !== false) {
 		$t_rows[] = $t_row;
 	}
 
@@ -209,7 +216,8 @@ function api_token_get_all( $p_user_id ) {
  * @return bool True if used
  * @access public
  */
-function api_token_is_used( array $p_token ) {
+function api_token_is_used(array $p_token)
+{
 	return (int)$p_token['date_used'] > 1;
 }
 
@@ -220,13 +228,14 @@ function api_token_is_used( array $p_token ) {
  * @return void
  * @access public
  */
-function api_token_touch( $p_api_token_id ) {
+function api_token_touch($p_api_token_id)
+{
 	$t_date_used = db_now();
 
 	db_param_push();
 	$t_query = 'UPDATE {api_token} SET date_used=' . db_param() . ' WHERE id=' . db_param();
 
-	db_query( $t_query, array( $t_date_used, $p_api_token_id ) );
+	db_query($t_query, array($t_date_used, $p_api_token_id));
 }
 
 /**
@@ -236,9 +245,9 @@ function api_token_touch( $p_api_token_id ) {
  * @return void
  * @access public
  */
-function api_token_revoke( $p_api_token_id, $p_user_id ) {
+function api_token_revoke($p_api_token_id, $p_user_id)
+{
 	db_param_push();
 	$t_query = 'DELETE FROM {api_token} WHERE id=' . db_param() . ' AND user_id = ' . db_param();
-	db_query( $t_query, array( $p_api_token_id, $p_user_id ) );
+	db_query($t_query, array($p_api_token_id, $p_user_id));
 }
-

@@ -35,15 +35,15 @@
  * @uses utility_api.php
  */
 
-require_api( 'access_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'current_user_api.php' );
-require_api( 'database_api.php' );
-require_api( 'error_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'utility_api.php' );
+require_api('access_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('current_user_api.php');
+require_api('database_api.php');
+require_api('error_api.php');
+require_api('helper_api.php');
+require_api('lang_api.php');
+require_api('utility_api.php');
 
 /**
  * Add a news item
@@ -56,15 +56,16 @@ require_api( 'utility_api.php' );
  * @param string  $p_body         News Body.
  * @return integer news article id
  */
-function news_create( $p_project_id, $p_poster_id, $p_view_state, $p_announcement, $p_headline, $p_body ) {
-	if( is_blank( $p_headline ) ) {
-		error_parameters( lang_get( 'headline' ) );
-		trigger_error( ERROR_EMPTY_FIELD, ERROR );
+function news_create($p_project_id, $p_poster_id, $p_view_state, $p_announcement, $p_headline, $p_body)
+{
+	if (is_blank($p_headline)) {
+		error_parameters(lang_get('headline'));
+		trigger_error(ERROR_EMPTY_FIELD, ERROR);
 	}
 
-	if( is_blank( $p_body ) ) {
-		error_parameters( lang_get( 'body' ) );
-		trigger_error( ERROR_EMPTY_FIELD, ERROR );
+	if (is_blank($p_body)) {
+		error_parameters(lang_get('body'));
+		trigger_error(ERROR_EMPTY_FIELD, ERROR);
 	}
 
 	db_param_push();
@@ -81,9 +82,9 @@ function news_create( $p_project_id, $p_poster_id, $p_view_state, $p_announcemen
 				      ' . db_param() . ',
 				      ' . db_param() . '
 					)';
-	db_query( $t_query, array( (int)$p_project_id, (int)$p_poster_id, db_now(), db_now(), (int)$p_view_state, $p_announcement, $p_headline, $p_body ) );
+	db_query($t_query, array((int)$p_project_id, (int)$p_poster_id, db_now(), db_now(), (int)$p_view_state, $p_announcement, $p_headline, $p_body));
 
-	$t_news_id = db_insert_id( db_get_table( 'news' ) );
+	$t_news_id = db_insert_id(db_get_table('news'));
 
 	return $t_news_id;
 }
@@ -94,10 +95,11 @@ function news_create( $p_project_id, $p_poster_id, $p_view_state, $p_announcemen
  * @param integer $p_news_id A news article identifier.
  * @return void
  */
-function news_delete( $p_news_id ) {
+function news_delete($p_news_id)
+{
 	db_param_push();
 	$t_query = 'DELETE FROM {news} WHERE id=' . db_param();
-	db_query( $t_query, array( $p_news_id ) );
+	db_query($t_query, array($p_news_id));
 }
 
 /**
@@ -106,10 +108,11 @@ function news_delete( $p_news_id ) {
  * @param integer $p_project_id A project identifier.
  * @return void
  */
-function news_delete_all( $p_project_id ) {
+function news_delete_all($p_project_id)
+{
 	db_param_push();
 	$t_query = 'DELETE FROM {news} WHERE project_id=' . db_param();
-	db_query( $t_query, array( (int)$p_project_id ) );
+	db_query($t_query, array((int)$p_project_id));
 }
 
 /**
@@ -123,15 +126,16 @@ function news_delete_all( $p_project_id ) {
  * @param string  $p_body         News body.
  * @return void
  */
-function news_update( $p_news_id, $p_project_id, $p_view_state, $p_announcement, $p_headline, $p_body ) {
-	if( is_blank( $p_headline ) ) {
-		error_parameters( lang_get( 'headline' ) );
-		trigger_error( ERROR_EMPTY_FIELD, ERROR );
+function news_update($p_news_id, $p_project_id, $p_view_state, $p_announcement, $p_headline, $p_body)
+{
+	if (is_blank($p_headline)) {
+		error_parameters(lang_get('headline'));
+		trigger_error(ERROR_EMPTY_FIELD, ERROR);
 	}
 
-	if( is_blank( $p_body ) ) {
-		error_parameters( lang_get( 'body' ) );
-		trigger_error( ERROR_EMPTY_FIELD, ERROR );
+	if (is_blank($p_body)) {
+		error_parameters(lang_get('body'));
+		trigger_error(ERROR_EMPTY_FIELD, ERROR);
 	}
 
 	# Update entry
@@ -144,7 +148,7 @@ function news_update( $p_news_id, $p_project_id, $p_view_state, $p_announcement,
 					project_id=' . db_param() . ',
 					last_modified= ' . db_param() . '
 				  WHERE id=' . db_param();
-	db_query( $t_query, array( $p_view_state, $p_announcement, $p_headline, $p_body, $p_project_id, db_now(), $p_news_id ) );
+	db_query($t_query, array($p_view_state, $p_announcement, $p_headline, $p_body, $p_project_id, db_now(), $p_news_id));
 }
 
 /**
@@ -153,15 +157,16 @@ function news_update( $p_news_id, $p_project_id, $p_view_state, $p_announcement,
  * @param integer $p_news_id A news article identifier.
  * @return array news article
  */
-function news_get_row( $p_news_id ) {
+function news_get_row($p_news_id)
+{
 	db_param_push();
 	$t_query = 'SELECT * FROM {news} WHERE id=' . db_param();
-	$t_result = db_query( $t_query, array( $p_news_id ) );
+	$t_result = db_query($t_query, array($p_news_id));
 
-	$t_row = db_fetch_array( $t_result );
+	$t_row = db_fetch_array($t_result);
 
-	if( !$t_row ) {
-		trigger_error( ERROR_NEWS_NOT_FOUND, ERROR );
+	if (!$t_row) {
+		trigger_error(ERROR_NEWS_NOT_FOUND, ERROR);
 	} else {
 		return $t_row;
 	}
@@ -174,18 +179,19 @@ function news_get_row( $p_news_id ) {
  * @param boolean $p_global     Whether this is site wide news i.e. ALL_PROJECTS.
  * @return int news count
  */
-function news_get_count( $p_project_id, $p_global = true ) {
-	$t_project_where = helper_project_specific_where( $p_project_id );
+function news_get_count($p_project_id, $p_global = true)
+{
+	$t_project_where = helper_project_specific_where($p_project_id);
 
 	$t_query = 'SELECT COUNT(*) FROM {news} WHERE ' . $t_project_where;
 
-	if( $p_global ) {
+	if ($p_global) {
 		$t_query .= ' OR project_id=' . ALL_PROJECTS;
 	}
 
-	$t_result = db_query( $t_query );
+	$t_result = db_query($t_query);
 
-	return db_result( $t_result, 0 );
+	return db_result($t_result, 0);
 }
 
 /**
@@ -195,31 +201,32 @@ function news_get_count( $p_project_id, $p_global = true ) {
  * @param boolean $p_global     Whether this is site wide news i.e. ALL_PROJECTS.
  * @return array Array of news articles
  */
-function news_get_rows( $p_project_id, $p_global = true ) {
-	$t_projects = current_user_get_all_accessible_subprojects( $p_project_id );
+function news_get_rows($p_project_id, $p_global = true)
+{
+	$t_projects = current_user_get_all_accessible_subprojects($p_project_id);
 	$t_projects[] = (int)$p_project_id;
 
-	if( $p_global && ALL_PROJECTS != $p_project_id ) {
+	if ($p_global && ALL_PROJECTS != $p_project_id) {
 		$t_projects[] = ALL_PROJECTS;
 	}
 
 	$t_query = 'SELECT * FROM {news}';
 
-	if( 1 == count( $t_projects ) ) {
+	if (1 == count($t_projects)) {
 		$c_project_id = $t_projects[0];
 		$t_query .= ' WHERE project_id=\'$c_project_id\'';
 	} else {
-		$t_query .= ' WHERE project_id IN (' . implode( ',', $t_projects ) . ')';
+		$t_query .= ' WHERE project_id IN (' . implode(',', $t_projects) . ')';
 	}
 
 	$t_query .= ' ORDER BY date_posted DESC';
 
-	$t_result = db_query( $t_query, array() );
+	$t_result = db_query($t_query, array());
 
 	$t_rows = array();
 
-	while( $t_row = db_fetch_array( $t_result ) ) {
-		array_push( $t_rows, $t_row );
+	while ($t_row = db_fetch_array($t_result)) {
+		array_push($t_rows, $t_row);
 	}
 
 	return $t_rows;
@@ -232,9 +239,10 @@ function news_get_rows( $p_project_id, $p_global = true ) {
  * @param string  $p_field_name The field name to retrieve.
  * @return mixed
  */
-function news_get_field( $p_news_id, $p_field_name ) {
-	$t_row = news_get_row( $p_news_id );
-	return( $t_row[$p_field_name] );
+function news_get_field($p_news_id, $p_field_name)
+{
+	$t_row = news_get_row($p_news_id);
+	return ($t_row[$p_field_name]);
 }
 
 /**
@@ -243,8 +251,9 @@ function news_get_field( $p_news_id, $p_field_name ) {
  * @param integer $p_news_id A news article identifier.
  * @return boolean
  */
-function news_is_private( $p_news_id ) {
-	return( news_get_field( $p_news_id, 'view_state' ) == VS_PRIVATE );
+function news_is_private($p_news_id)
+{
+	return (news_get_field($p_news_id, 'view_state') == VS_PRIVATE);
 }
 
 /**
@@ -255,67 +264,68 @@ function news_is_private( $p_news_id ) {
  * @param integer $p_project_id A project identifier.
  * @return array
  */
-function news_get_limited_rows( $p_offset, $p_project_id = null ) {
-	if( $p_project_id === null ) {
+function news_get_limited_rows($p_offset, $p_project_id = null)
+{
+	if ($p_project_id === null) {
 		$p_project_id = helper_get_current_project();
 	}
 
 	$c_offset = (int)$p_offset;
 
-	$t_projects = current_user_get_all_accessible_subprojects( $p_project_id );
+	$t_projects = current_user_get_all_accessible_subprojects($p_project_id);
 	$t_projects[] = (int)$p_project_id;
-	if( ALL_PROJECTS != $p_project_id ) {
+	if (ALL_PROJECTS != $p_project_id) {
 		$t_projects[] = ALL_PROJECTS;
 	}
 
-	$t_news_view_limit = config_get( 'news_view_limit' );
-	$t_news_view_limit_days = config_get( 'news_view_limit_days' ) * SECONDS_PER_DAY;
+	$t_news_view_limit = config_get('news_view_limit');
+	$t_news_view_limit_days = config_get('news_view_limit_days') * SECONDS_PER_DAY;
 
-	switch( config_get( 'news_limit_method' ) ) {
+	switch (config_get('news_limit_method')) {
 		case 0:
 			db_param_push();
-			
+
 			# BY_LIMIT - Select the news posts
 			$t_query = 'SELECT * FROM {news}';
 
-			if( 1 == count( $t_projects ) ) {
+			if (1 == count($t_projects)) {
 				$c_project_id = $t_projects[0];
 				$t_query .= ' WHERE project_id=' . db_param();
-				$t_params = array( $c_project_id );
+				$t_params = array($c_project_id);
 			} else {
-				$t_query .= ' WHERE project_id IN (' . implode( ',', $t_projects ) . ')';
+				$t_query .= ' WHERE project_id IN (' . implode(',', $t_projects) . ')';
 				$t_params = null;
 			}
 
 			$t_query .= ' ORDER BY announcement DESC, id DESC';
-			$t_result = db_query( $t_query, $t_params, $t_news_view_limit, $c_offset );
+			$t_result = db_query($t_query, $t_params, $t_news_view_limit, $c_offset);
 			break;
 		case 1:
 			db_param_push();
-			
+
 			# BY_DATE - Select the news posts
 			$t_query = 'SELECT * FROM {news} WHERE
-						( ' . db_helper_compare_time( db_param(), '<', 'date_posted', $t_news_view_limit_days ) . '
+						( ' . db_helper_compare_time(db_param(), '<', 'date_posted', $t_news_view_limit_days) . '
 						 OR announcement = ' . db_param() . ' ) ';
 			$t_params = array(
 				db_now(),
 				1,
 			);
-			if( 1 == count( $t_projects ) ) {
+			if (1 == count($t_projects)) {
 				$c_project_id = $t_projects[0];
 				$t_query .= ' AND project_id=' . db_param();
 				$t_params[] = $c_project_id;
 			} else {
-				$t_query .= ' AND project_id IN (' . implode( ',', $t_projects ) . ')';
+				$t_query .= ' AND project_id IN (' . implode(',', $t_projects) . ')';
 			}
 			$t_query .= ' ORDER BY announcement DESC, id DESC';
-			$t_result = db_query( $t_query, $t_params, $t_news_view_limit, $c_offset );
+			$t_result = db_query($t_query, $t_params, $t_news_view_limit, $c_offset);
 			break;
 	}
 
 	$t_rows = array();
-	while( $t_row = db_fetch_array( $t_result ) ) {
-		array_push( $t_rows, $t_row );
+	while ($t_row = db_fetch_array($t_result)) {
+		array_push($t_rows, $t_row);
 	}
 
 	return $t_rows;
@@ -326,16 +336,18 @@ function news_get_limited_rows( $p_offset, $p_project_id = null ) {
  * true: enabled, otherwise false.
  * @return boolean
  */
-function news_is_enabled() {
-	return config_get( 'news_enabled' ) == ON;
+function news_is_enabled()
+{
+	return config_get('news_enabled') == ON;
 }
 
 /**
  * Ensures that the news feature is enabled, otherwise generates an access denied error.
  * @return void
  */
-function news_ensure_enabled() {
-	if( !news_is_enabled() ) {
+function news_ensure_enabled()
+{
+	if (!news_is_enabled()) {
 		access_denied();
 	}
 }

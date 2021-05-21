@@ -238,7 +238,7 @@ $t_config_query = new DbQuery($t_sql, $t_params);
 
 	<!-- FILTER FORM -->
 	<form id="filter_form" method="post">
-		<?php # CSRF protection not required here - form does not result in modifications 
+		<?php  # CSRF protection not required here - form does not result in modifications 
 		?>
 		<input type="hidden" name="save" value="1" />
 
@@ -352,7 +352,7 @@ $t_config_query = new DbQuery($t_sql, $t_params);
 								<th><?php echo lang_get('access_level') ?></th>
 								<?php if ($t_read_write_access) { ?>
 									<th class="no-sort"><?php echo lang_get('actions') ?></th>
-								<?php } ?>
+								<?php  } ?>
 							</tr>
 						</thead>
 

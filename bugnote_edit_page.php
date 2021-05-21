@@ -143,8 +143,8 @@ $t_bugnote_class = bugnote_get_field($f_bugnote_id, 'view_state') == VS_PUBLIC ?
 											<input type="text" name="time_tracking" class="input-sm" size="5" value="<?php echo $t_time_tracking ?>" />
 										</td>
 									</tr>
-								<?php } ?>
-							<?php } ?>
+								<?php  } ?>
+							<?php  } ?>
 
 							<?php event_signal('EVENT_BUGNOTE_EDIT_FORM', array($t_bug_id, $f_bugnote_id)); ?>
 

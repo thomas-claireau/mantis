@@ -124,7 +124,7 @@ layout_page_begin('main_page.php');
 											<span class="required">*</span> <?php echo lang_get('body') ?>
 										</td>
 										<td>
-											<?php # Newline after opening textarea tag is intentional, see #25839 
+											<?php  # Newline after opening textarea tag is intentional, see #25839 
 											?>
 											<textarea class="form-control" id="news-update-body" name="body" cols="60" rows="10" required>
 <?php echo $v_body ?>

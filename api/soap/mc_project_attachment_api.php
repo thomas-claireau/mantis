@@ -23,7 +23,7 @@
  * @link http://www.mantisbt.org
  */
 
-require_once( dirname( __FILE__ ) . '/mc_core.php' );
+require_once(dirname(__FILE__) . '/mc_core.php');
 
 /**
  * Get the project attachment with the specified id.
@@ -33,14 +33,15 @@ require_once( dirname( __FILE__ ) . '/mc_core.php' );
  * @param integer $p_project_attachment_id The id of the attachment to be retrieved.
  * @return string Base64 encoded data that represents the attachment.
  */
-function mc_project_attachment_get( $p_username, $p_password, $p_project_attachment_id ) {
-	$t_user_id = mci_check_login( $p_username, $p_password );
-	if( $t_user_id === false ) {
+function mc_project_attachment_get($p_username, $p_password, $p_project_attachment_id)
+{
+	$t_user_id = mci_check_login($p_username, $p_password);
+	if ($t_user_id === false) {
 		return mci_fault_login_failed();
 	}
 
-	$t_file = mci_file_get( $p_project_attachment_id, 'doc', $t_user_id );
-	if( ApiObjectFactory::isFault( $t_file ) ) {
+	$t_file = mci_file_get($p_project_attachment_id, 'doc', $t_user_id);
+	if (ApiObjectFactory::isFault($t_file)) {
 		return $t_file;
 	}
 	return $t_file;
@@ -59,23 +60,24 @@ function mc_project_attachment_get( $p_username, $p_password, $p_project_attachm
  * @param string  $p_content     The attachment to add (base64Binary encoded).
  * @return integer The id of the added attachment.
  */
-function mc_project_attachment_add( $p_username, $p_password, $p_project_id, $p_name, $p_title, $p_description, $p_file_type, $p_content ) {
-	$t_user_id = mci_check_login( $p_username, $p_password );
-	if( $t_user_id === false ) {
+function mc_project_attachment_add($p_username, $p_password, $p_project_id, $p_name, $p_title, $p_description, $p_file_type, $p_content)
+{
+	$t_user_id = mci_check_login($p_username, $p_password);
+	if ($t_user_id === false) {
 		return mci_fault_login_failed();
 	}
 
 	# Check if project documentation feature is enabled.
-	if( OFF == config_get( 'enable_project_documentation' ) ) {
-		return mci_fault_access_denied( $t_user_id );
+	if (OFF == config_get('enable_project_documentation')) {
+		return mci_fault_access_denied($t_user_id);
 	}
-	if( !access_has_project_level( config_get( 'upload_project_file_threshold' ), $p_project_id, $t_user_id ) ) {
-		return mci_fault_access_denied( $t_user_id );
+	if (!access_has_project_level(config_get('upload_project_file_threshold'), $p_project_id, $t_user_id)) {
+		return mci_fault_access_denied($t_user_id);
 	}
-	if( is_blank( $p_title ) ) {
-		return ApiObjectFactory::faultBadRequest( 'Title must not be empty.' );
+	if (is_blank($p_title)) {
+		return ApiObjectFactory::faultBadRequest('Title must not be empty.');
 	}
-	return mci_file_add( $p_project_id, $p_name, $p_content, $p_file_type, 'project', $p_title, $p_description, $t_user_id );
+	return mci_file_add($p_project_id, $p_name, $p_content, $p_file_type, 'project', $p_title, $p_description, $t_user_id);
 }
 
 /**
@@ -86,14 +88,15 @@ function mc_project_attachment_add( $p_username, $p_password, $p_project_id, $p_
  * @param integer $p_project_attachment_id The id of the attachment to be deleted.
  * @return boolean true: success, false: failure
  */
-function mc_project_attachment_delete( $p_username, $p_password, $p_project_attachment_id ) {
-	$t_user_id = mci_check_login( $p_username, $p_password );
-	if( $t_user_id === false ) {
+function mc_project_attachment_delete($p_username, $p_password, $p_project_attachment_id)
+{
+	$t_user_id = mci_check_login($p_username, $p_password);
+	if ($t_user_id === false) {
 		return mci_fault_login_failed();
 	}
-	$t_project_id = file_get_field( $p_project_attachment_id, 'project_id', 'project' );
-	if( !access_has_project_level( config_get( 'upload_project_file_threshold' ), $t_project_id, $t_user_id ) ) {
-		return mci_fault_access_denied( $t_user_id );
+	$t_project_id = file_get_field($p_project_attachment_id, 'project_id', 'project');
+	if (!access_has_project_level(config_get('upload_project_file_threshold'), $t_project_id, $t_user_id)) {
+		return mci_fault_access_denied($t_user_id);
 	}
-	return file_delete( $p_project_attachment_id, 'project' );
+	return file_delete($p_project_attachment_id, 'project');
 }

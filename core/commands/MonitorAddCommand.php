@@ -14,19 +14,20 @@
 # You should have received a copy of the GNU General Public License
 # along with MantisBT.  If not, see <http://www.gnu.org/licenses/>.
 
-require_api( 'authentication_api.php' );
-require_api( 'bug_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'config_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'user_api.php' );
+require_api('authentication_api.php');
+require_api('bug_api.php');
+require_api('constant_inc.php');
+require_api('config_api.php');
+require_api('helper_api.php');
+require_api('user_api.php');
 
 use Mantis\Exceptions\ClientException;
 
 /**
  * A command that adds user to monitor an issue.
  */
-class MonitorAddCommand extends Command {
+class MonitorAddCommand extends Command
+{
 	/**
 	 * @var integer
 	 */
@@ -46,39 +47,41 @@ class MonitorAddCommand extends Command {
 	 *
 	 * @param array $p_data The command data.
 	 */
-	function __construct( array $p_data ) {
-		parent::__construct( $p_data );
+	function __construct(array $p_data)
+	{
+		parent::__construct($p_data);
 	}
 
 	/**
 	 * Validate the data.
 	 */
-	function validate() {		
-		$t_issue_id = helper_parse_issue_id( $this->query( 'issue_id' ) );
+	function validate()
+	{
+		$t_issue_id = helper_parse_issue_id($this->query('issue_id'));
 
-		$this->projectId = bug_get_field( $t_issue_id, 'project_id' );
+		$this->projectId = bug_get_field($t_issue_id, 'project_id');
 		$t_logged_in_user = auth_get_current_user_id();
 
-		$t_users = $this->payload( 'users', array( array( 'id' => $t_logged_in_user ) ) );
-		if( !is_array( $t_users ) ) {
-			throw new ClientException( 'Invalid users array', ERROR_INVALID_FIELD_VALUE, array( 'users' ) );
+		$t_users = $this->payload('users', array(array('id' => $t_logged_in_user)));
+		if (!is_array($t_users)) {
+			throw new ClientException('Invalid users array', ERROR_INVALID_FIELD_VALUE, array('users'));
 		}
 
 		# Normalize user objects
 		$t_user_ids = array();
-		foreach( $t_users as $t_user ) {
-			$t_user_ids[] = user_get_id_by_user_info( $t_user );
+		foreach ($t_users as $t_user) {
+			$t_user_ids[] = user_get_id_by_user_info($t_user);
 		}
 
 		$this->userIdsToAdd = array();
-		foreach( $t_user_ids as $t_user_id ) {
-			user_ensure_exists( $t_user_id );
+		foreach ($t_user_ids as $t_user_id) {
+			user_ensure_exists($t_user_id);
 
-			if( user_is_anonymous( $t_user_id ) ) {
-				throw new ClientException( "anonymous account can't monitor issues", ERROR_PROTECTED_ACCOUNT );
+			if (user_is_anonymous($t_user_id)) {
+				throw new ClientException("anonymous account can't monitor issues", ERROR_PROTECTED_ACCOUNT);
 			}
 
-			if( $t_logged_in_user == $t_user_id ) {
+			if ($t_logged_in_user == $t_user_id) {
 				$t_access_level_config = 'monitor_bug_threshold';
 			} else {
 				$t_access_level_config = 'monitor_add_others_bug_threshold';
@@ -86,12 +89,15 @@ class MonitorAddCommand extends Command {
 
 			$t_access_level = config_get(
 				$t_access_level_config,
-				/* default */ null,
-				/* user */ null,
-				$this->projectId );
+				/* default */
+				null,
+				/* user */
+				null,
+				$this->projectId
+			);
 
-			if( !access_has_bug_level( $t_access_level, $t_issue_id ) ) {
-				throw new ClientException( 'access denied', ERROR_ACCESS_DENIED );
+			if (!access_has_bug_level($t_access_level, $t_issue_id)) {
+				throw new ClientException('access denied', ERROR_ACCESS_DENIED);
 			}
 
 			$this->userIdsToAdd[] = $t_user_id;
@@ -103,8 +109,9 @@ class MonitorAddCommand extends Command {
 	 *
 	 * @returns array Command response
 	 */
-	protected function process() {
-		if( $this->projectId != helper_get_current_project() ) {
+	protected function process()
+	{
+		if ($this->projectId != helper_get_current_project()) {
 			# in case the current project is not the same project of the bug we are
 			# viewing, override the current project. This to avoid problems with
 			# categories and handlers lists etc.
@@ -112,11 +119,10 @@ class MonitorAddCommand extends Command {
 			$g_project_override = $this->projectId;
 		}
 
-		foreach( $this->userIdsToAdd as $t_user_id ) {
-			bug_monitor( $this->query( 'issue_id' ), $t_user_id );
+		foreach ($this->userIdsToAdd as $t_user_id) {
+			bug_monitor($this->query('issue_id'), $t_user_id);
 		}
 
 		return array();
 	}
 }
-

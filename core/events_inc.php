@@ -1,4 +1,5 @@
 <?php
+
 /**
  * MantisBT - A PHP based bugtracking system
  *
@@ -27,7 +28,7 @@
  */
 
 # Declare supported plugin events
-event_declare_many( array(
+event_declare_many(array(
 	# Events specific to plugins
 	'EVENT_PLUGIN_INIT' => EVENT_TYPE_EXECUTE,
 
@@ -154,4 +155,4 @@ event_declare_many( array(
 	'EVENT_AUTH_USER_FLAGS' => EVENT_TYPE_FIRST,
 
 	'EVENT_CRONJOB' => EVENT_TYPE_EXECUTE
-) );
+));

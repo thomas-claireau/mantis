@@ -69,7 +69,7 @@ class Tokenizer
 			}
 		}
 
-		$t_tokens = token_get_all('<?php ' . $p_code);
+		$t_tokens = token_get_all('<?php  ' . $p_code);
 
 		# Strip whitespace
 		$t_tokens = array_filter(
@@ -79,7 +79,7 @@ class Tokenizer
 			}
 		);
 
-		# Get rid of the opening '<?php' tag we added
+		# Get rid of the opening '<?php ' tag we added
 		array_shift($t_tokens);
 
 		# Remove any trailing ';'

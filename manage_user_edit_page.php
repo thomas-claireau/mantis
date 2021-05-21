@@ -219,7 +219,7 @@ print_manage_menu('manage_user_page.php');
 								<input type="checkbox" class="ace" id="send-email" name="send_email_notification" checked="checked">
 								<span class="lbl"> <?php echo lang_get('notify_user') ?></span>
 							</label>
-						<?php } ?>
+						<?php  } ?>
 					</div>
 				</div>
 			</div>
@@ -251,12 +251,12 @@ print_manage_menu('manage_user_page.php');
 							<input type="hidden" name="user_id" value="<?php echo $t_user['id'] ?>" />
 							<?php if ($t_reset) { ?>
 								<span><input type="submit" class="btn btn-primary btn-white btn-round" value="<?php echo lang_get('reset_password_button') ?>" /></span>
-							<?php	} else { ?>
+							<?php 	} else { ?>
 								<span><input type="submit" class="btn btn-primary btn-white btn-round" value="<?php echo lang_get('account_unlock_button') ?>" /></span>
-							<?php	} ?>
+							<?php 	} ?>
 						</fieldset>
 					</form>
-				<?php } ?>
+				<?php  } ?>
 
 				<!-- Delete Button -->
 				<?php if ($t_delete) { ?>
@@ -267,7 +267,7 @@ print_manage_menu('manage_user_page.php');
 							<span><input type="submit" class="btn btn-primary btn-white btn-round" value="<?php echo lang_get('delete_user_button') ?>" /></span>
 						</fieldset>
 					</form>
-				<?php } ?>
+				<?php  } ?>
 
 				<!-- Impersonate Button -->
 				<?php if ($t_impersonate) { ?>
@@ -278,11 +278,11 @@ print_manage_menu('manage_user_page.php');
 							<input type="submit" class="btn btn-primary btn-white btn-round" value="<?php echo lang_get('impersonate_user_button') ?>" />
 						</fieldset>
 					</form>
-				<?php } ?>
+				<?php  } ?>
 
 			</div>
 		</div>
-	<?php } ?>
+	<?php  } ?>
 
 	<?php if ($t_reset) { ?>
 		<div class="col-md-6 col-xs-12 no-padding">
@@ -299,7 +299,7 @@ print_manage_menu('manage_user_page.php');
 				?>
 			</div>
 		</div>
-	<?php } ?>
+	<?php  } ?>
 
 	<?php event_signal('EVENT_MANAGE_USER_PAGE', array($t_user_id)); ?>
 

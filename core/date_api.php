@@ -33,14 +33,14 @@
  * @uses utility_api.php
  */
 
-require_api( 'authentication_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'helper_api.php' );
-require_api( 'html_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'user_pref_api.php' );
-require_api( 'utility_api.php' );
+require_api('authentication_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('helper_api.php');
+require_api('html_api.php');
+require_api('lang_api.php');
+require_api('user_pref_api.php');
+require_api('utility_api.php');
 
 $g_cache_timezone = array();
 
@@ -50,7 +50,8 @@ $g_cache_timezone = array();
  * @return boolean
  * @access public
  */
-function date_is_null( $p_date ) {
+function date_is_null($p_date)
+{
 	return $p_date == date_get_null();
 }
 
@@ -59,7 +60,8 @@ function date_is_null( $p_date ) {
  * @return integer
  * @access public
  */
-function date_get_null() {
+function date_get_null()
+{
 	return 1;
 }
 
@@ -69,11 +71,12 @@ function date_get_null() {
  * @return false|int a timestamp on success, null date when $p_date is blank or false on failure.
  * @access public
  */
-function date_strtotime( $p_date ) {
-	if( is_blank( $p_date ) ) {
+function date_strtotime($p_date)
+{
+	if (is_blank($p_date)) {
 		return date_get_null();
 	}
-	return strtotime( $p_date );
+	return strtotime($p_date);
 }
 
 /**
@@ -82,14 +85,15 @@ function date_strtotime( $p_date ) {
  * @return void
  * @access public
  */
-function date_set_timezone( $p_timezone ) {
+function date_set_timezone($p_timezone)
+{
 	global $g_cache_timezone;
 
-	array_push( $g_cache_timezone, date_default_timezone_get() );
+	array_push($g_cache_timezone, date_default_timezone_get());
 
-	if( !date_default_timezone_set( $p_timezone ) ) {
+	if (!date_default_timezone_set($p_timezone)) {
 		# unable to set timezone
-		trigger_error( ERROR_UPDATING_TIMEZONE, WARNING );
+		trigger_error(ERROR_UPDATING_TIMEZONE, WARNING);
 	}
 }
 
@@ -98,18 +102,19 @@ function date_set_timezone( $p_timezone ) {
  * @return void
  * @access public
  */
-function date_restore_timezone() {
+function date_restore_timezone()
+{
 	global $g_cache_timezone;
 
-	$t_timezone = array_pop( $g_cache_timezone );
+	$t_timezone = array_pop($g_cache_timezone);
 
-	if( $t_timezone === null ) {
+	if ($t_timezone === null) {
 		return;
 	}
 
-	if( !date_default_timezone_set( $t_timezone ) ) {
+	if (!date_default_timezone_set($t_timezone)) {
 		# unable to set timezone
-		trigger_error( ERROR_UPDATING_TIMEZONE, WARNING );
+		trigger_error(ERROR_UPDATING_TIMEZONE, WARNING);
 	}
 }
 
@@ -119,13 +124,14 @@ function date_restore_timezone() {
  * @return void
  * @access public
  */
-function print_month_option_list( $p_month = 0 ) {
-	for( $i = 1;$i <= 12;$i++ ) {
-		$t_month_name = date( 'F', mktime( 0, 0, 0, $i, 1, 2000 ) );
-		if( $i == $p_month ) {
-			echo '<option value="' . $i . '" selected="selected">' . lang_get( 'month_' . strtolower( $t_month_name ) ) . '</option>';
+function print_month_option_list($p_month = 0)
+{
+	for ($i = 1; $i <= 12; $i++) {
+		$t_month_name = date('F', mktime(0, 0, 0, $i, 1, 2000));
+		if ($i == $p_month) {
+			echo '<option value="' . $i . '" selected="selected">' . lang_get('month_' . strtolower($t_month_name)) . '</option>';
 		} else {
-			echo '<option value="' . $i . '">' . lang_get( 'month_' . strtolower( $t_month_name ) ) . '</option>';
+			echo '<option value="' . $i . '">' . lang_get('month_' . strtolower($t_month_name)) . '</option>';
 		}
 	}
 }
@@ -137,9 +143,10 @@ function print_month_option_list( $p_month = 0 ) {
  * @return void
  * @access public
  */
-function print_numeric_month_option_list( $p_month = 0 ) {
-	for( $i = 1;$i <= 12;$i++ ) {
-		if( $i == $p_month ) {
+function print_numeric_month_option_list($p_month = 0)
+{
+	for ($i = 1; $i <= 12; $i++) {
+		if ($i == $p_month) {
 			echo '<option value="' . $i . '" selected="selected">' . $i . '</option>';
 		} else {
 			echo '<option value="' . $i . '">' . $i . '</option>';
@@ -153,9 +160,10 @@ function print_numeric_month_option_list( $p_month = 0 ) {
  * @return void
  * @access public
  */
-function print_day_option_list( $p_day = 0 ) {
-	for( $i = 1;$i <= 31;$i++ ) {
-		if( $i == $p_day ) {
+function print_day_option_list($p_day = 0)
+{
+	for ($i = 1; $i <= 31; $i++) {
+		if ($i == $p_day) {
 			echo '<option value="' . $i . '" selected="selected">' . $i . '</option>';
 		} else {
 			echo '<option value="' . $i . '">' . $i . '</option>';
@@ -170,11 +178,12 @@ function print_day_option_list( $p_day = 0 ) {
  * @return void
  * @access public
  */
-function print_year_option_list( $p_year = 0 ) {
-	$t_current_year = date( 'Y' );
+function print_year_option_list($p_year = 0)
+{
+	$t_current_year = date('Y');
 
-	for( $i = $t_current_year;$i > 1999;$i-- ) {
-		if( $i == $p_year ) {
+	for ($i = $t_current_year; $i > 1999; $i--) {
+		if ($i == $p_year) {
 			echo '<option value="' . $i . '" selected="selected">' . $i . '</option>';
 		} else {
 			echo '<option value="' . $i . '">' . $i . '</option>';
@@ -190,30 +199,31 @@ function print_year_option_list( $p_year = 0 ) {
  * @return void
  * @access public
  */
-function print_year_range_option_list( $p_year = 0, $p_start = 0, $p_end = 0 ) {
-	$t_current = date( 'Y' );
-	$t_forward_years = config_get( 'forward_year_count' );
+function print_year_range_option_list($p_year = 0, $p_start = 0, $p_end = 0)
+{
+	$t_current = date('Y');
+	$t_forward_years = config_get('forward_year_count');
 
 	$t_start_year = $p_start;
-	if( $t_start_year == 0 ) {
-		$t_backward_years = config_get( 'backward_year_count' );
+	if ($t_start_year == 0) {
+		$t_backward_years = config_get('backward_year_count');
 		$t_start_year = $t_current - $t_backward_years;
 	}
 
-	if( ( $p_year < $t_start_year ) && ( $p_year != 0 ) ) {
+	if (($p_year < $t_start_year) && ($p_year != 0)) {
 		$t_start_year = $p_year;
 	}
 
 	$t_end_year = $p_end;
-	if( $t_end_year == 0 ) {
+	if ($t_end_year == 0) {
 		$t_end_year = $t_current + $t_forward_years;
 	}
-	if( $p_year > $t_end_year ) {
+	if ($p_year > $t_end_year) {
 		$t_end_year = $p_year + $t_forward_years;
 	}
 
-	for( $i = $t_start_year;$i <= $t_end_year;$i++ ) {
-		if( $i == $p_year ) {
+	for ($i = $t_start_year; $i <= $t_end_year; $i++) {
+		if ($i == $p_year) {
 			echo '<option value="' . $i . '" selected="selected">' . $i . '</option>';
 		} else {
 			echo '<option value="' . $i . '">' . $i . '</option>';
@@ -235,48 +245,48 @@ function print_year_range_option_list( $p_year = 0, $p_start = 0, $p_end = 0 ) {
  * @return void
  * @access public
  */
-function print_date_selection_set( $p_name, $p_format, $p_date = 0, $p_default_disable = false, $p_allow_blank = false, $p_year_start = 0, $p_year_end = 0, $p_input_css = 'input-sm', $p_required = '' ) {
-	$t_chars = preg_split( '//', $p_format, -1, PREG_SPLIT_NO_EMPTY );
-	if( $p_date != 0 ) {
-		$t_date = preg_split( '/-/', date( 'Y-m-d', $p_date ), -1, PREG_SPLIT_NO_EMPTY );
+function print_date_selection_set($p_name, $p_format, $p_date = 0, $p_default_disable = false, $p_allow_blank = false, $p_year_start = 0, $p_year_end = 0, $p_input_css = 'input-sm', $p_required = '')
+{
+	$t_chars = preg_split('//', $p_format, -1, PREG_SPLIT_NO_EMPTY);
+	if ($p_date != 0) {
+		$t_date = preg_split('/-/', date('Y-m-d', $p_date), -1, PREG_SPLIT_NO_EMPTY);
 	} else {
-		$t_date = array( 0, 0, 0, );
+		$t_date = array(0, 0, 0,);
 	}
 
 	$t_disable = '';
-	if( $p_default_disable == true ) {
+	if ($p_default_disable == true) {
 		$t_disable = ' disabled="disabled"';
 	}
 	$t_blank_line = '';
-	if( $p_allow_blank == true ) {
+	if ($p_allow_blank == true) {
 		$t_blank_line = '<option value="0"></option>';
 	}
 
-	foreach( $t_chars as $t_char ) {
-		if( strcmp( $t_char, 'M' ) == 0 ) {
+	foreach ($t_chars as $t_char) {
+		if (strcmp($t_char, 'M') == 0) {
 			echo '<select class="' . $p_input_css . '" ' . helper_get_tab_index() . ' name="' . $p_name . '_month"' . $t_disable . $p_required . '>';
 			echo $t_blank_line;
-			print_month_option_list( $t_date[1] );
+			print_month_option_list($t_date[1]);
 			echo '</select>' . "\n";
 		}
-		if( strcmp( $t_char, 'm' ) == 0 ) {
+		if (strcmp($t_char, 'm') == 0) {
 			echo '<select class="' . $p_input_css . '" ' . helper_get_tab_index() . ' name="' . $p_name . '_month"' . $t_disable . $p_required . '>';
 			echo $t_blank_line;
-			print_month_option_list( $t_date[1] );
+			print_month_option_list($t_date[1]);
 			echo '</select>' . "\n";
 		}
-		if( strcasecmp( $t_char, 'D' ) == 0 ) {
+		if (strcasecmp($t_char, 'D') == 0) {
 			echo '<select class="' . $p_input_css . '" ' . helper_get_tab_index() . ' name="' . $p_name . '_day"' . $t_disable . $p_required . '>';
 			echo $t_blank_line;
-			print_day_option_list( $t_date[2] );
+			print_day_option_list($t_date[2]);
 			echo '</select>' . "\n";
 		}
-		if( strcasecmp( $t_char, 'Y' ) == 0 ) {
+		if (strcasecmp($t_char, 'Y') == 0) {
 			echo '<select class="' . $p_input_css . '" ' .  helper_get_tab_index() . ' name="' . $p_name . '_year"' . $t_disable . $p_required . '>';
 			echo $t_blank_line;
-			print_year_range_option_list( $t_date[0], $p_year_start, $p_year_end );
+			print_year_range_option_list($t_date[0], $p_year_start, $p_year_end);
 			echo '</select>' . "\n";
 		}
 	}
 }
-

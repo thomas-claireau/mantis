@@ -45,15 +45,15 @@
  * @uses utility_api.php
  */
 
-require_api( 'access_api.php' );
-require_api( 'bug_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'graphviz_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'relationship_api.php' );
-require_api( 'string_api.php' );
-require_api( 'utility_api.php' );
+require_api('access_api.php');
+require_api('bug_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('graphviz_api.php');
+require_api('helper_api.php');
+require_api('relationship_api.php');
+require_api('string_api.php');
+require_api('utility_api.php');
 
 /**
  * Generate a pretty bug ID string that is safe to use in the DOT language
@@ -66,9 +66,10 @@ require_api( 'utility_api.php' );
  * @param integer $p_bug_id ID of the bug to pretty format.
  * @return string Pretty formatted bug ID
  */
-function relgraph_bug_format_id( $p_bug_id ) {
-	$t_pretty_bug_id = bug_format_id( $p_bug_id );
-	if( !preg_match( '/^(([a-zA-z_][0-9a-zA-Z_]*)|(\d+))$/', $t_pretty_bug_id ) ) {
+function relgraph_bug_format_id($p_bug_id)
+{
+	$t_pretty_bug_id = bug_format_id($p_bug_id);
+	if (!preg_match('/^(([a-zA-z_][0-9a-zA-Z_]*)|(\d+))$/', $t_pretty_bug_id)) {
 		$t_pretty_bug_id = $p_bug_id;
 	}
 	return $t_pretty_bug_id;
@@ -81,7 +82,8 @@ function relgraph_bug_format_id( $p_bug_id ) {
  * @param boolean $p_show_summary Whether to include the Summary in the nodes
  * @return Graph
  */
-function relgraph_generate_rel_graph( $p_bug_id, $p_show_summary = false ) {
+function relgraph_generate_rel_graph($p_bug_id, $p_show_summary = false)
+{
 	# List of visited issues and their data.
 	$v_bug_list = array();
 	$v_rel_list = array();
@@ -90,35 +92,35 @@ function relgraph_generate_rel_graph( $p_bug_id, $p_show_summary = false ) {
 	$v_queue = array();
 
 	# Now we visit all related issues.
-	$t_max_depth = config_get( 'relationship_graph_max_depth' );
+	$t_max_depth = config_get('relationship_graph_max_depth');
 
 	# Put the first element into queue.
-	array_push( $v_queue, array( 0, $p_bug_id ) );
+	array_push($v_queue, array(0, $p_bug_id));
 
 	# And now we process it
-	while( !empty( $v_queue ) ) {
-		list( $t_depth, $t_id ) = array_shift( $v_queue );
+	while (!empty($v_queue)) {
+		list($t_depth, $t_id) = array_shift($v_queue);
 
-		if( isset( $v_bug_list[$t_id] ) ) {
+		if (isset($v_bug_list[$t_id])) {
 			continue;
 		}
 
-		if( !bug_exists( $t_id ) ) {
+		if (!bug_exists($t_id)) {
 			continue;
 		}
 
-		$t_bug = bug_get( $t_id, false );
+		$t_bug = bug_get($t_id, false);
 
-		if( !access_has_bug_level( config_get( 'view_bug_threshold', null, null, $t_bug->project_id ), $t_id ) ) {
+		if (!access_has_bug_level(config_get('view_bug_threshold', null, null, $t_bug->project_id), $t_id)) {
 			continue;
 		}
 
 		$v_bug_list[$t_id] = $t_bug;
 
-		$t_relationships = relationship_get_all_src( $t_id );
-		foreach( $t_relationships as $t_relationship ) {
+		$t_relationships = relationship_get_all_src($t_id);
+		foreach ($t_relationships as $t_relationship) {
 			$t_dst = $t_relationship->dest_bug_id;
-			if( BUG_DEPENDANT == $t_relationship->type ) {
+			if (BUG_DEPENDANT == $t_relationship->type) {
 				$v_rel_list[$t_id][$t_dst] = BUG_DEPENDANT;
 				$v_rel_list[$t_dst][$t_id] = BUG_BLOCKS;
 			} else {
@@ -126,15 +128,15 @@ function relgraph_generate_rel_graph( $p_bug_id, $p_show_summary = false ) {
 				$v_rel_list[$t_dst][$t_id] = $t_relationship->type;
 			}
 
-			if( $t_depth < $t_max_depth ) {
-				array_push( $v_queue, array( $t_depth + 1, $t_dst ) );
+			if ($t_depth < $t_max_depth) {
+				array_push($v_queue, array($t_depth + 1, $t_dst));
 			}
 		}
 
-		$t_relationships = relationship_get_all_dest( $t_id );
-		foreach( $t_relationships as $t_relationship ) {
+		$t_relationships = relationship_get_all_dest($t_id);
+		foreach ($t_relationships as $t_relationship) {
 			$t_dst = $t_relationship->src_bug_id;
-			if( BUG_DEPENDANT == $t_relationship->type ) {
+			if (BUG_DEPENDANT == $t_relationship->type) {
 				$v_rel_list[$t_id][$t_dst] = BUG_BLOCKS;
 				$v_rel_list[$t_dst][$t_id] = BUG_DEPENDANT;
 			} else {
@@ -142,8 +144,8 @@ function relgraph_generate_rel_graph( $p_bug_id, $p_show_summary = false ) {
 				$v_rel_list[$t_dst][$t_id] = $t_relationship->type;
 			}
 
-			if( $t_depth < $t_max_depth ) {
-				array_push( $v_queue, array( $t_depth + 1, $t_dst ) );
+			if ($t_depth < $t_max_depth) {
+				array_push($v_queue, array($t_depth + 1, $t_dst));
 			}
 		}
 	}
@@ -151,76 +153,76 @@ function relgraph_generate_rel_graph( $p_bug_id, $p_show_summary = false ) {
 	# We have already collected all the information we need to generate
 	# the graph. Now it is the matter to create a Digraph object and
 	# store the information there, along with graph formatting attributes.
-	$t_id_string = relgraph_bug_format_id( $p_bug_id );
-	$t_graph_fontname = config_get( 'relationship_graph_fontname' );
-	$t_graph_fontsize = config_get( 'relationship_graph_fontsize' );
+	$t_id_string = relgraph_bug_format_id($p_bug_id);
+	$t_graph_fontname = config_get('relationship_graph_fontname');
+	$t_graph_fontsize = config_get('relationship_graph_fontsize');
 	$t_graph_fontpath = get_font_path();
-	$t_view_on_click = config_get( 'relationship_graph_view_on_click' );
-	$t_neato_tool = config_get_global( 'neato_tool' );
+	$t_view_on_click = config_get('relationship_graph_view_on_click');
+	$t_neato_tool = config_get_global('neato_tool');
 
 	$t_graph_attributes = array(
 		'overlap'	=> 'false',
 		'overlap_scaling' => '0',
 	);
 
-	if( !empty( $t_graph_fontpath ) ) {
+	if (!empty($t_graph_fontpath)) {
 		$t_graph_attributes['fontpath'] = $t_graph_fontpath;
 	}
 
-	$t_graph = new Graph( $t_id_string, $t_graph_attributes, $t_neato_tool );
+	$t_graph = new Graph($t_id_string, $t_graph_attributes, $t_neato_tool);
 
-	$t_graph->set_default_node_attr( array (
-			'fontname'	=> $t_graph_fontname,
-			'fontsize'	=> $t_graph_fontsize,
-			'shape'		=> 'record',
-			'style'		=> 'filled',
-			'height'	=> '0.2',
-			'width'		=> '0.4'
-	) );
+	$t_graph->set_default_node_attr(array(
+		'fontname'	=> $t_graph_fontname,
+		'fontsize'	=> $t_graph_fontsize,
+		'shape'		=> 'record',
+		'style'		=> 'filled',
+		'height'	=> '0.2',
+		'width'		=> '0.4'
+	));
 
-	$t_graph->set_default_edge_attr( array (
-			'style'		=> 'solid',
-			'color'		=> '#0000C0',
-			'dir'		=> 'none'
-	) );
+	$t_graph->set_default_edge_attr(array(
+		'style'		=> 'solid',
+		'color'		=> '#0000C0',
+		'dir'		=> 'none'
+	));
 
 	# Add all issue nodes and edges to the graph.
-	ksort( $v_bug_list );
-	foreach( $v_bug_list as $t_id => $t_bug ) {
-		$t_id_string = relgraph_bug_format_id( $t_id );
+	ksort($v_bug_list);
+	foreach ($v_bug_list as $t_id => $t_bug) {
+		$t_id_string = relgraph_bug_format_id($t_id);
 
-		if( $t_view_on_click ) {
-			$t_url = string_get_bug_view_url( $t_id );
+		if ($t_view_on_click) {
+			$t_url = string_get_bug_view_url($t_id);
 		} else {
 			$t_url = 'bug_relationship_graph.php?bug_id=' . $t_id . '&graph=relation';
 		}
 
-		relgraph_add_bug_to_graph( $t_graph, $t_id_string, $t_bug, $t_url, $t_id == $p_bug_id, $p_show_summary );
+		relgraph_add_bug_to_graph($t_graph, $t_id_string, $t_bug, $t_url, $t_id == $p_bug_id, $p_show_summary);
 
 		# Now add all relationship edges to the graph.
-		if( isset( $v_rel_list[$t_id] ) ) {
-			foreach( $v_rel_list[$t_id] as $t_dst => $t_relation ) {
+		if (isset($v_rel_list[$t_id])) {
+			foreach ($v_rel_list[$t_id] as $t_dst => $t_relation) {
 
 				# Do not create edges for unvisited bugs.
-				if( !isset( $v_bug_list[$t_dst] ) ) {
+				if (!isset($v_bug_list[$t_dst])) {
 					continue;
 				}
 
 				# avoid double links
-				if( $t_dst < $t_id ) {
+				if ($t_dst < $t_id) {
 					continue;
 				}
 
-				$t_related_id = relgraph_bug_format_id( $t_dst );
+				$t_related_id = relgraph_bug_format_id($t_dst);
 
 				global $g_relationships;
-				if( isset( $g_relationships[$t_relation] ) && isset( $g_relationships[$t_relation]['#edge_style'] ) ) {
+				if (isset($g_relationships[$t_relation]) && isset($g_relationships[$t_relation]['#edge_style'])) {
 					$t_edge_style = $g_relationships[$t_relation]['#edge_style'];
 				} else {
 					$t_edge_style = array();
 				}
 
-				$t_graph->add_edge( $t_id_string, $t_related_id, $t_edge_style );
+				$t_graph->add_edge($t_id_string, $t_related_id, $t_edge_style);
 			}
 		}
 	}
@@ -236,7 +238,8 @@ function relgraph_generate_rel_graph( $p_bug_id, $p_show_summary = false ) {
  * @todo duplicate bug/bugid
  * @return Digraph
  */
-function relgraph_generate_dep_graph( $p_bug_id, $p_horizontal = false, $p_show_summary = false ) {
+function relgraph_generate_dep_graph($p_bug_id, $p_horizontal = false, $p_show_summary = false)
+{
 	# List of visited issues and their data.
 	$v_bug_list = array();
 
@@ -248,7 +251,7 @@ function relgraph_generate_dep_graph( $p_bug_id, $p_horizontal = false, $p_show_
 	# so, if these issues happen to be visited also, relationship links
 	# will be preserved.
 	# The first issue in the list is the one we are parting from.
-	$p_bug = bug_get( $p_bug_id, true );
+	$p_bug = bug_get($p_bug_id, true);
 
 	$v_bug_list[$p_bug_id] = $p_bug;
 	$v_bug_list[$p_bug_id]->is_descendant = true;
@@ -256,88 +259,88 @@ function relgraph_generate_dep_graph( $p_bug_id, $p_horizontal = false, $p_show_
 	$v_bug_list[$p_bug_id]->children = array();
 
 	# Now we visit all ascendants of the root issue.
-	$t_relationships = relationship_get_all_dest( $p_bug_id );
-	foreach( $t_relationships as $t_relationship ) {
-		if( $t_relationship->type != BUG_DEPENDANT ) {
+	$t_relationships = relationship_get_all_dest($p_bug_id);
+	foreach ($t_relationships as $t_relationship) {
+		if ($t_relationship->type != BUG_DEPENDANT) {
 			continue;
 		}
 
 		$v_bug_list[$p_bug_id]->parents[] = $t_relationship->src_bug_id;
-		relgraph_add_parent( $v_bug_list, $t_relationship->src_bug_id );
+		relgraph_add_parent($v_bug_list, $t_relationship->src_bug_id);
 	}
 
-	$t_relationships = relationship_get_all_src( $p_bug_id );
-	foreach( $t_relationships as $t_relationship ) {
-		if( $t_relationship->type != BUG_DEPENDANT ) {
+	$t_relationships = relationship_get_all_src($p_bug_id);
+	foreach ($t_relationships as $t_relationship) {
+		if ($t_relationship->type != BUG_DEPENDANT) {
 			continue;
 		}
 
 		$v_bug_list[$p_bug_id]->children[] = $t_relationship->dest_bug_id;
-		relgraph_add_child( $v_bug_list, $t_relationship->dest_bug_id );
+		relgraph_add_child($v_bug_list, $t_relationship->dest_bug_id);
 	}
 
 	# We have already collected all the information we need to generate
 	# the graph. Now it is the matter to create a Digraph object and
 	# store the information there, along with graph formatting attributes.
-	$t_id_string = relgraph_bug_format_id( $p_bug_id );
-	$t_graph_fontname = config_get( 'relationship_graph_fontname' );
-	$t_graph_fontsize = config_get( 'relationship_graph_fontsize' );
+	$t_id_string = relgraph_bug_format_id($p_bug_id);
+	$t_graph_fontname = config_get('relationship_graph_fontname');
+	$t_graph_fontsize = config_get('relationship_graph_fontsize');
 	$t_graph_fontpath = get_font_path();
-	$t_view_on_click = config_get( 'relationship_graph_view_on_click' );
-	$t_dot_tool = config_get_global( 'dot_tool' );
+	$t_view_on_click = config_get('relationship_graph_view_on_click');
+	$t_dot_tool = config_get_global('dot_tool');
 
 	$t_graph_attributes = array();
 
-	if( !empty( $t_graph_fontpath ) ) {
+	if (!empty($t_graph_fontpath)) {
 		$t_graph_attributes['fontpath'] = $t_graph_fontpath;
 	}
 
-	if( $p_horizontal ) {
+	if ($p_horizontal) {
 		$t_graph_attributes['rankdir'] = 'LR';
 		$t_graph_orientation = 'horizontal';
 	} else {
 		$t_graph_orientation = 'vertical';
 	}
 
-	$t_graph = new Digraph( $t_id_string, $t_graph_attributes, $t_dot_tool );
+	$t_graph = new Digraph($t_id_string, $t_graph_attributes, $t_dot_tool);
 
-	$t_graph->set_default_node_attr( array (
-			'fontname'	=> $t_graph_fontname,
-			'fontsize'	=> $t_graph_fontsize,
-			'shape'		=> 'record',
-			'style'		=> 'filled',
-			'height'	=> '0.2',
-			'width'		=> '0.4'
-	) );
+	$t_graph->set_default_node_attr(array(
+		'fontname'	=> $t_graph_fontname,
+		'fontsize'	=> $t_graph_fontsize,
+		'shape'		=> 'record',
+		'style'		=> 'filled',
+		'height'	=> '0.2',
+		'width'		=> '0.4'
+	));
 
-	$t_graph->set_default_edge_attr( array (
-			'style'		=> 'solid',
-			'color'		=> '#C00000',
-			'dir'		=> 'back'
-	) );
+	$t_graph->set_default_edge_attr(array(
+		'style'		=> 'solid',
+		'color'		=> '#C00000',
+		'dir'		=> 'back'
+	));
 
 	# Add all issue nodes and edges to the graph.
-	foreach( $v_bug_list as $t_related_bug_id => $t_related_bug ) {
-		$t_id_string = relgraph_bug_format_id( $t_related_bug_id );
+	foreach ($v_bug_list as $t_related_bug_id => $t_related_bug) {
+		$t_id_string = relgraph_bug_format_id($t_related_bug_id);
 
-		if( $t_view_on_click ) {
-			$t_url = string_get_bug_view_url( $t_related_bug_id );
+		if ($t_view_on_click) {
+			$t_url = string_get_bug_view_url($t_related_bug_id);
 		} else {
 			$t_url = 'bug_relationship_graph.php?bug_id=' . $t_related_bug_id . '&graph=dependency&orientation=' . $t_graph_orientation;
 		}
 
-		relgraph_add_bug_to_graph( $t_graph, $t_id_string, $t_related_bug, $t_url, $t_related_bug_id == $p_bug_id, $p_show_summary );
+		relgraph_add_bug_to_graph($t_graph, $t_id_string, $t_related_bug, $t_url, $t_related_bug_id == $p_bug_id, $p_show_summary);
 
 		# Now add all relationship edges to the graph.
-		foreach( $v_bug_list[$t_related_bug_id]->parents as $t_parent_id ) {
+		foreach ($v_bug_list[$t_related_bug_id]->parents as $t_parent_id) {
 
 			# Do not create edges for unvisited bugs.
-			if( !isset( $v_bug_list[$t_parent_id] ) ) {
+			if (!isset($v_bug_list[$t_parent_id])) {
 				continue;
 			}
 
-			$t_parent_node = relgraph_bug_format_id( $t_parent_id );
-			$t_graph->add_edge( $t_parent_node, $t_id_string );
+			$t_parent_node = relgraph_bug_format_id($t_parent_id);
+			$t_graph->add_edge($t_parent_node, $t_id_string);
 		}
 	}
 
@@ -350,21 +353,22 @@ function relgraph_generate_dep_graph( $p_bug_id, $p_horizontal = false, $p_show_
  * @param integer $p_bug_id    Bug id.
  * @return boolean
  */
-function relgraph_add_parent( array &$p_bug_list, $p_bug_id ) {
+function relgraph_add_parent(array &$p_bug_list, $p_bug_id)
+{
 	# If the issue is already in the list, we already visited it, just leave.
-	if( isset( $p_bug_list[$p_bug_id] ) ) {
+	if (isset($p_bug_list[$p_bug_id])) {
 		return true;
 	}
 
 	# Check if the issue really exists and we have access to it. If not,
 	# it is like it didn't exist.
-	if( !bug_exists( $p_bug_id ) ) {
+	if (!bug_exists($p_bug_id)) {
 		return false;
 	}
 
-	$t_bug = bug_get( $p_bug_id, false );
+	$t_bug = bug_get($p_bug_id, false);
 
-	if( !access_has_bug_level( config_get( 'view_bug_threshold', null, null, $t_bug->project_id ), $p_bug_id ) ) {
+	if (!access_has_bug_level(config_get('view_bug_threshold', null, null, $t_bug->project_id), $p_bug_id)) {
 		return false;
 	}
 
@@ -376,22 +380,22 @@ function relgraph_add_parent( array &$p_bug_list, $p_bug_id ) {
 
 	# Add all parent issues to the list of parents and visit them
 	# recursively.
-	$t_relationships = relationship_get_all_dest( $p_bug_id );
-	foreach( $t_relationships as $t_relationship ) {
-		if( $t_relationship->type != BUG_DEPENDANT ) {
+	$t_relationships = relationship_get_all_dest($p_bug_id);
+	foreach ($t_relationships as $t_relationship) {
+		if ($t_relationship->type != BUG_DEPENDANT) {
 			continue;
 		}
 
 		$p_bug_list[$p_bug_id]->parents[] = $t_relationship->src_bug_id;
-		relgraph_add_parent( $p_bug_list, $t_relationship->src_bug_id );
+		relgraph_add_parent($p_bug_list, $t_relationship->src_bug_id);
 	}
 
 	# Add all child issues to the list of children. Do not visit them
 	# since this will add too much data that is unrelated to the original
 	# issue, and has a potential to generate really huge graphs.
-	$t_relationships = relationship_get_all_src( $p_bug_id );
-	foreach( $t_relationships as $t_relationship ) {
-		if( $t_relationship->type != BUG_DEPENDANT ) {
+	$t_relationships = relationship_get_all_src($p_bug_id);
+	foreach ($t_relationships as $t_relationship) {
+		if ($t_relationship->type != BUG_DEPENDANT) {
 			continue;
 		}
 
@@ -407,14 +411,15 @@ function relgraph_add_parent( array &$p_bug_list, $p_bug_id ) {
  * @param integer $p_bug_id    Bug id.
  * @return boolean
  */
-function relgraph_add_child( array &$p_bug_list, $p_bug_id ) {
+function relgraph_add_child(array &$p_bug_list, $p_bug_id)
+{
 	# Check if the issue is already in the issue list.
-	if( isset( $p_bug_list[$p_bug_id] ) ) {
+	if (isset($p_bug_list[$p_bug_id])) {
 
 		# The issue is in the list, but we cannot discard it since it
 		# may be a parent issue (whose children were not visited).
 
-		if( !$p_bug_list[$p_bug_id]->is_descendant ) {
+		if (!$p_bug_list[$p_bug_id]->is_descendant) {
 
 			# Yes, we visited this issue as a parent... This is the case
 			# where someone set up a cyclic relationship (I really hope
@@ -423,21 +428,21 @@ function relgraph_add_child( array &$p_bug_list, $p_bug_id ) {
 			# that were already listed by _add_parent().
 			$p_bug_list[$p_bug_id]->is_descendant = true;
 
-			foreach( $p_bug_list[$p_bug_id]->children as $t_child ) {
-				relgraph_add_child( $p_bug_list, $t_child );
+			foreach ($p_bug_list[$p_bug_id]->children as $t_child) {
+				relgraph_add_child($p_bug_list, $t_child);
 			}
 		}
 	} else {
 		# The issue is not in the list, proceed as usual.
 		# Check if the issue really exists and we have access to it.
 		# If not, it is like it didn't exist.
-		if( !bug_exists( $p_bug_id ) ) {
+		if (!bug_exists($p_bug_id)) {
 			return false;
 		}
 
-		$t_bug = bug_get( $p_bug_id, false );
+		$t_bug = bug_get($p_bug_id, false);
 
-		if( !access_has_bug_level( config_get( 'view_bug_threshold', null, null, $t_bug->project_id ), $p_bug_id ) ) {
+		if (!access_has_bug_level(config_get('view_bug_threshold', null, null, $t_bug->project_id), $p_bug_id)) {
 			return false;
 		}
 
@@ -450,9 +455,9 @@ function relgraph_add_child( array &$p_bug_list, $p_bug_id ) {
 		# Add all parent issues to the list of parents. Do not visit them
 		# for the same reason we didn't visit the children of all
 		# ancestors.
-		$t_relationships = relationship_get_all_dest( $p_bug_id );
-		foreach( $t_relationships as $t_relationship ) {
-			if( $t_relationship->type != BUG_DEPENDANT ) {
+		$t_relationships = relationship_get_all_dest($p_bug_id);
+		foreach ($t_relationships as $t_relationship) {
+			if ($t_relationship->type != BUG_DEPENDANT) {
 				continue;
 			}
 
@@ -461,14 +466,14 @@ function relgraph_add_child( array &$p_bug_list, $p_bug_id ) {
 
 		# Add all child issues to the list of children and visit them
 		# recursively.
-		$t_relationships = relationship_get_all_src( $p_bug_id );
-		foreach( $t_relationships as $t_relationship ) {
-			if( $t_relationship->type != BUG_DEPENDANT ) {
+		$t_relationships = relationship_get_all_src($p_bug_id);
+		foreach ($t_relationships as $t_relationship) {
+			if ($t_relationship->type != BUG_DEPENDANT) {
 				continue;
 			}
 
 			$p_bug_list[$p_bug_id]->children[] = $t_relationship->dest_bug_id;
-			relgraph_add_child( $p_bug_list, $t_relationship->dest_bug_id );
+			relgraph_add_child($p_bug_list, $t_relationship->dest_bug_id);
 		}
 	}
 
@@ -481,8 +486,9 @@ function relgraph_add_child( array &$p_bug_list, $p_bug_id ) {
  * @param Graph $p_graph Graph object.
  * @return void
  */
-function relgraph_output_image( Graph $p_graph ) {
-	$p_graph->output( 'png', true );
+function relgraph_output_image(Graph $p_graph)
+{
+	$p_graph->output('png', true);
 }
 
 /**
@@ -492,9 +498,10 @@ function relgraph_output_image( Graph $p_graph ) {
  * @param string $p_name  The XHTML name attribute to apply to the containing <map> element.
  * @return void
  */
-function relgraph_output_map( Graph $p_graph, $p_name ) {
+function relgraph_output_map(Graph $p_graph, $p_name)
+{
 	echo '<map name="' . $p_name . '">' . "\n";
-	$p_graph->output( 'cmapx' );
+	$p_graph->output('cmapx');
 	echo '</map>' . "\n";
 }
 
@@ -509,20 +516,21 @@ function relgraph_output_map( Graph $p_graph, $p_name ) {
  * @param boolean $p_show_summary Whether to include the Summary in the nodes
  * @return void
  */
-function relgraph_add_bug_to_graph( Graph &$p_graph, $p_bug_id, BugData $p_bug, $p_url = null, $p_highlight = false, $p_show_summary = false ) {
-	$t_summary = string_display_line_links( $p_bug->summary );
-	$t_status = get_enum_element( 'status', $p_bug->status );
+function relgraph_add_bug_to_graph(Graph &$p_graph, $p_bug_id, BugData $p_bug, $p_url = null, $p_highlight = false, $p_show_summary = false)
+{
+	$t_summary = string_display_line_links($p_bug->summary);
+	$t_status = get_enum_element('status', $p_bug->status);
 	$t_label = $p_bug_id;
-	if( $p_show_summary ) {
+	if ($p_show_summary) {
 		# Truncate summary to 30 chars, to avoid nodes being too wide
-		$t_label .= "\n" . mb_strimwidth( $t_summary, 0, 30, "..." );
+		$t_label .= "\n" . mb_strimwidth($t_summary, 0, 30, "...");
 	}
 
 	$t_node_attributes = array();
 	$t_node_attributes['label'] = $t_label;
 	$t_node_attributes['tooltip'] = '[' . $t_status . '] ' . $t_summary;
 
-	if( $p_highlight ) {
+	if ($p_highlight) {
 		$t_node_attributes['color'] = '#0000FF';
 		$t_node_attributes['style'] = 'bold, filled';
 	} else {
@@ -530,11 +538,11 @@ function relgraph_add_bug_to_graph( Graph &$p_graph, $p_bug_id, BugData $p_bug, 
 		$t_node_attributes['style'] = 'filled';
 	}
 
-	$t_node_attributes['fillcolor'] = get_status_color( $p_bug->status );
+	$t_node_attributes['fillcolor'] = get_status_color($p_bug->status);
 
-	if( null !== $p_url ) {
+	if (null !== $p_url) {
 		$t_node_attributes['URL'] = $p_url;
 	}
 
-	$p_graph->add_node( $p_bug_id, $t_node_attributes );
+	$p_graph->add_node($p_bug_id, $t_node_attributes);
 }

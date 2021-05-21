@@ -31,14 +31,17 @@
  * Determine if PHP is running in CLI or CGI mode and return the mode.
  * @return int PHP mode
  */
-function php_mode() {
+function php_mode()
+{
 	static $s_mode = null;
 
-	if( is_null( $s_mode ) ) {
+	if (is_null($s_mode)) {
 		# Check to see if this is CLI mode or CGI mode
-		if( isset( $_SERVER['SERVER_ADDR'] )
-			|| isset( $_SERVER['LOCAL_ADDR'] )
-			|| isset( $_SERVER['REMOTE_ADDR'] ) ) {
+		if (
+			isset($_SERVER['SERVER_ADDR'])
+			|| isset($_SERVER['LOCAL_ADDR'])
+			|| isset($_SERVER['REMOTE_ADDR'])
+		) {
 			$s_mode = PHP_CGI;
 		} else {
 			$s_mode = PHP_CLI;

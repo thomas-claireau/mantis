@@ -13,16 +13,16 @@
 // $Id$
 
 /**
-* @package RSS
-* @category flaimo-php
-* @filesource
-*/
+ * @package RSS
+ * @category flaimo-php
+ * @filesource
+ */
 error_reporting(E_ALL);
 ob_start();
 include_once 'class.RSSBuilder.inc.php';
 
 /* create the object - remember, not all attibutes are supported by every rss version. just hand over an empty string if you don't need a specific attribute */
-$encoding =(string) 'UTF-8';
+$encoding = (string) 'UTF-8';
 $about = (string) 'http://flaimo.com/';
 $title = (string) 'flaimo.com fake news';
 $description = (string) 'non existing news about my homepage';
@@ -44,7 +44,7 @@ $rssfile->addDCdata($publisher,	$creator, $date, $language,	$rights, $coverage, 
 /* if you want you can add additional Syndication data to the basic rss file (if rss version supports it) */
 $period = (string) 'daily'; // hourly / daily / weekly / ...
 $frequency = (int) 1; // every X hours/days/...
-$base = (string) time()-10000;
+$base = (string) time() - 10000;
 $rssfile->addSYdata($period, $frequency, $base);
 
 /* data for a single RSS item */
@@ -74,4 +74,3 @@ echo $rssfile->saveRSS($version, $path = '');
 */
 
 ob_end_flush();
-?>

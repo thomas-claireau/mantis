@@ -339,7 +339,7 @@ function edit_account_prefs($p_user_id = null, $p_error_if_protected = true, $p_
 												</label>
 											</td>
 										</tr>
-									<?php } else { ?>
+									<?php  } else { ?>
 										<input type="hidden" name="email_on_new" value="<?php echo $t_pref->email_on_new ?>" />
 										<input type="hidden" name="email_on_assigned" value="<?php echo $t_pref->email_on_assigned ?>" />
 										<input type="hidden" name="email_on_feedback" value="<?php echo $t_pref->email_on_feedback ?>" />
@@ -360,7 +360,7 @@ function edit_account_prefs($p_user_id = null, $p_error_if_protected = true, $p_
 										<input type="hidden" name="email_on_priority_min_severity" value="<?php echo $t_pref->email_on_priority_min_severity ?>" />
 										<input type="hidden" name="email_bugnote_limit" value="<?php echo $t_pref->email_bugnote_limit ?>" />
 										<input type="hidden" name="email_full_issue" value="<?php echo $t_email_full_issue ?>" />
-									<?php } ?>
+									<?php  } ?>
 									<tr>
 										<td class="category">
 											<?php echo lang_get('timezone') ?>

@@ -14,19 +14,20 @@
 # You should have received a copy of the GNU General Public License
 # along with MantisBT.  If not, see <http://www.gnu.org/licenses/>.
 
-require_api( 'authentication_api.php' );
-require_api( 'bug_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'config_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'user_api.php' );
+require_api('authentication_api.php');
+require_api('bug_api.php');
+require_api('constant_inc.php');
+require_api('config_api.php');
+require_api('helper_api.php');
+require_api('user_api.php');
 
 use Mantis\Exceptions\ClientException;
 
 /**
  * A command that gets issue attachments.
  */
-class IssueFileGetCommand extends Command {
+class IssueFileGetCommand extends Command
+{
 	/**
 	 * The issue id.
 	 */
@@ -37,15 +38,17 @@ class IssueFileGetCommand extends Command {
 	 *
 	 * @param array $p_data The command data.
 	 */
-	function __construct( array $p_data ) {
-		parent::__construct( $p_data );
+	function __construct(array $p_data)
+	{
+		parent::__construct($p_data);
 	}
 
 	/**
 	 * Validate the data.
 	 */
-	function validate() {
-		$this->issue_id = helper_parse_issue_id( $this->query( 'issue_id' ) );
+	function validate()
+	{
+		$this->issue_id = helper_parse_issue_id($this->query('issue_id'));
 	}
 
 	/**
@@ -53,11 +56,12 @@ class IssueFileGetCommand extends Command {
 	 *
 	 * @returns array Command response
 	 */
-	protected function process() {
-		$t_issue = bug_get( $this->issue_id, true );
+	protected function process()
+	{
+		$t_issue = bug_get($this->issue_id, true);
 		$this->user_id = auth_get_current_user_id();
 
-		if( $t_issue->project_id != helper_get_current_project() ) {
+		if ($t_issue->project_id != helper_get_current_project()) {
 			# in case the current project is not the same project of the bug we are
 			# viewing, override the current project. This to avoid problems with
 			# categories and handlers lists etc.
@@ -65,22 +69,21 @@ class IssueFileGetCommand extends Command {
 			$g_project_override = $t_issue->project_id;
 		}
 
-		$t_file_id = $this->query( 'file_id' );
-		$t_attachments = file_get_visible_attachments( $this->issue_id );
+		$t_file_id = $this->query('file_id');
+		$t_attachments = file_get_visible_attachments($this->issue_id);
 		$t_matching_attachments = array();
-		foreach( $t_attachments as $t_attachment ) {
-			if( $t_file_id != null && $t_file_id != $t_attachment['id'] ) {
+		foreach ($t_attachments as $t_attachment) {
+			if ($t_file_id != null && $t_file_id != $t_attachment['id']) {
 				continue;
 			}
 
-			$t_result = file_get_content( $t_attachment['id'] );
+			$t_result = file_get_content($t_attachment['id']);
 			$t_attachment['content_type'] = $t_result['type'];
 			$t_attachment['content'] = $t_result['content'];
-	
+
 			$t_matching_attachments[] = $t_attachment;
 		}
 
 		return $t_matching_attachments;
 	}
 }
-

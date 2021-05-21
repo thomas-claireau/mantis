@@ -1,4 +1,5 @@
 <?php
+
 /**
  * MantisBT - A PHP based bugtracking system
  *
@@ -19,16 +20,17 @@
  */
 
 /**
-  * Mapper class
-  *
-  * it will store the ( type, old, new ) triplet for later retrieval
-  */
-class ImportXml_Mapper {
+ * Mapper class
+ *
+ * it will store the ( type, old, new ) triplet for later retrieval
+ */
+class ImportXml_Mapper
+{
 	/**
 	 * Issues
 	 * @var array
 	 */
-	private $issue = array( );
+	private $issue = array();
 
 	/**
 	 * add
@@ -37,7 +39,8 @@ class ImportXml_Mapper {
 	 * @param mixed $p_new  New.
 	 * @return void
 	 */
-	public function add( $p_type, $p_old, $p_new ) {
+	public function add($p_type, $p_old, $p_new)
+	{
 		$this->{$p_type}[$p_old] = $p_new;
 	}
 
@@ -47,8 +50,9 @@ class ImportXml_Mapper {
 	 * @param mixed $p_id   ID.
 	 * @return boolean
 	 */
-	public function exists( $p_type, $p_id ) {
-		return array_key_exists( $p_id, $this->{$p_type} );
+	public function exists($p_type, $p_id)
+	{
+		return array_key_exists($p_id, $this->{$p_type});
 	}
 
 	/**
@@ -57,8 +61,9 @@ class ImportXml_Mapper {
 	 * @param mixed $p_old  Old.
 	 * @return mixed
 	 */
-	public function getNewID( $p_type, $p_old ) {
-		if( $this->exists( $p_type, $p_old ) ) {
+	public function getNewID($p_type, $p_old)
+	{
+		if ($this->exists($p_type, $p_old)) {
 			return $this->{$p_type}[$p_old];
 		} else {
 			return $p_old;
@@ -70,7 +75,8 @@ class ImportXml_Mapper {
 	 * @param mixed $p_type Type.
 	 * @return mixed
 	 */
-	public function getAll( $p_type ) {
+	public function getAll($p_type)
+	{
 		return $this->{$p_type};
 	}
 }

@@ -203,7 +203,7 @@ $t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
 						<td class="small-caption pull-right">
 							<?php echo lang_get('time_tracking_cost') ?>
 						</td>
-					<?php	} ?>
+					<?php 	} ?>
 
 				</tr>
 				<?php
@@ -232,7 +232,7 @@ $t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
 								<td class="small-caption right">
 									<?php echo string_attribute(number_format($t_user_info['cost'], 2)); ?>
 								</td>
-							<?php		} ?>
+							<?php 		} ?>
 						</tr>
 
 				<?php
@@ -251,7 +251,7 @@ $t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
 						<td class="small-caption bold right">
 							<?php echo string_attribute(number_format($t_bugnote_stats['total']['cost'], 2)); ?>
 						</td>
-					<?php 	} ?>
+					<?php  	} ?>
 				</tr>
 			</table>
 
@@ -270,7 +270,7 @@ $t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
 							<td class="small-caption pull-right">
 								<?php echo lang_get('time_tracking_cost') ?>
 							</td>
-						<?php	} ?>
+						<?php 	} ?>
 					</tr>
 
 					<?php
@@ -294,9 +294,9 @@ $t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
 								<td class="small-caption right">
 									<?php echo string_attribute(number_format($t_user_info['cost'], 2)); ?>
 								</td>
-							<?php		} ?>
+							<?php 		} ?>
 						</tr>
-					<?php	} ?>
+					<?php 	} ?>
 					<tr class="row-category2">
 						<td class="small-caption bold">
 							<?php echo lang_get('total_time'); ?>
@@ -308,7 +308,7 @@ $t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
 							<td class="small-caption bold right">
 								<?php echo string_attribute(number_format($t_bugnote_stats['total']['cost'], 2)); ?>
 							</td>
-						<?php	} ?>
+						<?php 	} ?>
 					</tr>
 				</table>
 

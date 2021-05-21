@@ -22,9 +22,9 @@
  * @link http://www.mantisbt.org
  */
 
-$g_app->group('/lang', function() use ( $g_app ) {
-	$g_app->get( '', 'rest_lang_get' );
-	$g_app->get( '/', 'rest_lang_get' );
+$g_app->group('/lang', function () use ($g_app) {
+	$g_app->get('', 'rest_lang_get');
+	$g_app->get('/', 'rest_lang_get');
 });
 
 /**
@@ -35,15 +35,16 @@ $g_app->group('/lang', function() use ( $g_app ) {
  * @param array $p_args Arguments
  * @return \Slim\Http\Response The augmented response.
  */
-function rest_lang_get( \Slim\Http\Request $p_request, \Slim\Http\Response $p_response, array $p_args ) {
+function rest_lang_get(\Slim\Http\Request $p_request, \Slim\Http\Response $p_response, array $p_args)
+{
 	$t_data = array(
 		'query' => array(
-			'string' => $p_request->getParam( 'string' )
+			'string' => $p_request->getParam('string')
 		)
 	);
 
-	$t_command = new LocalizedStringsGetCommand( $t_data );
+	$t_command = new LocalizedStringsGetCommand($t_data);
 	$t_result = $t_command->execute();
 
-	return $p_response->withStatus( HTTP_STATUS_SUCCESS )->withJson( $t_result );
+	return $p_response->withStatus(HTTP_STATUS_SUCCESS)->withJson($t_result);
 }

@@ -42,7 +42,8 @@ abstract class Command
 	 *
 	 * @param array $p_data The command data.
 	 */
-	function __construct( array $p_data ) {
+	function __construct(array $p_data)
+	{
 		$this->data = $p_data;
 	}
 
@@ -70,8 +71,9 @@ abstract class Command
 	 *
 	 * @return mixed The option value or its default.
 	 */
-	public function option( $p_name, $p_default = null ) {
-		if( isset( $this->data['options'][$p_name] ) ) {
+	public function option($p_name, $p_default = null)
+	{
+		if (isset($this->data['options'][$p_name])) {
 			return $this->data['options'][$p_name];
 		}
 
@@ -86,8 +88,9 @@ abstract class Command
 	 *
 	 * @return mixed The payload field value or its default.
 	 */
-	public function payload( $p_name, $p_default = null ) {
-		if( isset( $this->data['payload'][$p_name] ) ) {
+	public function payload($p_name, $p_default = null)
+	{
+		if (isset($this->data['payload'][$p_name])) {
 			return $this->data['payload'][$p_name];
 		}
 
@@ -102,8 +105,9 @@ abstract class Command
 	 *
 	 * @return mixed The field value or its default.
 	 */
-	public function query( $p_name, $p_default = null ) {
-		if( isset( $this->data['query'][$p_name] ) ) {
+	public function query($p_name, $p_default = null)
+	{
+		if (isset($this->data['query'][$p_name])) {
 			return $this->data['query'][$p_name];
 		}
 
@@ -117,19 +121,20 @@ abstract class Command
 	 *
 	 * @return array Execution result
 	 */
-	public function execute() {
+	public function execute()
+	{
 		# For now, all commands require user to be authenticated
-		auth_ensure_user_authenticated();		
+		auth_ensure_user_authenticated();
 
-		if( !isset( $this->data['payload'] ) ) {
+		if (!isset($this->data['payload'])) {
 			$this->data['payload'] = array();
 		}
 
-		if( !isset( $this->data['query'] ) ) {
+		if (!isset($this->data['query'])) {
 			$this->data['query'] = array();
 		}
 
-		if( !isset( $this->data['options'] ) ) {
+		if (!isset($this->data['options'])) {
 			$this->data['options'] = array();
 		}
 

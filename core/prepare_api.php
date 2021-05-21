@@ -33,12 +33,12 @@
  * @uses version_api.php
  */
 
-require_api( 'access_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'string_api.php' );
-require_api( 'user_api.php' );
-require_api( 'version_api.php' );
+require_api('access_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('string_api.php');
+require_api('user_api.php');
+require_api('version_api.php');
 
 /**
  * Return a ready-to-use mailto: URL.
@@ -51,18 +51,19 @@ require_api( 'version_api.php' );
  *
  * @return string
  */
-function prepare_mailto_url ( $p_email, $p_subject = '' ) {
+function prepare_mailto_url($p_email, $p_subject = '')
+{
 	# If we apply string_url() to the whole mailto: link then the @ gets
 	# turned into a %40 and you can't right click in browsers to use the
 	# Copy Email Address functionality.
-	if( $p_subject ) {
+	if ($p_subject) {
 		# URL-encoding the subject is required otherwise special characters
 		# (ampersand for example) will truncate the text
-		$p_subject = '?subject=' . string_url( $p_subject );
+		$p_subject = '?subject=' . string_url($p_subject);
 	}
 	$t_mailto = 'mailto:' . $p_email . $p_subject;
 
-	return string_attribute( $t_mailto );
+	return string_attribute($t_mailto);
 }
 
 /**
@@ -80,29 +81,31 @@ function prepare_mailto_url ( $p_email, $p_subject = '' ) {
  *
  * @return string
  */
-function prepare_email_link( $p_email, $p_text, $p_subject = '', $p_tooltip ='', $p_show_as_button = false ) {
-	$t_text = string_display_line( $p_text );
-	if( !is_blank( $p_tooltip ) && $p_tooltip != $p_text ) {
-		$t_tooltip = ' title="' . string_display_line( $p_tooltip ) . '"';
+function prepare_email_link($p_email, $p_text, $p_subject = '', $p_tooltip = '', $p_show_as_button = false)
+{
+	$t_text = string_display_line($p_text);
+	if (!is_blank($p_tooltip) && $p_tooltip != $p_text) {
+		$t_tooltip = ' title="' . string_display_line($p_tooltip) . '"';
 	} else {
 		$t_tooltip = '';
 	}
 
-	if( !access_has_project_level( config_get( 'show_user_email_threshold' ) ) ) {
+	if (!access_has_project_level(config_get('show_user_email_threshold'))) {
 		return $t_tooltip ? '<a' . $t_tooltip . '>' . $t_text . '</a>' : $t_text;
 	}
 
-	$t_mailto = prepare_mailto_url( $p_email, $p_subject );
+	$t_mailto = prepare_mailto_url($p_email, $p_subject);
 
-	if( $p_show_as_button ) {
+	if ($p_show_as_button) {
 		$t_class = ' class="noprint blue zoom-130"';
-		$t_text = icon_get( 'fa-envelope-o', 'bigger-115' )
-			. ( $t_text ? "&nbsp;$t_text" : '' );
+		$t_text = icon_get('fa-envelope-o', 'bigger-115')
+			. ($t_text ? "&nbsp;$t_text" : '');
 	} else {
 		$t_class = '';
 	}
 
-	return sprintf( '<a href="%s"%s%s>%s</a>',
+	return sprintf(
+		'<a href="%s"%s%s>%s</a>',
 		$t_mailto,
 		$t_tooltip,
 		$t_class,
@@ -117,25 +120,26 @@ function prepare_email_link( $p_email, $p_text, $p_subject = '', $p_tooltip ='',
  * @param boolean $p_link     Whether to include an html link
  * @return string
  */
-function prepare_user_name( $p_user_id, $p_link = true ) {
+function prepare_user_name($p_user_id, $p_link = true)
+{
 	# Catch a user_id of NO_USER (like when a handler hasn't been assigned)
-	if( NO_USER == $p_user_id ) {
+	if (NO_USER == $p_user_id) {
 		return '';
 	}
 
-	$t_username = user_get_username( $p_user_id );
-	$t_name = user_get_name( $p_user_id );
-	if( $t_username != $t_name ) {
-		$t_tooltip = ' title="' . string_attribute( $t_username ) . '"';
+	$t_username = user_get_username($p_user_id);
+	$t_name = user_get_name($p_user_id);
+	if ($t_username != $t_name) {
+		$t_tooltip = ' title="' . string_attribute($t_username) . '"';
 	} else {
 		$t_tooltip = '';
 	}
 
-	$t_name = string_display_line( $t_name );
+	$t_name = string_display_line($t_name);
 
-	if( user_exists( $p_user_id ) && user_get_field( $p_user_id, 'enabled' ) ) {
-		if( $p_link ) {
-			return '<a' . $t_tooltip . ' href="' . string_sanitize_url( 'view_user_page.php?id=' . $p_user_id, true ) . '">' . $t_name . '</a>';
+	if (user_exists($p_user_id) && user_get_field($p_user_id, 'enabled')) {
+		if ($p_link) {
+			return '<a' . $t_tooltip . ' href="' . string_sanitize_url('view_user_page.php?id=' . $p_user_id, true) . '">' . $t_name . '</a>';
 		} else {
 			return '<span ' . $t_tooltip . '>' . $t_name . '</span>';
 		}
@@ -154,19 +158,20 @@ function prepare_user_name( $p_user_id, $p_link = true ) {
  *                                      null means include the project if different from current context.
  * @return string The formatted version string.
  */
-function prepare_version_string( $p_project_id, $p_version_id, $p_show_project = null ) {
-	if( $p_version_id === false ) {
+function prepare_version_string($p_project_id, $p_version_id, $p_show_project = null)
+{
+	if ($p_version_id === false) {
 		return '';
 	}
 
-	$t_version_text = version_full_name( $p_version_id, $p_show_project, $p_project_id );
+	$t_version_text = version_full_name($p_version_id, $p_show_project, $p_project_id);
 
-	if( access_has_project_level( config_get( 'show_version_dates_threshold' ), $p_project_id ) ) {
-		$t_short_date_format = config_get( 'short_date_format' );
+	if (access_has_project_level(config_get('show_version_dates_threshold'), $p_project_id)) {
+		$t_short_date_format = config_get('short_date_format');
 
-		$t_version = version_cache_row( $p_version_id );
-		if( 1 == $t_version['released'] ) {
-			$t_version_text .= ' (' . date( $t_short_date_format, $t_version['date_order'] ) . ')';
+		$t_version = version_cache_row($p_version_id);
+		if (1 == $t_version['released']) {
+			$t_version_text .= ' (' . date($t_short_date_format, $t_version['date_order']) . ')';
 		}
 	}
 
@@ -183,17 +188,18 @@ function prepare_version_string( $p_project_id, $p_version_id, $p_show_project =
  * @param integer $p_size           Image maximum size.
  * @return string the HTML string of the avatar.
  */
-function prepare_raw_avatar( $p_avatar, $p_class_prefix, $p_size) {
-	if( $p_avatar === null ) {
+function prepare_raw_avatar($p_avatar, $p_class_prefix, $p_size)
+{
+	if ($p_avatar === null) {
 		return '';
 	}
 
-	$t_image = htmlspecialchars( $p_avatar->image );
-	$t_text = htmlspecialchars( $p_avatar->text );
+	$t_image = htmlspecialchars($p_avatar->image);
+	$t_text = htmlspecialchars($p_avatar->text);
 
 	$t_avatar_class = $p_class_prefix . '-avatar' . '-' . $p_size;
 	return '<img class="' . $t_avatar_class . '" src="' . $t_image . '" alt="' .
-			$t_text . '" />';
+		$t_text . '" />';
 }
 
 /**
@@ -206,17 +212,17 @@ function prepare_raw_avatar( $p_avatar, $p_class_prefix, $p_size) {
  * @param integer $p_size           Image maximum size.
  * @return string the HTML string of the avatar.
  */
-function prepare_avatar( $p_avatar, $p_class_prefix, $p_size ) {
-	if( $p_avatar === null ) {
+function prepare_avatar($p_avatar, $p_class_prefix, $p_size)
+{
+	if ($p_avatar === null) {
 		return '';
 	}
 
-	$t_link = htmlspecialchars( $p_avatar->link );
+	$t_link = htmlspecialchars($p_avatar->link);
 
 	$t_container_class = $p_class_prefix . '-avatar-container' . '-' . $p_size;
-	return '<div class="' . $t_container_class . '">' . 
-			'<a rel="nofollow" href="' . $t_link . '">' .
-			prepare_raw_avatar( $p_avatar, $p_class_prefix, $p_size ) . 
-			'</a></div>';
+	return '<div class="' . $t_container_class . '">' .
+		'<a rel="nofollow" href="' . $t_link . '">' .
+		prepare_raw_avatar($p_avatar, $p_class_prefix, $p_size) .
+		'</a></div>';
 }
-

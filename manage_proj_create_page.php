@@ -69,7 +69,7 @@ $f_parent_id = gpc_get('parent_id', null);
 			<?php print_icon('fa-warning', 'ace-icon fa-lg'); ?>
 			<?php echo lang_get('create_first_project') ?>
 		</div>
-	<?php } ?>
+	<?php  } ?>
 
 	<div id="manage-project-create-div" class="form-container">
 		<form method="post" id="manage-project-create-form" action="manage_proj_create.php">

@@ -33,14 +33,14 @@
  * @uses utility_api.php
  */
 
-require_api( 'authentication_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'filter_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'user_api.php' );
-require_api( 'user_pref_api.php' );
-require_api( 'utility_api.php' );
+require_api('authentication_api.php');
+require_api('constant_inc.php');
+require_api('filter_api.php');
+require_api('gpc_api.php');
+require_api('helper_api.php');
+require_api('user_api.php');
+require_api('user_pref_api.php');
+require_api('utility_api.php');
 
 /**
  * Sets the current user
@@ -49,13 +49,14 @@ require_api( 'utility_api.php' );
  * @return integer Old current user id
  * @access public
  */
-function current_user_set( $p_user_id ) {
+function current_user_set($p_user_id)
+{
 	global $g_cache_current_user_id;
 	global $g_cache_current_user_pref;
 
 	$t_user_id = (int)$p_user_id;
 
-	if( $t_user_id == $g_cache_current_user_id ) {
+	if ($t_user_id == $g_cache_current_user_id) {
 		return $t_user_id;
 	}
 
@@ -76,8 +77,9 @@ function current_user_set( $p_user_id ) {
  * @return int access level code
  * @access public
  */
-function current_user_get_access_level() {
-	return user_get_access_level( auth_get_current_user_id(), helper_get_current_project() );
+function current_user_get_access_level()
+{
+	return user_get_access_level(auth_get_current_user_id(), helper_get_current_project());
 }
 
 /**
@@ -87,8 +89,9 @@ function current_user_get_access_level() {
  * @return int Number of issues assigned to current user that are still open.
  * @access public
  */
-function current_user_get_assigned_open_bug_count() {
-	return user_get_assigned_open_bug_count( auth_get_current_user_id(), helper_get_current_project() );
+function current_user_get_assigned_open_bug_count()
+{
+	return user_get_assigned_open_bug_count(auth_get_current_user_id(), helper_get_current_project());
 }
 
 /**
@@ -98,8 +101,9 @@ function current_user_get_assigned_open_bug_count() {
  * @return int Number of issues reported by current user that are still open.
  * @access public
  */
-function current_user_get_reported_open_bug_count() {
-	return user_get_reported_open_bug_count( auth_get_current_user_id(), helper_get_current_project() );
+function current_user_get_reported_open_bug_count()
+{
+	return user_get_reported_open_bug_count(auth_get_current_user_id(), helper_get_current_project());
 }
 
 /**
@@ -109,8 +113,9 @@ function current_user_get_reported_open_bug_count() {
  * @return mixed Get the value of the specified field for current user.
  * @access public
  */
-function current_user_get_field( $p_field_name ) {
-	return user_get_field( auth_get_current_user_id(), $p_field_name );
+function current_user_get_field($p_field_name)
+{
+	return user_get_field(auth_get_current_user_id(), $p_field_name);
 }
 
 /**
@@ -120,8 +125,9 @@ function current_user_get_field( $p_field_name ) {
  * @return mixed Get the value of the specified preference for current user.
  * @access public
  */
-function current_user_get_pref( $p_pref_name ) {
-	return user_pref_get_pref( auth_get_current_user_id(), $p_pref_name );
+function current_user_get_pref($p_pref_name)
+{
+	return user_pref_get_pref(auth_get_current_user_id(), $p_pref_name);
 }
 
 /**
@@ -132,8 +138,9 @@ function current_user_get_pref( $p_pref_name ) {
  * @access public
  * @return boolean
  */
-function current_user_set_pref( $p_pref_name, $p_pref_value ) {
-	return user_pref_set_pref( auth_get_current_user_id(), $p_pref_name, $p_pref_value );
+function current_user_set_pref($p_pref_name, $p_pref_value)
+{
+	return user_pref_set_pref(auth_get_current_user_id(), $p_pref_name, $p_pref_value);
 }
 
 /**
@@ -143,8 +150,9 @@ function current_user_set_pref( $p_pref_name, $p_pref_value ) {
  * @return void
  * @access public
  */
-function current_user_set_default_project( $p_project_id ) {
-	user_set_default_project( auth_get_current_user_id(), $p_project_id );
+function current_user_set_default_project($p_project_id)
+{
+	user_set_default_project(auth_get_current_user_id(), $p_project_id);
 }
 
 /**
@@ -155,8 +163,9 @@ function current_user_set_default_project( $p_project_id ) {
  * @return array an array of accessible project ids.
  * @access public
  */
-function current_user_get_accessible_projects( $p_show_disabled = false ) {
-	return user_get_accessible_projects( auth_get_current_user_id(), $p_show_disabled );
+function current_user_get_accessible_projects($p_show_disabled = false)
+{
+	return user_get_accessible_projects(auth_get_current_user_id(), $p_show_disabled);
 }
 
 /**
@@ -168,8 +177,9 @@ function current_user_get_accessible_projects( $p_show_disabled = false ) {
  * @return array an array of accessible sub-project ids.
  * @access public
  */
-function current_user_get_accessible_subprojects( $p_project_id, $p_show_disabled = false ) {
-	return user_get_accessible_subprojects( auth_get_current_user_id(), $p_project_id, $p_show_disabled );
+function current_user_get_accessible_subprojects($p_project_id, $p_show_disabled = false)
+{
+	return user_get_accessible_subprojects(auth_get_current_user_id(), $p_project_id, $p_show_disabled);
 }
 
 /**
@@ -180,8 +190,9 @@ function current_user_get_accessible_subprojects( $p_project_id, $p_show_disable
  * @return array an array of accessible sub-project ids.
  * @access public
  */
-function current_user_get_all_accessible_subprojects( $p_project_id ) {
-	return user_get_all_accessible_subprojects( auth_get_current_user_id(), $p_project_id );
+function current_user_get_all_accessible_subprojects($p_project_id)
+{
+	return user_get_all_accessible_subprojects(auth_get_current_user_id(), $p_project_id);
 }
 
 /**
@@ -191,8 +202,9 @@ function current_user_get_all_accessible_subprojects( $p_project_id ) {
  * @return boolean true: administrator; false: otherwise.
  * @access public
  */
-function current_user_is_administrator() {
-	return auth_is_user_authenticated() && user_is_administrator( auth_get_current_user_id() );
+function current_user_is_administrator()
+{
+	return auth_is_user_authenticated() && user_is_administrator(auth_get_current_user_id());
 }
 
 /**
@@ -202,8 +214,9 @@ function current_user_is_administrator() {
  * @return true: user is protected; false: otherwise.
  * @access public
  */
-function current_user_is_protected() {
-	return user_is_protected( auth_get_current_user_id() );
+function current_user_is_protected()
+{
+	return user_is_protected(auth_get_current_user_id());
 }
 
 /**
@@ -212,8 +225,9 @@ function current_user_is_protected() {
  * @return true: user is anonymous; false: otherwise.
  * @access public
  */
-function current_user_is_anonymous() {
-	return user_is_anonymous( auth_get_current_user_id() );
+function current_user_is_anonymous()
+{
+	return user_is_anonymous(auth_get_current_user_id());
 }
 
 /**
@@ -223,8 +237,9 @@ function current_user_is_anonymous() {
  * @access public
  * @return void
  */
-function current_user_ensure_unprotected() {
-	user_ensure_unprotected( auth_get_current_user_id() );
+function current_user_ensure_unprotected()
+{
+	user_ensure_unprotected(auth_get_current_user_id());
 }
 
 /**
@@ -237,18 +252,19 @@ function current_user_ensure_unprotected() {
  * @return array	A filter array
  * @access public
  */
-function current_user_get_bug_filter( $p_project_id = null ) {
-	$f_tmp_key = gpc_get_string( 'filter', null );
+function current_user_get_bug_filter($p_project_id = null)
+{
+	$f_tmp_key = gpc_get_string('filter', null);
 
-	if( null !== $f_tmp_key ) {
-		$t_filter = filter_temporary_get( $f_tmp_key, null );
+	if (null !== $f_tmp_key) {
+		$t_filter = filter_temporary_get($f_tmp_key, null);
 		# if filter doesn't exist or can't be loaded, return a default filter (doesn't throw error)
-		if( null === $t_filter ) {
+		if (null === $t_filter) {
 			$t_filter = filter_get_default();
 		}
 	} else {
 		$t_user_id = auth_get_current_user_id();
-		$t_filter = user_get_bug_filter( $t_user_id, $p_project_id );
+		$t_filter = user_get_bug_filter($t_user_id, $p_project_id);
 	}
 
 	return $t_filter;
@@ -259,8 +275,9 @@ function current_user_get_bug_filter( $p_project_id = null ) {
  *
  * @return boolean
  */
-function current_user_has_more_than_one_project() {
-	return user_has_more_than_one_project( auth_get_current_user_id() );
+function current_user_has_more_than_one_project()
+{
+	return user_has_more_than_one_project(auth_get_current_user_id());
 }
 
 /**
@@ -276,31 +293,32 @@ function current_user_has_more_than_one_project() {
  *
  * @return void
  */
-function current_user_modify_single_project_default() {
+function current_user_modify_single_project_default()
+{
 	# The user must not be able to use the project selector
-	if( layout_navbar_can_show_projects_menu() ) {
+	if (layout_navbar_can_show_projects_menu()) {
 		return;
 	}
 	# The user must have one, or none, projects
 	$t_user_id = auth_get_current_user_id();
-	if( user_has_more_than_one_project( $t_user_id ) ) {
+	if (user_has_more_than_one_project($t_user_id)) {
 		return;
 	}
-	$t_default = user_pref_get_pref( $t_user_id, 'default_project' );
+	$t_default = user_pref_get_pref($t_user_id, 'default_project');
 	$t_current = helper_get_current_project();
-	$t_projects = user_get_all_accessible_projects( $t_user_id );
-	$t_count = count( $t_projects );
+	$t_projects = user_get_all_accessible_projects($t_user_id);
+	$t_count = count($t_projects);
 
-	if( 0 == $t_count ) {
+	if (0 == $t_count) {
 		$t_project_id = ALL_PROJECTS;
 	} else {
-		$t_project_id = reset( $t_projects );
+		$t_project_id = reset($t_projects);
 	}
 
-	if( $t_project_id != $t_current ) {
-		helper_set_current_project( $t_project_id );
+	if ($t_project_id != $t_current) {
+		helper_set_current_project($t_project_id);
 	}
-	if( $t_project_id != $t_default ) {
-		user_pref_set_pref( $t_user_id, 'default_project', (int)$t_project_id, ALL_PROJECTS, false /* skip protected check */ );
+	if ($t_project_id != $t_default) {
+		user_pref_set_pref($t_user_id, 'default_project', (int)$t_project_id, ALL_PROJECTS, false /* skip protected check */);
 	}
 }

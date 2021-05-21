@@ -77,7 +77,7 @@ function table_print_filter_headers()
 			<th><?php echo lang_get('query_name') ?></td>
 				<?php if ($t_rss_enabled) { ?>
 			<th><?php echo lang_get('rss') ?></td>
-			<?php } ?>
+			<?php  } ?>
 			<th><?php echo lang_get('email_project') ?></td>
 			<th><?php echo lang_get('public') ?></td>
 			<th><?php echo lang_get('owner') ?></td>

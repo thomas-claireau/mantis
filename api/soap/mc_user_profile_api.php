@@ -32,20 +32,21 @@
  * @param integer $p_per_page    Results per page.
  * @return mixed
  */
-function mc_user_profiles_get_all( $p_username, $p_password, $p_page_number, $p_per_page ) {
-	$t_user_id = mci_check_login( $p_username, $p_password );
-	if( $t_user_id === false ) {
+function mc_user_profiles_get_all($p_username, $p_password, $p_page_number, $p_per_page)
+{
+	$t_user_id = mci_check_login($p_username, $p_password);
+	if ($t_user_id === false) {
 		return mci_fault_login_failed();
 	}
 
-	if( !mci_has_readonly_access( $t_user_id ) ) {
-		return mci_fault_access_denied( $t_user_id );
+	if (!mci_has_readonly_access($t_user_id)) {
+		return mci_fault_access_denied($t_user_id);
 	}
 
 	$t_results = array();
-	$t_start = max( array( 0, $p_page_number - 1 ) ) * $p_per_page;
+	$t_start = max(array(0, $p_page_number - 1)) * $p_per_page;
 
-	foreach ( profile_get_all_for_user( $t_user_id ) as $t_profile_row ) {
+	foreach (profile_get_all_for_user($t_user_id) as $t_profile_row) {
 		$t_result = array(
 			'id' => $t_profile_row['id'],
 			'description' => $t_profile_row['description'],
@@ -54,8 +55,8 @@ function mc_user_profiles_get_all( $p_username, $p_password, $p_page_number, $p_
 			'platform' => $t_profile_row['platform']
 		);
 
-		if( $t_profile_row['user_id'] != 0 ) {
-			$t_result['user_id'] = mci_account_get_array_by_id( $t_profile_row['user_id'] );
+		if ($t_profile_row['user_id'] != 0) {
+			$t_result['user_id'] = mci_account_get_array_by_id($t_profile_row['user_id']);
 		}
 
 		$t_results[] = $t_result;
@@ -64,10 +65,10 @@ function mc_user_profiles_get_all( $p_username, $p_password, $p_page_number, $p_
 	# the profile_api does not implement pagination in the backend, so we emulate it here
 	# we can always push the pagination in the database, but this seems unlikely in the
 	# near future, as the number of profiles is expected to be small
-	$t_paged_results = array_slice( $t_results, $t_start, $p_per_page );
+	$t_paged_results = array_slice($t_results, $t_start, $p_per_page);
 
-	return array (
-		'total_results' => count( $t_results ),
+	return array(
+		'total_results' => count($t_results),
 		'results' => $t_paged_results
 	);
 }

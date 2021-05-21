@@ -33,19 +33,20 @@
  * @uses utility_api.php
  */
 
-require_api( 'authentication_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'database_api.php' );
-require_api( 'error_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'user_api.php' );
-require_api( 'utility_api.php' );
+require_api('authentication_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('database_api.php');
+require_api('error_api.php');
+require_api('lang_api.php');
+require_api('user_api.php');
+require_api('utility_api.php');
 
 /**
  * Preference Structure Definition
  */
-class UserPreferences {
+class UserPreferences
+{
 	/**
 	 * Default Profile
 	 */
@@ -190,32 +191,32 @@ class UserPreferences {
 	 * Default Values - Config Field Mappings
 	 */
 	private static $_default_mapping = array(
-	'default_profile' => array( 'default_profile', 'int' ),
-	'default_project' => array( 'default_project', 'int' ),
-	'refresh_delay' => array( 'default_refresh_delay', 'int' ),
-	'redirect_delay' => array( 'default_redirect_delay', 'int' ),
-	'bugnote_order' => array( 'default_bugnote_order', 'string' ),
-	'email_on_new' => array( 'default_email_on_new', 'int' ),
-	'email_on_assigned' => array(  'default_email_on_assigned', 'int' ),
-	'email_on_feedback' => array(  'default_email_on_feedback', 'int' ),
-	'email_on_resolved' => array(  'default_email_on_resolved', 'int' ),
-	'email_on_closed' => array(  'default_email_on_closed', 'int' ),
-	'email_on_reopened' => array(  'default_email_on_reopened', 'int' ),
-	'email_on_bugnote' => array(  'default_email_on_bugnote', 'int' ),
-	'email_on_status' => array(  'default_email_on_status', 'int' ),
-	'email_on_priority' => array(  'default_email_on_priority', 'int' ),
-	'email_on_new_min_severity' => array(  'default_email_on_new_minimum_severity', 'int' ),
-	'email_on_assigned_min_severity' => array(  'default_email_on_assigned_minimum_severity', 'int' ),
-	'email_on_feedback_min_severity' => array(  'default_email_on_feedback_minimum_severity', 'int' ),
-	'email_on_resolved_min_severity' => array(  'default_email_on_resolved_minimum_severity', 'int' ),
-	'email_on_closed_min_severity' => array(  'default_email_on_closed_minimum_severity', 'int' ),
-	'email_on_reopened_min_severity' => array(  'default_email_on_reopened_minimum_severity', 'int' ),
-	'email_on_bugnote_min_severity' => array(  'default_email_on_bugnote_minimum_severity', 'int' ),
-	'email_on_status_min_severity' => array(  'default_email_on_status_minimum_severity', 'int' ),
-	'email_on_priority_min_severity' => array(  'default_email_on_priority_minimum_severity', 'int' ),
-	'email_bugnote_limit' => array(  'default_email_bugnote_limit', 'int' ),
-	'language' => array(  'default_language', 'string' ),
-	'timezone' => array( 'default_timezone', 'string' ),
+		'default_profile' => array('default_profile', 'int'),
+		'default_project' => array('default_project', 'int'),
+		'refresh_delay' => array('default_refresh_delay', 'int'),
+		'redirect_delay' => array('default_redirect_delay', 'int'),
+		'bugnote_order' => array('default_bugnote_order', 'string'),
+		'email_on_new' => array('default_email_on_new', 'int'),
+		'email_on_assigned' => array('default_email_on_assigned', 'int'),
+		'email_on_feedback' => array('default_email_on_feedback', 'int'),
+		'email_on_resolved' => array('default_email_on_resolved', 'int'),
+		'email_on_closed' => array('default_email_on_closed', 'int'),
+		'email_on_reopened' => array('default_email_on_reopened', 'int'),
+		'email_on_bugnote' => array('default_email_on_bugnote', 'int'),
+		'email_on_status' => array('default_email_on_status', 'int'),
+		'email_on_priority' => array('default_email_on_priority', 'int'),
+		'email_on_new_min_severity' => array('default_email_on_new_minimum_severity', 'int'),
+		'email_on_assigned_min_severity' => array('default_email_on_assigned_minimum_severity', 'int'),
+		'email_on_feedback_min_severity' => array('default_email_on_feedback_minimum_severity', 'int'),
+		'email_on_resolved_min_severity' => array('default_email_on_resolved_minimum_severity', 'int'),
+		'email_on_closed_min_severity' => array('default_email_on_closed_minimum_severity', 'int'),
+		'email_on_reopened_min_severity' => array('default_email_on_reopened_minimum_severity', 'int'),
+		'email_on_bugnote_min_severity' => array('default_email_on_bugnote_minimum_severity', 'int'),
+		'email_on_status_min_severity' => array('default_email_on_status_minimum_severity', 'int'),
+		'email_on_priority_min_severity' => array('default_email_on_priority_minimum_severity', 'int'),
+		'email_bugnote_limit' => array('default_email_bugnote_limit', 'int'),
+		'language' => array('default_language', 'string'),
+		'timezone' => array('default_timezone', 'string'),
 	);
 
 	/**
@@ -223,7 +224,8 @@ class UserPreferences {
 	 * @param integer $p_user_id    A valid user identifier.
 	 * @param integer $p_project_id A valid project identifier.
 	 */
-	function __construct( $p_user_id, $p_project_id ) {
+	function __construct($p_user_id, $p_project_id)
+	{
 		$this->default_profile = 0;
 		$this->default_project = ALL_PROJECTS;
 
@@ -238,10 +240,11 @@ class UserPreferences {
 	 * @return void
 	 * @access private
 	 */
-	public function __set( $p_name, $p_value ) {
-		switch( $p_name ) {
+	public function __set($p_name, $p_value)
+	{
+		switch ($p_name) {
 			case 'timezone':
-				if( $p_value == '' ) {
+				if ($p_value == '') {
 					$p_value = null;
 				}
 		}
@@ -254,11 +257,12 @@ class UserPreferences {
 	 * @access private
 	 * @return mixed
 	 */
-	public function __get( $p_string ) {
-		if( is_null( $this->$p_string ) ) {
-			$this->$p_string = config_get( self::$_default_mapping[$p_string][0], null, $this->pref_user_id, $this->pref_project_id );
+	public function __get($p_string)
+	{
+		if (is_null($this->$p_string)) {
+			$this->$p_string = config_get(self::$_default_mapping[$p_string][0], null, $this->pref_user_id, $this->pref_project_id);
 		}
-		switch( self::$_default_mapping[$p_string][1] ) {
+		switch (self::$_default_mapping[$p_string][1]) {
 			case 'int':
 				return (int)($this->$p_string);
 			default:
@@ -271,9 +275,10 @@ class UserPreferences {
 	 * @param string $p_string Property to get.
 	 * @return mixed
 	 */
-	function Get( $p_string ) {
-		if( is_null( $this->$p_string ) ) {
-			$this->$p_string = config_get( self::$_default_mapping[$p_string][0], null, $this->pref_user_id, $this->pref_project_id );
+	function Get($p_string)
+	{
+		if (is_null($this->$p_string)) {
+			$this->$p_string = config_get(self::$_default_mapping[$p_string][0], null, $this->pref_user_id, $this->pref_project_id);
 		}
 		return $this->$p_string;
 	}
@@ -291,16 +296,17 @@ $g_cache_current_user_pref = array();
  * @param boolean $p_trigger_errors Whether to trigger error on failure.
  * @return boolean|array
  */
-function user_pref_cache_row( $p_user_id, $p_project_id = ALL_PROJECTS, $p_trigger_errors = true ) {
+function user_pref_cache_row($p_user_id, $p_project_id = ALL_PROJECTS, $p_trigger_errors = true)
+{
 	global $g_cache_user_pref;
 
-	if( !isset( $g_cache_user_pref[(int)$p_user_id][(int)$p_project_id] ) ) {
-		user_pref_cache_array_rows( array( $p_user_id ), $p_project_id );
+	if (!isset($g_cache_user_pref[(int)$p_user_id][(int)$p_project_id])) {
+		user_pref_cache_array_rows(array($p_user_id), $p_project_id);
 	}
 
 	$t_row = $g_cache_user_pref[(int)$p_user_id][(int)$p_project_id];
-	if( false === $t_row && $p_trigger_errors ) {
-		trigger_error( ERROR_USER_PREFS_NOT_FOUND, ERROR );
+	if (false === $t_row && $p_trigger_errors) {
+		trigger_error(ERROR_USER_PREFS_NOT_FOUND, ERROR);
 	}
 	return $t_row;
 }
@@ -311,42 +317,43 @@ function user_pref_cache_row( $p_user_id, $p_project_id = ALL_PROJECTS, $p_trigg
  * @param integer $p_project_id    A valid project identifier.
  * @return void
  */
-function user_pref_cache_array_rows( array $p_user_id_array, $p_project_id = ALL_PROJECTS ) {
+function user_pref_cache_array_rows(array $p_user_id_array, $p_project_id = ALL_PROJECTS)
+{
 	global $g_cache_user_pref;
 	$c_user_id_array = array();
 
 	# identify the user ids that are not cached already.
-	foreach( $p_user_id_array as $t_user_id ) {
-		if( !isset( $g_cache_user_pref[(int)$t_user_id][(int)$p_project_id] ) ) {
+	foreach ($p_user_id_array as $t_user_id) {
+		if (!isset($g_cache_user_pref[(int)$t_user_id][(int)$p_project_id])) {
 			$c_user_id_array[(int)$t_user_id] = (int)$t_user_id;
 		}
 	}
 
 	# if all users are already cached, then return
-	if( empty( $c_user_id_array ) ) {
+	if (empty($c_user_id_array)) {
 		return;
 	}
 
-	$t_query = new DbQuery( 'SELECT * FROM {user_pref} WHERE user_id IN :user_array AND project_id = :project_id' );
-	$t_query->bind( 'user_array', $c_user_id_array );
-	$t_query->bind( 'project_id', (int)$p_project_id );
+	$t_query = new DbQuery('SELECT * FROM {user_pref} WHERE user_id IN :user_array AND project_id = :project_id');
+	$t_query->bind('user_array', $c_user_id_array);
+	$t_query->bind('project_id', (int)$p_project_id);
 
 	$t_result = $t_query->fetch_all();
-	if( $t_result ) {
-		foreach( $t_result as $t_row ) {
+	if ($t_result) {
+		foreach ($t_result as $t_row) {
 			$t_user_id = (int)$t_row['user_id'];
-			if( !isset( $g_cache_user_pref[$t_user_id] ) ) {
+			if (!isset($g_cache_user_pref[$t_user_id])) {
 				$g_cache_user_pref[$t_user_id] = array();
 			}
 			$g_cache_user_pref[$t_user_id][(int)$p_project_id] = $t_row;
 
 			# remove found users from required set.
-			unset( $c_user_id_array[$t_user_id] );
+			unset($c_user_id_array[$t_user_id]);
 		}
 	}
 
 	# cache users that are not found as false (i.e. negative cache)
-	foreach( $c_user_id_array as $t_user_id ) {
+	foreach ($c_user_id_array as $t_user_id) {
 		$g_cache_user_pref[(int)$t_user_id][(int)$p_project_id] = false;
 	}
 }
@@ -357,15 +364,16 @@ function user_pref_cache_array_rows( array $p_user_id_array, $p_project_id = ALL
  * @param integer $p_project_id A valid project identifier.
  * @return boolean
  */
-function user_pref_clear_cache( $p_user_id = null, $p_project_id = null ) {
+function user_pref_clear_cache($p_user_id = null, $p_project_id = null)
+{
 	global $g_cache_user_pref;
 
-	if( null === $p_user_id ) {
+	if (null === $p_user_id) {
 		$g_cache_user_pref = array();
-	} else if( null === $p_project_id ) {
-		unset( $g_cache_user_pref[(int)$p_user_id] );
+	} else if (null === $p_project_id) {
+		unset($g_cache_user_pref[(int)$p_user_id]);
 	} else {
-		unset( $g_cache_user_pref[(int)$p_user_id][(int)$p_project_id] );
+		unset($g_cache_user_pref[(int)$p_user_id][(int)$p_project_id]);
 	}
 
 	return true;
@@ -378,8 +386,9 @@ function user_pref_clear_cache( $p_user_id = null, $p_project_id = null ) {
  * @param integer $p_project_id A valid project identifier.
  * @return boolean
  */
-function user_pref_exists( $p_user_id, $p_project_id = ALL_PROJECTS ) {
-	if( false === user_pref_cache_row( $p_user_id, $p_project_id, false ) ) {
+function user_pref_exists($p_user_id, $p_project_id = ALL_PROJECTS)
+{
+	if (false === user_pref_cache_row($p_user_id, $p_project_id, false)) {
 		return false;
 	} else {
 		return true;
@@ -390,9 +399,10 @@ function user_pref_exists( $p_user_id, $p_project_id = ALL_PROJECTS ) {
  * Backwards compatibility wrapper for user_pref_db_insert()
  * @deprecated	Use user_pref_db_insert()
  */
-function user_pref_insert( $p_user_id, $p_project_id, UserPreferences $p_prefs ) {
-	user_ensure_unprotected( $p_user_id );
-	user_pref_db_insert( $p_user_id, $p_project_id, $p_prefs );
+function user_pref_insert($p_user_id, $p_project_id, UserPreferences $p_prefs)
+{
+	user_ensure_unprotected($p_user_id);
+	user_pref_db_insert($p_user_id, $p_project_id, $p_prefs);
 }
 
 /**
@@ -402,25 +412,26 @@ function user_pref_insert( $p_user_id, $p_project_id, UserPreferences $p_prefs )
  * @param UserPreferences $p_prefs      A UserPrefences Object.
  * @return boolean
  */
-function user_pref_db_insert( $p_user_id, $p_project_id, UserPreferences $p_prefs ) {
+function user_pref_db_insert($p_user_id, $p_project_id, UserPreferences $p_prefs)
+{
 	static $s_vars;
 	$c_user_id = (int)$p_user_id;
 	$c_project_id = (int)$p_project_id;
 
-	if( $s_vars == null ) {
-		$s_vars = getClassProperties( 'UserPreferences', 'protected' );
+	if ($s_vars == null) {
+		$s_vars = getClassProperties('UserPreferences', 'protected');
 	}
 
 	$t_values = array();
 	$t_values[] = $c_user_id;
 	$t_values[] = $c_project_id;
-	foreach( $s_vars as $t_var => $t_val ) {
-		array_push( $t_values, $p_prefs->Get( $t_var ) );
+	foreach ($s_vars as $t_var => $t_val) {
+		array_push($t_values, $p_prefs->Get($t_var));
 	}
 
-	$t_columns = 'user_id, project_id, ' . implode( ', ', array_keys( $s_vars ) );
-	$t_query = new DBQuery( 'INSERT INTO {user_pref} (' . $t_columns . ') VALUES :values' );
-	$t_query->bind( 'values', $t_values );
+	$t_columns = 'user_id, project_id, ' . implode(', ', array_keys($s_vars));
+	$t_query = new DBQuery('INSERT INTO {user_pref} (' . $t_columns . ') VALUES :values');
+	$t_query->bind('values', $t_values);
 	$t_query->execute();
 
 	return true;
@@ -430,10 +441,11 @@ function user_pref_db_insert( $p_user_id, $p_project_id, UserPreferences $p_pref
  * Backwards compatibility wrapper for user_pref_db_update()
  * @deprecated	Use user_pref_db_update()
  */
-function user_pref_update( $p_user_id, $p_project_id, UserPreferences $p_prefs ) {
-	user_ensure_unprotected( $p_user_id );
-	user_pref_db_update($p_user_id, $p_project_id, $p_prefs );
-	user_pref_clear_cache( $p_user_id, $p_project_id );
+function user_pref_update($p_user_id, $p_project_id, UserPreferences $p_prefs)
+{
+	user_ensure_unprotected($p_user_id);
+	user_pref_db_update($p_user_id, $p_project_id, $p_prefs);
+	user_pref_clear_cache($p_user_id, $p_project_id);
 }
 
 /**
@@ -443,25 +455,26 @@ function user_pref_update( $p_user_id, $p_project_id, UserPreferences $p_prefs )
  * @param UserPreferences $p_prefs      A UserPrefences Object.
  * @return void
  */
-function user_pref_db_update( $p_user_id, $p_project_id, UserPreferences $p_prefs ) {
+function user_pref_db_update($p_user_id, $p_project_id, UserPreferences $p_prefs)
+{
 	static $s_vars;
 
-	if( $s_vars == null ) {
-		$s_vars = getClassProperties( 'UserPreferences', 'protected' );
+	if ($s_vars == null) {
+		$s_vars = getClassProperties('UserPreferences', 'protected');
 	}
 
 	$t_pairs = array();
-	foreach( $s_vars as $t_var => $t_val ) {
+	foreach ($s_vars as $t_var => $t_val) {
 		$t_pairs[] = "$t_var = :$t_var";
 		$t_param[$t_var] = $p_prefs->$t_var;
 	}
 
-	$t_query = new DbQuery( 'UPDATE {user_pref}
-		SET ' . implode( ', ', $t_pairs ) . '
-		WHERE user_id = :user_id AND project_id = :project_id' );
-	$t_query->bind( $t_param );
-	$t_query->bind( 'user_id', $p_user_id );
-	$t_query->bind( 'project_id', $p_project_id );
+	$t_query = new DbQuery('UPDATE {user_pref}
+		SET ' . implode(', ', $t_pairs) . '
+		WHERE user_id = :user_id AND project_id = :project_id');
+	$t_query->bind($t_param);
+	$t_query->bind('user_id', $p_user_id);
+	$t_query->bind('project_id', $p_project_id);
 	$t_query->execute();
 }
 
@@ -469,10 +482,11 @@ function user_pref_db_update( $p_user_id, $p_project_id, UserPreferences $p_pref
  * Backwards compatibility wrapper for user_pref_db_delete()
  * @deprecated	Use user_pref_db_delete()
  */
-function user_pref_delete( $p_user_id, $p_project_id = ALL_PROJECTS ) {
-	user_ensure_unprotected( $p_user_id );
-	user_pref_db_delete( $p_user_id, $p_project_id );
-	user_pref_clear_cache( $p_user_id, $p_project_id );
+function user_pref_delete($p_user_id, $p_project_id = ALL_PROJECTS)
+{
+	user_ensure_unprotected($p_user_id);
+	user_pref_db_delete($p_user_id, $p_project_id);
+	user_pref_clear_cache($p_user_id, $p_project_id);
 }
 
 /**
@@ -482,12 +496,14 @@ function user_pref_delete( $p_user_id, $p_project_id = ALL_PROJECTS ) {
  * @param integer $p_project_id A valid project identifier.
  * @return void
  */
-function user_pref_db_delete( $p_user_id, $p_project_id ) {
-	$t_query = new DbQuery( 'DELETE FROM {user_pref}'
-		. ' WHERE user_id=:user_id AND project_id=:project_id'
+function user_pref_db_delete($p_user_id, $p_project_id)
+{
+	$t_query = new DbQuery(
+		'DELETE FROM {user_pref}'
+			. ' WHERE user_id=:user_id AND project_id=:project_id'
 	);
-	$t_query->bind( 'user_id', (int)$p_user_id );
-	$t_query->bind( 'project_id', (int)$p_project_id );
+	$t_query->bind('user_id', (int)$p_user_id);
+	$t_query->bind('project_id', (int)$p_project_id);
 	$t_query->execute();
 }
 
@@ -495,10 +511,11 @@ function user_pref_db_delete( $p_user_id, $p_project_id ) {
  * Backwards compatibility wrapper for user_pref_db_delete_user()
  * @deprecated	Use user_pref_db_delete_user()
  */
-function user_pref_delete_all( $p_user_id ) {
-	user_ensure_unprotected( $p_user_id );
-	user_pref_db_delete_user( $p_user_id );
-	user_pref_clear_cache( $p_user_id );
+function user_pref_delete_all($p_user_id)
+{
+	user_ensure_unprotected($p_user_id);
+	user_pref_db_delete_user($p_user_id);
+	user_pref_clear_cache($p_user_id);
 }
 
 /**
@@ -511,9 +528,10 @@ function user_pref_delete_all( $p_user_id ) {
  * @param integer $p_user_id A valid user identifier.
  * @return void
  */
-function user_pref_db_delete_user( $p_user_id ) {
-	$t_query = new DbQuery( 'DELETE FROM {user_pref} WHERE user_id=:user_id' );
-	$t_query->bind( 'user_id', (int)$p_user_id );
+function user_pref_db_delete_user($p_user_id)
+{
+	$t_query = new DbQuery('DELETE FROM {user_pref} WHERE user_id=:user_id');
+	$t_query->bind('user_id', (int)$p_user_id);
 	$t_query->execute();
 }
 
@@ -525,15 +543,17 @@ function user_pref_db_delete_user( $p_user_id ) {
  *
  * @return void
  */
-function user_pref_clear_project_default( $p_project_id, array $p_users = array() ) {
-	$t_query = new DbQuery( 'UPDATE {user_pref}'
-		. ' SET default_project = ' . ALL_PROJECTS
-		. ' WHERE default_project = :default'
+function user_pref_clear_project_default($p_project_id, array $p_users = array())
+{
+	$t_query = new DbQuery(
+		'UPDATE {user_pref}'
+			. ' SET default_project = ' . ALL_PROJECTS
+			. ' WHERE default_project = :default'
 	);
-	$t_query->bind( 'default', (int)$p_project_id );
-	if( $p_users ) {
-		$t_query->append_sql( ' AND ' . $t_query->sql_in( 'user_id', 'users' ) );
-		$t_query->bind( 'users', $p_users );
+	$t_query->bind('default', (int)$p_project_id);
+	if ($p_users) {
+		$t_query->append_sql(' AND ' . $t_query->sql_in('user_id', 'users'));
+		$t_query->bind('users', $p_users);
 	}
 	$t_query->execute();
 }
@@ -550,28 +570,29 @@ function user_pref_clear_project_default( $p_project_id, array $p_users = array(
  *
  * @return void
  */
-function user_pref_clear_invalid_project_default( $p_project_id, array $p_users = array() ) {
+function user_pref_clear_invalid_project_default($p_project_id, array $p_users = array())
+{
 	# Get all users having the project as default
-	$t_query = new DbQuery( 'SELECT user_id FROM {user_pref} WHERE default_project = :default' );
-	$t_query->bind( 'default', (int)$p_project_id );
-	if( $p_users ) {
-		$t_query->append_sql( ' AND ' . $t_query->sql_in( 'user_id', 'users' ) );
-		$t_query->bind( 'users', $p_users );
+	$t_query = new DbQuery('SELECT user_id FROM {user_pref} WHERE default_project = :default');
+	$t_query->bind('default', (int)$p_project_id);
+	if ($p_users) {
+		$t_query->append_sql(' AND ' . $t_query->sql_in('user_id', 'users'));
+		$t_query->bind('users', $p_users);
 	}
 	$t_query->execute();
 
-	$t_users_having_project_as_default = array_column( $t_query->fetch_all(), 'user_id' );
+	$t_users_having_project_as_default = array_column($t_query->fetch_all(), 'user_id');
 
 	# Users who can't access the project anymore must have the default cleared
 	$t_users_to_clear = array();
-	foreach( $t_users_having_project_as_default as $t_id ) {
-		if( access_get_project_level( $p_project_id, $t_id ) == ANYBODY ) {
+	foreach ($t_users_having_project_as_default as $t_id) {
+		if (access_get_project_level($p_project_id, $t_id) == ANYBODY) {
 			$t_users_to_clear[] = $t_id;
 		}
 	}
 
-	if( !empty( $t_users_to_clear ) ) {
-		user_pref_clear_project_default( $p_project_id, $t_users_to_clear );
+	if (!empty($t_users_to_clear)) {
+		user_pref_clear_project_default($p_project_id, $t_users_to_clear);
 	}
 }
 
@@ -584,9 +605,10 @@ function user_pref_clear_invalid_project_default( $p_project_id, array $p_users 
  * @param integer $p_project_id A valid project identifier.
  * @return void
  */
-function user_pref_db_delete_project( $p_project_id ) {
-	$t_query = new DbQuery( 'DELETE FROM {user_pref} WHERE project_id=:project_id' );
-	$t_query->bind( 'project_id', (int)$p_project_id );
+function user_pref_db_delete_project($p_project_id)
+{
+	$t_query = new DbQuery('DELETE FROM {user_pref} WHERE project_id=:project_id');
+	$t_query->bind('project_id', (int)$p_project_id);
 	$t_query->execute();
 }
 
@@ -596,49 +618,52 @@ function user_pref_db_delete_project( $p_project_id ) {
  * @param integer $p_project_id A valid project identifier.
  * @return UserPreferences
  */
-function user_pref_get( $p_user_id, $p_project_id = ALL_PROJECTS ) {
+function user_pref_get($p_user_id, $p_project_id = ALL_PROJECTS)
+{
 	static $s_vars;
 	global $g_cache_current_user_pref;
 
-	if( isset( $g_cache_current_user_pref[(int)$p_project_id] ) &&
+	if (
+		isset($g_cache_current_user_pref[(int)$p_project_id]) &&
 		auth_is_user_authenticated() &&
-		auth_get_current_user_id() == $p_user_id ) {
+		auth_get_current_user_id() == $p_user_id
+	) {
 		return $g_cache_current_user_pref[(int)$p_project_id];
 	}
 
-	$t_prefs = new UserPreferences( $p_user_id, $p_project_id );
+	$t_prefs = new UserPreferences($p_user_id, $p_project_id);
 
-	$t_row = user_pref_cache_row( $p_user_id, $p_project_id, false );
+	$t_row = user_pref_cache_row($p_user_id, $p_project_id, false);
 
 	# If the user has no preferences for the given project
-	if( false === $t_row ) {
-		if( ALL_PROJECTS != $p_project_id ) {
+	if (false === $t_row) {
+		if (ALL_PROJECTS != $p_project_id) {
 			# Try to get the prefs for ALL_PROJECTS (the defaults)
-			$t_row = user_pref_cache_row( $p_user_id, ALL_PROJECTS, false );
+			$t_row = user_pref_cache_row($p_user_id, ALL_PROJECTS, false);
 		}
 
 		# If $t_row is still false (the user doesn't have default preferences)
-		if( false === $t_row ) {
+		if (false === $t_row) {
 			# We use an empty array
 			$t_row = array();
 		}
 	}
 
-	if( $s_vars == null ) {
-		$s_vars = getClassProperties( 'UserPreferences', 'protected' );
+	if ($s_vars == null) {
+		$s_vars = getClassProperties('UserPreferences', 'protected');
 	}
 
-	$t_row_keys = array_keys( $t_row );
+	$t_row_keys = array_keys($t_row);
 
 	# Check each variable in the class
-	foreach( $s_vars as $t_var => $t_val ) {
+	foreach ($s_vars as $t_var => $t_val) {
 		# If we got a field from the DB with the same name
-		if( in_array( $t_var, $t_row_keys, true ) ) {
+		if (in_array($t_var, $t_row_keys, true)) {
 			# Store that value in the object
 			$t_prefs->$t_var = $t_row[$t_var];
 		}
 	}
-	if( auth_is_user_authenticated() && auth_get_current_user_id() == $p_user_id ) {
+	if (auth_is_user_authenticated() && auth_get_current_user_id() == $p_user_id) {
 		$g_cache_current_user_pref[(int)$p_project_id] = $t_prefs;
 	}
 	return $t_prefs;
@@ -653,21 +678,22 @@ function user_pref_get( $p_user_id, $p_project_id = ALL_PROJECTS ) {
  * @param integer $p_project_id A valid project identifier.
  * @return string
  */
-function user_pref_get_pref( $p_user_id, $p_pref_name, $p_project_id = ALL_PROJECTS ) {
+function user_pref_get_pref($p_user_id, $p_pref_name, $p_project_id = ALL_PROJECTS)
+{
 	static $s_vars;
 
-	$t_prefs = user_pref_get( $p_user_id, $p_project_id );
+	$t_prefs = user_pref_get($p_user_id, $p_project_id);
 
-	if( $s_vars == null ) {
-		$t_reflection = new ReflectionClass( 'UserPreferences' );
+	if ($s_vars == null) {
+		$t_reflection = new ReflectionClass('UserPreferences');
 		$s_vars = $t_reflection->getDefaultProperties();
 	}
 
-	if( in_array( $p_pref_name, array_keys( $s_vars ), true ) ) {
-		return $t_prefs->Get( $p_pref_name );
+	if (in_array($p_pref_name, array_keys($s_vars), true)) {
+		return $t_prefs->Get($p_pref_name);
 	} else {
-		error_parameters( $p_pref_name );
-		trigger_error( ERROR_DB_FIELD_NOT_FOUND, WARNING );
+		error_parameters($p_pref_name);
+		trigger_error(ERROR_DB_FIELD_NOT_FOUND, WARNING);
 		return '';
 	}
 }
@@ -678,12 +704,13 @@ function user_pref_get_pref( $p_user_id, $p_pref_name, $p_project_id = ALL_PROJE
  * @param integer $p_project_id A valid project identifier.
  * @return string language name or null if invalid language specified
  */
-function user_pref_get_language( $p_user_id, $p_project_id = ALL_PROJECTS ) {
-	$t_prefs = user_pref_get( $p_user_id, $p_project_id );
+function user_pref_get_language($p_user_id, $p_project_id = ALL_PROJECTS)
+{
+	$t_prefs = user_pref_get($p_user_id, $p_project_id);
 
 	# ensure the language is a valid one
 	$t_lang = $t_prefs->language;
-	if( !lang_language_exists( $t_lang ) ) {
+	if (!lang_language_exists($t_lang)) {
 		$t_lang = null;
 	}
 	return $t_lang;
@@ -703,12 +730,13 @@ function user_pref_get_language( $p_user_id, $p_project_id = ALL_PROJECTS ) {
  * @param boolean $p_check_protected	Whether to perform a check to not allow modify protected users
  * @return boolean
  */
-function user_pref_set_pref( $p_user_id, $p_pref_name, $p_pref_value, $p_project_id = ALL_PROJECTS, $p_check_protected = true ) {
-	$t_prefs = user_pref_get( $p_user_id, $p_project_id );
+function user_pref_set_pref($p_user_id, $p_pref_name, $p_pref_value, $p_project_id = ALL_PROJECTS, $p_check_protected = true)
+{
+	$t_prefs = user_pref_get($p_user_id, $p_project_id);
 
-	if( $t_prefs->$p_pref_name != $p_pref_value ) {
+	if ($t_prefs->$p_pref_name != $p_pref_value) {
 		$t_prefs->$p_pref_name = $p_pref_value;
-		user_pref_set( $p_user_id, $t_prefs, $p_project_id, $p_check_protected );
+		user_pref_set($p_user_id, $t_prefs, $p_project_id, $p_check_protected);
 	}
 
 	return true;
@@ -723,16 +751,17 @@ function user_pref_set_pref( $p_user_id, $p_pref_name, $p_pref_value, $p_project
  * @param boolean         $p_check_protected	Whether to perform a check to not allow modify protected users
  * @return void
  */
-function user_pref_set( $p_user_id, UserPreferences $p_prefs, $p_project_id = ALL_PROJECTS, $p_check_protected = true ) {
-	if( $p_check_protected ) {
-		user_ensure_unprotected( $p_user_id );
+function user_pref_set($p_user_id, UserPreferences $p_prefs, $p_project_id = ALL_PROJECTS, $p_check_protected = true)
+{
+	if ($p_check_protected) {
+		user_ensure_unprotected($p_user_id);
 	}
-	if( user_pref_exists( $p_user_id, $p_project_id ) ) {
-		user_pref_db_update( $p_user_id, $p_project_id, $p_prefs );
+	if (user_pref_exists($p_user_id, $p_project_id)) {
+		user_pref_db_update($p_user_id, $p_project_id, $p_prefs);
 	} else {
-		user_pref_db_insert( $p_user_id, $p_project_id, $p_prefs );
+		user_pref_db_insert($p_user_id, $p_project_id, $p_prefs);
 	}
-	user_pref_clear_cache( $p_user_id, $p_project_id );
+	user_pref_clear_cache($p_user_id, $p_project_id);
 }
 
 /**
@@ -742,12 +771,13 @@ function user_pref_set( $p_user_id, UserPreferences $p_prefs, $p_project_id = AL
  * @param boolean         $p_check_protected	Whether to perform a check to not allow modify protected users
  * @return void
  */
-function user_pref_reset( $p_user_id, $p_project_id = ALL_PROJECTS, $p_check_protected = true ) {
-	if( $p_check_protected ) {
-		user_ensure_unprotected( $p_user_id );
+function user_pref_reset($p_user_id, $p_project_id = ALL_PROJECTS, $p_check_protected = true)
+{
+	if ($p_check_protected) {
+		user_ensure_unprotected($p_user_id);
 	}
-	if( user_pref_exists( $p_user_id, $p_project_id ) ) {
-		user_pref_db_delete( $p_user_id, $p_project_id );
+	if (user_pref_exists($p_user_id, $p_project_id)) {
+		user_pref_db_delete($p_user_id, $p_project_id);
 	}
-	user_pref_clear_cache( $p_user_id, $p_project_id );
+	user_pref_clear_cache($p_user_id, $p_project_id);
 }

@@ -26,21 +26,21 @@
  */
 
 # Prevent output of HTML in the content if errors occur
-define( 'DISABLE_INLINE_ERROR_REPORTING', true );
+define('DISABLE_INLINE_ERROR_REPORTING', true);
 
-@require_once( dirname( dirname( __FILE__ ) ) . '/core.php' );
-require_api( 'config_api.php' );
+@require_once(dirname(dirname(__FILE__)) . '/core.php');
+require_api('config_api.php');
 
 /**
  * Send correct MIME Content-Type header for css content.
  */
-header( 'Content-Type: text/css; charset=UTF-8' );
+header('Content-Type: text/css; charset=UTF-8');
 
 /**
  * Don't let Internet Explorer second-guess our content-type, as per
  * http://blogs.msdn.com/b/ie/archive/2008/07/02/ie8-security-part-v-comprehensive-protection.aspx
  */
-header( 'X-Content-Type-Options: nosniff' );
+header('X-Content-Type-Options: nosniff');
 
 /**
  * WARNING: DO NOT EXPOSE SENSITIVE CONFIGURATION VALUES!
@@ -58,17 +58,17 @@ header( 'X-Content-Type-Options: nosniff' );
  *	eg. status colors are only necessary on a few pages.(my view, view all bugs, bug view, etc. )
  *	other pages may need to include dynamic css styles as well
  */
-$t_referer_page = array_key_exists( 'HTTP_REFERER', $_SERVER )
-	? basename( parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_PATH ) )
-	: basename( __FILE__ );
+$t_referer_page = array_key_exists('HTTP_REFERER', $_SERVER)
+	? basename(parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH))
+	: basename(__FILE__);
 
-if( $t_referer_page == auth_login_page() ) {
+if ($t_referer_page == auth_login_page()) {
 	# custom status colors not needed.
-	http_caching_headers( false );
+	http_caching_headers(false);
 	exit;
 }
 
-switch( $t_referer_page ) {
+switch ($t_referer_page) {
 	case AUTH_PAGE_USERNAME:
 	case AUTH_PAGE_CREDENTIAL:
 	case 'signup_page.php':
@@ -76,24 +76,24 @@ switch( $t_referer_page ) {
 	case 'account_update.php':
 		# We don't need custom status colors on login page, and this is
 		# actually causing an error since we're not authenticated yet.
-		http_caching_headers( false );
+		http_caching_headers(false);
 		exit;
 }
 
 # rewrite headers to allow caching
-if( gpc_isset( 'cache_key' ) ) {
-	http_caching_headers( true );
+if (gpc_isset('cache_key')) {
+	http_caching_headers(true);
 }
 
-$t_status_string = config_get( 'status_enum_string' );
-$t_statuses = MantisEnum::getAssocArrayIndexedByValues( $t_status_string );
-$t_colors = config_get( 'status_colors' );
+$t_status_string = config_get('status_enum_string');
+$t_statuses = MantisEnum::getAssocArrayIndexedByValues($t_status_string);
+$t_colors = config_get('status_colors');
 
-foreach( $t_statuses as $t_id => $t_label ) {
+foreach ($t_statuses as $t_id => $t_label) {
 	# Status color class
-	if( array_key_exists( $t_label, $t_colors ) ) {
+	if (array_key_exists($t_label, $t_colors)) {
 		$t_color = $t_colors[$t_label];
-		echo '.' . html_get_status_css_fg( $t_id ) . " { color: {$t_color}; }\n";
-		echo '.' . html_get_status_css_bg( $t_id ) . " { background-color: {$t_color}; }\n";
+		echo '.' . html_get_status_css_fg($t_id) . " { color: {$t_color}; }\n";
+		echo '.' . html_get_status_css_bg($t_id) . " { background-color: {$t_color}; }\n";
 	}
 }

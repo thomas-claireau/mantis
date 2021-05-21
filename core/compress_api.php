@@ -27,8 +27,8 @@
  * @uses utility_api.php
  */
 
-require_api( 'constant_inc.php' );
-require_api( 'utility_api.php' );
+require_api('constant_inc.php');
+require_api('utility_api.php');
 
 # Starts the buffering/compression (only if the compression option is ON)
 # This variable is used internally.  It is not used for configuration
@@ -42,41 +42,42 @@ $g_compression_started = false;
  * @return boolean
  * @access public
  */
-function compress_handler_is_enabled() {
+function compress_handler_is_enabled()
+{
 	global $g_compress_html;
 
 	# indicates compression should be disabled for a page. Note: php.ini may still enable zlib.output_compression.
 	# it may be possible to turn this off through the use of ini_set within that specific page.
-	if( defined( 'COMPRESSION_DISABLED' ) ) {
+	if (defined('COMPRESSION_DISABLED')) {
 		return false;
 	}
 
 	# Do not use config_get() here so only dependency is on constant_inc.php in this module
 	# We only actively compress html if global configuration compress_html is set.
-	if( OFF == $g_compress_html ) {
+	if (OFF == $g_compress_html) {
 		return false;
 	}
 
 	# both compression handlers require zlib module to be loaded
-	if( !extension_loaded( 'zlib' ) ) {
+	if (!extension_loaded('zlib')) {
 		return false;
 	}
 
-	if( ini_get( 'zlib.output_compression' ) ) {
+	if (ini_get('zlib.output_compression')) {
 		# zlib output compression is already enabled - we can't load the gzip output handler
 		return false;
 	}
 
 	# It's possible to set zlib.output_compression via ini_set.
 	# This method is preferred over ob_gzhandler
-	if( ini_get( 'output_handler' ) == '' && function_exists( 'ini_set' ) ) {
-		ini_set( 'zlib.output_compression', true );
+	if (ini_get('output_handler') == '' && function_exists('ini_set')) {
+		ini_set('zlib.output_compression', true);
 		# do it transparently
 		return false;
 	}
 
 	# if php.ini does not already use ob_gzhandler by default, return true.
-	return ( 'ob_gzhandler' != ini_get( 'output_handler' ) );
+	return ('ob_gzhandler' != ini_get('output_handler'));
 }
 
 /**
@@ -84,20 +85,21 @@ function compress_handler_is_enabled() {
  * @return void
  * @access public
  */
-function compress_start_handler() {
+function compress_start_handler()
+{
 	# Do not start compress handler if we got any output so far, as this
 	# denotes that an error has occurred. Enabling compression in this case
 	# will likely cause a Content Encoding Error when displaying the page.
-	if( ob_get_length() ) {
+	if (ob_get_length()) {
 		return;
 	}
 
-	if( compress_handler_is_enabled() ) {
+	if (compress_handler_is_enabled()) {
 		# Before doing anything else, start output buffering so we don't prevent
 		# headers from being sent if there's a blank line in an included file
-		ob_start( 'compress_handler' );
-	} else if( ini_get_bool( 'zlib.output_compression' ) == true ) {
-		if( defined( 'COMPRESSION_DISABLED' ) ) {
+		ob_start('compress_handler');
+	} else if (ini_get_bool('zlib.output_compression') == true) {
+		if (defined('COMPRESSION_DISABLED')) {
 			return;
 		}
 		ob_start();
@@ -112,10 +114,11 @@ function compress_start_handler() {
  * @return string
  * @access public
  */
-function compress_handler( &$p_buffer, $p_mode ) {
+function compress_handler(&$p_buffer, $p_mode)
+{
 	global $g_compression_started;
-	if( $g_compression_started && compress_handler_is_enabled() ) {
-		return ob_gzhandler( $p_buffer, $p_mode );
+	if ($g_compression_started && compress_handler_is_enabled()) {
+		return ob_gzhandler($p_buffer, $p_mode);
 	} else {
 		return $p_buffer;
 	}
@@ -126,7 +129,8 @@ function compress_handler( &$p_buffer, $p_mode ) {
  * @return void
  * @access public
  */
-function compress_enable() {
+function compress_enable()
+{
 	global $g_compression_started;
 
 	$g_compression_started = true;
@@ -137,7 +141,8 @@ function compress_enable() {
  * @return void
  * @access public
  */
-function compress_disable() {
+function compress_disable()
+{
 	global $g_compression_started;
 
 	$g_compression_started = false;

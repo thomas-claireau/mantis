@@ -152,12 +152,12 @@ if ($g_global_profiles) {
 												<td class="center">
 													<?php if ($t_is_global_profile) { ?>
 														<?php print_icon('fa-check', 'ace-icon fa-lg'); ?>
-													<?php } ?>
+													<?php  } ?>
 												</td>
 												<td class="center">
 													<?php if ($t_is_default_profile) { ?>
 														<?php print_icon('fa-check', 'ace-icon fa-lg'); ?>
-													<?php } ?>
+													<?php  } ?>
 												</td>
 											<?php
 											}

@@ -227,7 +227,7 @@ layout_page_begin();
 													</select>
 												</td>
 											</tr>
-										<?php } ?>
+										<?php  } ?>
 
 										<?php
 										if ($t_can_update_due_date) {
@@ -285,7 +285,7 @@ layout_page_begin();
 										?>
 											<tr>
 												<th class="category">
-													<?php if ($t_require && $t_has_write_access) { ?><span class="required">*</span><?php } ?>
+													<?php if ($t_require && $t_has_write_access) { ?><span class="required">*</span><?php  } ?>
 													<?php echo lang_get_defaulted($t_def['name']) ?>
 												</th>
 												<td>
@@ -356,7 +356,7 @@ layout_page_begin();
 													?>
 												</td>
 											</tr>
-										<?php } ?>
+										<?php  } ?>
 										<!-- Bugnote -->
 										<tr id="bug-change-status-note">
 											<th class="category">

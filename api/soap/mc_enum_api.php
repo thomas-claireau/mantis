@@ -30,12 +30,13 @@
  * @param string $p_password The password of the user.
  * @return array  The requested enumeration
  */
-function mc_enum_status( $p_username, $p_password ) {
-	if( !mci_validate_enum_access( $p_username, $p_password ) ) {
+function mc_enum_status($p_username, $p_password)
+{
+	if (!mci_validate_enum_access($p_username, $p_password)) {
 		return mci_fault_login_failed();
 	}
 
-	return mci_explode_to_objectref( 'status' );
+	return mci_explode_to_objectref('status');
 }
 
 /**
@@ -45,12 +46,13 @@ function mc_enum_status( $p_username, $p_password ) {
  * @param string $p_password The password of the user.
  * @return array  The requested enumeration
  */
-function mc_enum_priorities( $p_username, $p_password ) {
-	if( !mci_validate_enum_access( $p_username, $p_password ) ) {
+function mc_enum_priorities($p_username, $p_password)
+{
+	if (!mci_validate_enum_access($p_username, $p_password)) {
 		return mci_fault_login_failed();
 	}
 
-	return mci_explode_to_objectref( 'priority' );
+	return mci_explode_to_objectref('priority');
 }
 
 /**
@@ -60,12 +62,13 @@ function mc_enum_priorities( $p_username, $p_password ) {
  * @param string $p_password The password of the user.
  * @return array  The requested enumeration
  */
-function mc_enum_severities( $p_username, $p_password ) {
-	if( !mci_validate_enum_access( $p_username, $p_password ) ) {
+function mc_enum_severities($p_username, $p_password)
+{
+	if (!mci_validate_enum_access($p_username, $p_password)) {
 		return mci_fault_login_failed();
 	}
 
-	return mci_explode_to_objectref( 'severity' );
+	return mci_explode_to_objectref('severity');
 }
 
 /**
@@ -75,12 +78,13 @@ function mc_enum_severities( $p_username, $p_password ) {
  * @param string $p_password The password of the user.
  * @return array  The requested enumeration
  */
-function mc_enum_reproducibilities( $p_username, $p_password ) {
-	if( !mci_validate_enum_access( $p_username, $p_password ) ) {
+function mc_enum_reproducibilities($p_username, $p_password)
+{
+	if (!mci_validate_enum_access($p_username, $p_password)) {
 		return mci_fault_login_failed();
 	}
 
-	return mci_explode_to_objectref( 'reproducibility' );
+	return mci_explode_to_objectref('reproducibility');
 }
 
 /**
@@ -90,12 +94,13 @@ function mc_enum_reproducibilities( $p_username, $p_password ) {
  * @param string $p_password The password of the user.
  * @return array  The requested enumeration
  */
-function mc_enum_projections( $p_username, $p_password ) {
-	if( !mci_validate_enum_access( $p_username, $p_password ) ) {
+function mc_enum_projections($p_username, $p_password)
+{
+	if (!mci_validate_enum_access($p_username, $p_password)) {
 		return mci_fault_login_failed();
 	}
 
-	return mci_explode_to_objectref( 'projection' );
+	return mci_explode_to_objectref('projection');
 }
 
 /**
@@ -105,12 +110,13 @@ function mc_enum_projections( $p_username, $p_password ) {
  * @param string $p_password The password of the user.
  * @return array  The requested enumeration
  */
-function mc_enum_etas( $p_username, $p_password ) {
-	if( !mci_validate_enum_access( $p_username, $p_password ) ) {
+function mc_enum_etas($p_username, $p_password)
+{
+	if (!mci_validate_enum_access($p_username, $p_password)) {
 		return mci_fault_login_failed();
 	}
 
-	return mci_explode_to_objectref( 'eta' );
+	return mci_explode_to_objectref('eta');
 }
 
 /**
@@ -120,12 +126,13 @@ function mc_enum_etas( $p_username, $p_password ) {
  * @param string $p_password The password of the user.
  * @return array  The requested enumeration
  */
-function mc_enum_resolutions( $p_username, $p_password ) {
-	if( !mci_validate_enum_access( $p_username, $p_password ) ) {
+function mc_enum_resolutions($p_username, $p_password)
+{
+	if (!mci_validate_enum_access($p_username, $p_password)) {
 		return mci_fault_login_failed();
 	}
 
-	return mci_explode_to_objectref( 'resolution' );
+	return mci_explode_to_objectref('resolution');
 }
 
 /**
@@ -135,12 +142,13 @@ function mc_enum_resolutions( $p_username, $p_password ) {
  * @param string $p_password The password of the user.
  * @return array  The requested enumeration
  */
-function mc_enum_access_levels( $p_username, $p_password ) {
-	if( !mci_validate_enum_access( $p_username, $p_password ) ) {
+function mc_enum_access_levels($p_username, $p_password)
+{
+	if (!mci_validate_enum_access($p_username, $p_password)) {
 		return mci_fault_login_failed();
 	}
 
-	return mci_explode_to_objectref( 'access_levels' );
+	return mci_explode_to_objectref('access_levels');
 }
 
 /**
@@ -150,12 +158,13 @@ function mc_enum_access_levels( $p_username, $p_password ) {
  * @param string $p_password The password of the user.
  * @return array  The requested enumeration
  */
-function mc_enum_project_status( $p_username, $p_password ) {
-	if( !mci_validate_enum_access( $p_username, $p_password ) ) {
+function mc_enum_project_status($p_username, $p_password)
+{
+	if (!mci_validate_enum_access($p_username, $p_password)) {
 		return mci_fault_login_failed();
 	}
 
-	return mci_explode_to_objectref( 'project_status' );
+	return mci_explode_to_objectref('project_status');
 }
 
 /**
@@ -165,12 +174,13 @@ function mc_enum_project_status( $p_username, $p_password ) {
  * @param string $p_password The password of the user.
  * @return array  The requested enumeration
  */
-function mc_enum_project_view_states( $p_username, $p_password ) {
-	if( !mci_validate_enum_access( $p_username, $p_password ) ) {
+function mc_enum_project_view_states($p_username, $p_password)
+{
+	if (!mci_validate_enum_access($p_username, $p_password)) {
 		return mci_fault_login_failed();
 	}
 
-	return mci_explode_to_objectref( 'project_view_state' );
+	return mci_explode_to_objectref('project_view_state');
 }
 
 /**
@@ -180,12 +190,13 @@ function mc_enum_project_view_states( $p_username, $p_password ) {
  * @param string $p_password The password of the user.
  * @return array  The requested enumeration
  */
-function mc_enum_view_states( $p_username, $p_password ) {
-	if( !mci_validate_enum_access( $p_username, $p_password ) ) {
+function mc_enum_view_states($p_username, $p_password)
+{
+	if (!mci_validate_enum_access($p_username, $p_password)) {
 		return mci_fault_login_failed();
 	}
 
-	return mci_explode_to_objectref( 'view_state' );
+	return mci_explode_to_objectref('view_state');
 }
 
 /**
@@ -195,12 +206,13 @@ function mc_enum_view_states( $p_username, $p_password ) {
  * @param string $p_password The password of the user.
  * @return array The requested enumeration
  */
-function mc_enum_custom_field_types( $p_username, $p_password ) {
-	if( !mci_validate_enum_access( $p_username, $p_password ) ) {
+function mc_enum_custom_field_types($p_username, $p_password)
+{
+	if (!mci_validate_enum_access($p_username, $p_password)) {
 		return mci_fault_login_failed();
 	}
 
-	return mci_explode_to_objectref( 'custom_field_type' );
+	return mci_explode_to_objectref('custom_field_type');
 }
 
 /**
@@ -211,16 +223,17 @@ function mc_enum_custom_field_types( $p_username, $p_password ) {
  * @param string $p_enumeration The enumeration to get.
  * @return string  The requested enumeration.
  */
-function mc_enum_get( $p_username, $p_password, $p_enumeration ) {
-	if( !mci_validate_enum_access( $p_username, $p_password ) ) {
+function mc_enum_get($p_username, $p_password, $p_enumeration)
+{
+	if (!mci_validate_enum_access($p_username, $p_password)) {
 		return mci_fault_login_failed();
 	}
 
 	# safe to call directly after login checks
 	$t_user_id = auth_get_current_user_id();
-	$t_lang = mci_get_user_lang( $t_user_id );
+	$t_lang = mci_get_user_lang($t_user_id);
 
-	return lang_get( $p_enumeration . '_enum_string', $t_lang );
+	return lang_get($p_enumeration . '_enum_string', $t_lang);
 }
 
 /**
@@ -230,17 +243,18 @@ function mc_enum_get( $p_username, $p_password, $p_enumeration ) {
  * @param string $p_enumeration_name The name of the enumeration to convert.
  * @return array  The converted enumeration
  */
-function mci_explode_to_objectref( $p_enumeration_name ) {
+function mci_explode_to_objectref($p_enumeration_name)
+{
 	$t_config_var_name = $p_enumeration_name . '_enum_string';
-	$t_config_var_value = config_get( $t_config_var_name );
-	$t_translated_values = lang_get( $t_config_var_name, mci_get_user_lang( auth_get_current_user_id() ) );
+	$t_config_var_value = config_get($t_config_var_name);
+	$t_translated_values = lang_get($t_config_var_name, mci_get_user_lang(auth_get_current_user_id()));
 
-	$t_enum_values = MantisEnum::getValues( $t_config_var_value );
+	$t_enum_values = MantisEnum::getValues($t_config_var_value);
 
 	$t_result = array();
 
-	foreach ( $t_enum_values as $t_key ) {
-		$t_translated = MantisEnum::getLocalizedLabel( $t_config_var_value, $t_translated_values, $t_key );
+	foreach ($t_enum_values as $t_key) {
+		$t_translated = MantisEnum::getLocalizedLabel($t_config_var_value, $t_translated_values, $t_key);
 
 		$t_result[] = array(
 			'id' => $t_key,
@@ -257,12 +271,13 @@ function mci_explode_to_objectref( $p_enumeration_name ) {
  * @param string $p_password Password.
  * @return boolean true if the user has access, false otherwise
  */
-function mci_validate_enum_access( $p_username, $p_password ) {
-	$t_user_id = mci_check_login( $p_username, $p_password );
-	if( $t_user_id === false ) {
+function mci_validate_enum_access($p_username, $p_password)
+{
+	$t_user_id = mci_check_login($p_username, $p_password);
+	if ($t_user_id === false) {
 		return false;
 	}
-	if( !mci_has_readonly_access( $t_user_id ) ) {
+	if (!mci_has_readonly_access($t_user_id)) {
 		return false;
 	}
 
@@ -277,25 +292,26 @@ function mci_validate_enum_access( $p_username, $p_password ) {
  * @param string  $p_lang      The language for the name field.
  * @return array an array containing the id and the name of the enumeration element.
  */
-function mci_enum_get_array_by_id( $p_enum_id, $p_enum_type, $p_lang ) {
+function mci_enum_get_array_by_id($p_enum_id, $p_enum_type, $p_lang)
+{
 	$t_result = array();
 	$t_result['id'] = (int)$p_enum_id;
 
 	$t_enum_name = $p_enum_type . '_enum_string';
-	$t_enum_string_value = config_get( $t_enum_name );
-	$t_enum_localized_value = lang_get( $t_enum_name, $p_lang );
+	$t_enum_string_value = config_get($t_enum_name);
+	$t_enum_localized_value = lang_get($t_enum_name, $p_lang);
 
-	if( ApiObjectFactory::$soap ) {
+	if (ApiObjectFactory::$soap) {
 		# Soap API returns the localized label as the name
-		$t_result['name'] = MantisEnum::getLocalizedLabel( $t_enum_string_value, $t_enum_localized_value, $p_enum_id );
+		$t_result['name'] = MantisEnum::getLocalizedLabel($t_enum_string_value, $t_enum_localized_value, $p_enum_id);
 	} else {
-		$t_result['name'] = MantisEnum::getLabel( $t_enum_string_value, $p_enum_id );
-		$t_result['label'] = MantisEnum::getLocalizedLabel( $t_enum_string_value, $t_enum_localized_value, $p_enum_id );
+		$t_result['name'] = MantisEnum::getLabel($t_enum_string_value, $p_enum_id);
+		$t_result['label'] = MantisEnum::getLocalizedLabel($t_enum_string_value, $t_enum_localized_value, $p_enum_id);
 
-		if( $p_enum_type == 'status' ) {
-			$t_status_colors = config_get( 'status_colors' );
+		if ($p_enum_type == 'status') {
+			$t_status_colors = config_get('status_colors');
 
-			if( !array_key_exists( $t_result['name'], $t_status_colors ) ) {
+			if (!array_key_exists($t_result['name'], $t_status_colors)) {
 				$t_result['color'] = 'currentcolor';
 				return $t_result;
 			}
@@ -315,9 +331,10 @@ function mci_enum_get_array_by_id( $p_enum_id, $p_enum_type, $p_lang ) {
  *
  * @return integer The id corresponding to the given label, or 0 if not found.
  */
-function mci_get_enum_value_from_label( $p_enum_string, $p_label ) {
-	$t_value = MantisEnum::getValue( $p_enum_string, $p_label );
-	if( $t_value === false ) {
+function mci_get_enum_value_from_label($p_enum_string, $p_label)
+{
+	$t_value = MantisEnum::getValue($p_enum_string, $p_label);
+	if ($t_value === false) {
 		return 0;
 	}
 
@@ -335,22 +352,23 @@ function mci_get_enum_value_from_label( $p_enum_string, $p_label ) {
  * @param stdClass|array $p_object_ref An associate array with "id" and "name" keys.
  * @return integer enum id
  */
-function mci_get_enum_id_from_objectref( $p_enum, $p_object_ref ) {
-	$p_object_ref = ApiObjectFactory::objectToArray( $p_object_ref );
+function mci_get_enum_id_from_objectref($p_enum, $p_object_ref)
+{
+	$p_object_ref = ApiObjectFactory::objectToArray($p_object_ref);
 
-	if( !is_null( $p_object_ref ) && isset( $p_object_ref['id'] ) && (int)$p_object_ref['id'] != 0 ) {
+	if (!is_null($p_object_ref) && isset($p_object_ref['id']) && (int)$p_object_ref['id'] != 0) {
 		$t_id = (int)$p_object_ref['id'];
 	} else {
-		$t_enum = config_get( $p_enum . '_enum_string' );
-		if( !is_null( $p_object_ref ) && isset( $p_object_ref['name'] ) && !is_blank( $p_object_ref['name'] ) ) {
-			$t_id = mci_get_enum_value_from_label( $t_enum, $p_object_ref['name'] );
-			if( $t_id == 0 ) {
-				$t_id = config_get( 'webservice_' . $p_enum . '_enum_default_when_not_found' );
+		$t_enum = config_get($p_enum . '_enum_string');
+		if (!is_null($p_object_ref) && isset($p_object_ref['name']) && !is_blank($p_object_ref['name'])) {
+			$t_id = mci_get_enum_value_from_label($t_enum, $p_object_ref['name']);
+			if ($t_id == 0) {
+				$t_id = config_get('webservice_' . $p_enum . '_enum_default_when_not_found');
 			}
 		} else {
-			$t_default_id = config_get( 'default_bug_' . $p_enum, 0 );
-			if( $t_default_id == 0 ) {
-				$t_array = mci_explode_to_objectref( $p_enum );
+			$t_default_id = config_get('default_bug_' . $p_enum, 0);
+			if ($t_default_id == 0) {
+				$t_array = mci_explode_to_objectref($p_enum);
 				$t_id = (int)$t_array[0]['id'];
 			} else {
 				$t_id = $t_default_id;

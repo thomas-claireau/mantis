@@ -159,7 +159,7 @@ $t_filter_project_id = filter_get_field($f_filter_id, 'project_id');
 										</label>
 									</td>
 								</tr>
-							<?php } ?>
+							<?php  } ?>
 							<tr>
 								<td class="category">
 									<?php echo lang_get('email_project') ?>
@@ -176,13 +176,13 @@ $t_filter_project_id = filter_get_field($f_filter_id, 'project_id');
 											<span class="lbl padding-6"><?php echo lang_get('stored_project') . ' (' . string_display_line(project_get_name($t_filter_project_id)) . ')' ?></span>
 										</label>
 										<br>
-									<?php } ?>
+									<?php  } ?>
 									<?php if ($t_filter_project_id != $t_current_project_id) { ?>
 										<label>
 											<input type="radio" class="ace input-sm" name="filter_project_id" value="<?php echo $t_current_project_id ?>">
 											<span class="lbl padding-6"><?php echo lang_get('current_project') . ' (' . string_display_line(project_get_name($t_current_project_id)) . ')' ?></span>
 										</label>
-									<?php } ?>
+									<?php  } ?>
 								</td>
 							</tr>
 						</table>

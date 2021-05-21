@@ -1,4 +1,5 @@
 <?php
+
 /**
  * MantisBT - A PHP based bugtracking system
  *
@@ -28,7 +29,8 @@
  * Please note: upon registration or avatar change, it takes some time for
  * the updated gravatar images to show on sites
  */
-class GravatarPlugin extends MantisPlugin {
+class GravatarPlugin extends MantisPlugin
+{
 	const GRAVATAR_URL = 'https://secure.gravatar.com/';
 
 	/**
@@ -57,9 +59,10 @@ class GravatarPlugin extends MantisPlugin {
 	 * A method that populates the plugin information and minimum requirements.
 	 * @return void
 	 */
-	function register() {
-		$this->name = plugin_lang_get( 'title' );
-		$this->description = plugin_lang_get( 'description' );
+	function register()
+	{
+		$this->name = plugin_lang_get('title');
+		$this->description = plugin_lang_get('description');
 		$this->page = '';
 
 		$this->version = MANTIS_VERSION;
@@ -76,7 +79,8 @@ class GravatarPlugin extends MantisPlugin {
 	 * Default plugin configuration.
 	 * @return array
 	 */
-	function config() {
+	function config()
+	{
 		return array(
 			/**
 			 * The rating of the avatar to show: 'G', 'PG', 'R', 'X'
@@ -99,7 +103,8 @@ class GravatarPlugin extends MantisPlugin {
 	/**
 	 * Register event hooks for plugin.
 	 */
-	function hooks() {
+	function hooks()
+	{
 		return array(
 			'EVENT_USER_AVATAR' => 'user_get_avatar',
 			'EVENT_CORE_HEADERS' => 'csp_headers',
@@ -109,9 +114,10 @@ class GravatarPlugin extends MantisPlugin {
 	/**
 	 * Register gravatar url as an img-src for CSP header
 	 */
-	function csp_headers() {
-		if( config_get( 'show_avatar' ) !== OFF ) {
-			http_csp_add( 'img-src', self::GRAVATAR_URL );
+	function csp_headers()
+	{
+		if (config_get('show_avatar') !== OFF) {
+			http_csp_add('img-src', self::GRAVATAR_URL);
 		}
 	}
 
@@ -127,18 +133,19 @@ class GravatarPlugin extends MantisPlugin {
 	 *
 	 * @return object An instance of class Avatar or null.
 	 */
-	function user_get_avatar( $p_event, $p_user_id, $p_size = 80 ) {
-		$t_default_avatar = plugin_config_get( 'default_avatar' );
+	function user_get_avatar($p_event, $p_user_id, $p_size = 80)
+	{
+		$t_default_avatar = plugin_config_get('default_avatar');
 
 		# Default avatar is either one of Gravatar's options, or
 		# assumed to be an URL to a default avatar image
-		$t_default_avatar = urlencode( $t_default_avatar );
-		$t_rating = plugin_config_get( 'rating' );
+		$t_default_avatar = urlencode($t_default_avatar);
+		$t_rating = plugin_config_get('rating');
 
-		if( user_exists( $p_user_id ) ) {
-			$t_email_hash = md5( strtolower( trim( user_get_email( $p_user_id ) ) ) );
+		if (user_exists($p_user_id)) {
+			$t_email_hash = md5(strtolower(trim(user_get_email($p_user_id))));
 		} else {
-			$t_email_hash = md5( 'generic-avatar-since-user-not-found' );
+			$t_email_hash = md5('generic-avatar-since-user-not-found');
 		}
 
 		# Build Gravatar URL

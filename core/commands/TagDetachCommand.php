@@ -14,12 +14,12 @@
 # You should have received a copy of the GNU General Public License
 # along with MantisBT.  If not, see <http://www.gnu.org/licenses/>.
 
-require_api( 'authentication_api.php' );
-require_api( 'bug_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'config_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'user_api.php' );
+require_api('authentication_api.php');
+require_api('bug_api.php');
+require_api('constant_inc.php');
+require_api('config_api.php');
+require_api('helper_api.php');
+require_api('user_api.php');
 
 use Mantis\Exceptions\ClientException;
 
@@ -30,7 +30,8 @@ use Mantis\Exceptions\ClientException;
  *   "query": { "issue_id" => 1234, "tag_id" => 1 }
  * }
  */
-class TagDetachCommand extends Command {
+class TagDetachCommand extends Command
+{
 	/**
 	 * @var integer issue id
 	 */
@@ -49,23 +50,26 @@ class TagDetachCommand extends Command {
 	/**
 	 * @param array $p_data The command data.
 	 */
-	function __construct( array $p_data ) {
-		parent::__construct( $p_data );
+	function __construct(array $p_data)
+	{
+		parent::__construct($p_data);
 	}
 
 	/**
 	 * Validate the data.
 	 */
-	function validate() {		
-		$this->issue_id = helper_parse_issue_id( $this->query( 'issue_id' ) );
-		$this->tag_id = $this->query( 'tag_id' );
+	function validate()
+	{
+		$this->issue_id = helper_parse_issue_id($this->query('issue_id'));
+		$this->tag_id = $this->query('tag_id');
 		$this->user_id = auth_get_current_user_id();
 
-		if( !is_numeric( $this->tag_id ) ) {
+		if (!is_numeric($this->tag_id)) {
 			throw new ClientException(
-				sprintf( "Invalid tag id '%s'", $this->tag_id ),
+				sprintf("Invalid tag id '%s'", $this->tag_id),
 				ERROR_INVALID_FIELD_VALUE,
-				array( 'tag_id' ) );
+				array('tag_id')
+			);
 		}
 	}
 
@@ -74,11 +78,11 @@ class TagDetachCommand extends Command {
 	 *
 	 * @returns array Command response
 	 */
-	protected function process() {
-		if( tag_bug_is_attached( $this->tag_id, $this->issue_id ) ) {
-			tag_bug_detach( $this->tag_id, $this->issue_id );
-			event_signal( 'EVENT_TAG_DETACHED', array( $this->issue_id, array( $this->tag_id ) ) );
+	protected function process()
+	{
+		if (tag_bug_is_attached($this->tag_id, $this->issue_id)) {
+			tag_bug_detach($this->tag_id, $this->issue_id);
+			event_signal('EVENT_TAG_DETACHED', array($this->issue_id, array($this->tag_id)));
 		}
 	}
 }
-

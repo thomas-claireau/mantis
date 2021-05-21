@@ -33,12 +33,13 @@
  * @param string $p_url The URL to fetch.
  * @return null|string URL contents (NULL in case of errors)
  */
-function url_get( $p_url ) {
+function url_get($p_url)
+{
 	# Generic PHP call
-	if( ini_get_bool( 'allow_url_fopen' ) ) {
-		$t_data = @file_get_contents( $p_url );
+	if (ini_get_bool('allow_url_fopen')) {
+		$t_data = @file_get_contents($p_url);
 
-		if( $t_data !== false ) {
+		if ($t_data !== false) {
 			return $t_data;
 		}
 		# If the call failed (e.g. due to lack of https wrapper)
@@ -46,8 +47,8 @@ function url_get( $p_url ) {
 	}
 
 	# Use the PHP cURL extension
-	if( function_exists( 'curl_init' ) ) {
-		$t_curl = curl_init( $p_url );
+	if (function_exists('curl_init')) {
+		$t_curl = curl_init($p_url);
 
 		# cURL options
 		$t_curl_opt[CURLOPT_RETURNTRANSFER] = true;
@@ -62,18 +63,18 @@ function url_get( $p_url ) {
 			'mantisbt/' . MANTIS_VERSION . ' php-curl/' . $t_vers['version'];
 
 		# Set the options
-		curl_setopt_array( $t_curl, $t_curl_opt );
+		curl_setopt_array($t_curl, $t_curl_opt);
 
 		# Retrieve data
-		$t_data = curl_exec( $t_curl );
-		curl_close( $t_curl );
+		$t_data = curl_exec($t_curl);
+		curl_close($t_curl);
 
-		if( $t_data !== false ) {
+		if ($t_data !== false) {
 			return $t_data;
 		}
 	}
 
 	# Last resort system call
-	$t_url = escapeshellarg( $p_url );
-	return shell_exec( 'curl ' . $t_url );
+	$t_url = escapeshellarg($p_url);
+	return shell_exec('curl ' . $t_url);
 }

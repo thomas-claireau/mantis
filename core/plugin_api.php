@@ -39,17 +39,17 @@
  * @uses logging_api.php
  */
 
-require_api( 'access_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'database_api.php' );
-require_api( 'error_api.php' );
-require_api( 'event_api.php' );
-require_api( 'file_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'history_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'logging_api.php' );
+require_api('access_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('database_api.php');
+require_api('error_api.php');
+require_api('event_api.php');
+require_api('file_api.php');
+require_api('helper_api.php');
+require_api('history_api.php');
+require_api('lang_api.php');
+require_api('logging_api.php');
 
 /**
  * Installed Plugins cache
@@ -87,9 +87,10 @@ $g_plugin_current = array();
  * Get the currently executing plugin's basename.
  * @return string Plugin basename, or null if no current plugin
  */
-function plugin_get_current() {
+function plugin_get_current()
+{
 	global $g_plugin_current;
-	return( isset( $g_plugin_current[0] ) ? $g_plugin_current[0] : null );
+	return (isset($g_plugin_current[0]) ? $g_plugin_current[0] : null);
 }
 
 /**
@@ -97,18 +98,20 @@ function plugin_get_current() {
  * @param string $p_base_name Plugin base name.
  * @return void
  */
-function plugin_push_current( $p_base_name ) {
+function plugin_push_current($p_base_name)
+{
 	global $g_plugin_current;
-	array_unshift( $g_plugin_current, $p_base_name );
+	array_unshift($g_plugin_current, $p_base_name);
 }
 
 /**
  * Remove the current plugin from the stack
  * @return string Plugin basename, or null if no current plugin
  */
-function plugin_pop_current() {
+function plugin_pop_current()
+{
 	global $g_plugin_current;
-	return( isset( $g_plugin_current[0] ) ? array_shift( $g_plugin_current ) : null );
+	return (isset($g_plugin_current[0]) ? array_shift($g_plugin_current) : null);
 }
 
 /**
@@ -116,8 +119,9 @@ function plugin_pop_current() {
  * @see $g_plugins_force_installed
  * @return array List of plugins (basename => priority)
  */
-function plugin_get_force_installed() {
-	$t_forced_plugins = config_get_global( 'plugins_force_installed' );
+function plugin_get_force_installed()
+{
+	$t_forced_plugins = config_get_global('plugins_force_installed');
 
 	# MantisCore pseudo-plugin is force-installed by definition
 	$t_forced_plugins['MantisCore'] = PLUGIN_PRIORITY_HIGH;
@@ -131,18 +135,19 @@ function plugin_get_force_installed() {
  * @param string|null $p_basename Plugin base name (defaults to current plugin).
  * @return MantisPlugin Plugin Object
  */
-function plugin_get( $p_basename = null ) {
+function plugin_get($p_basename = null)
+{
 	global $g_plugin_cache;
 
-	if( is_null( $p_basename ) ) {
+	if (is_null($p_basename)) {
 		$t_current = plugin_get_current();
 	} else {
 		$t_current = $p_basename;
 	}
 
-	if( !plugin_is_registered( $t_current ) ) {
-		error_parameters( $t_current );
-		trigger_error( ERROR_PLUGIN_NOT_REGISTERED, ERROR );
+	if (!plugin_is_registered($t_current)) {
+		error_parameters($t_current);
+		trigger_error(ERROR_PLUGIN_NOT_REGISTERED, ERROR);
 	}
 
 	return $g_plugin_cache[$t_current];
@@ -155,16 +160,17 @@ function plugin_get( $p_basename = null ) {
  * @param string  $p_base_name Plugin base name (defaults to current plugin).
  * @return string
  */
-function plugin_page( $p_page, $p_redirect = false, $p_base_name = null ) {
-	if( is_null( $p_base_name ) ) {
+function plugin_page($p_page, $p_redirect = false, $p_base_name = null)
+{
+	if (is_null($p_base_name)) {
 		$t_current = plugin_get_current();
 	} else {
 		$t_current = $p_base_name;
 	}
-	if( $p_redirect ) {
+	if ($p_redirect) {
 		return 'plugin.php?page=' . $t_current . '/' . $p_page;
 	} else {
-		return helper_mantis_url( 'plugin.php?page=' . $t_current . '/' . $p_page );
+		return helper_mantis_url('plugin.php?page=' . $t_current . '/' . $p_page);
 	}
 }
 
@@ -174,8 +180,9 @@ function plugin_page( $p_page, $p_redirect = false, $p_base_name = null ) {
  * @param string $p_base_name The basename for plugin or null for current plugin.
  * @return string The route group path to use.
  */
-function plugin_route_group( $p_base_name = null ) {
-	if( is_null( $p_base_name ) ) {
+function plugin_route_group($p_base_name = null)
+{
+	if (is_null($p_base_name)) {
 		$t_current = plugin_get_current();
 	} else {
 		$t_current = $p_base_name;
@@ -190,12 +197,13 @@ function plugin_route_group( $p_base_name = null ) {
  * @param string $p_base_name Plugin base name.
  * @return mixed File path or false if FNF
  */
-function plugin_file_path( $p_filename, $p_base_name ) {
-	$t_file_path = config_get_global( 'plugin_path' );
+function plugin_file_path($p_filename, $p_base_name)
+{
+	$t_file_path = config_get_global('plugin_path');
 	$t_file_path .= $p_base_name . DIRECTORY_SEPARATOR;
 	$t_file_path .= 'files' . DIRECTORY_SEPARATOR . $p_filename;
 
-	return( is_file( $t_file_path ) ? $t_file_path : false );
+	return (is_file($t_file_path) ? $t_file_path : false);
 }
 
 /**
@@ -205,16 +213,17 @@ function plugin_file_path( $p_filename, $p_base_name ) {
  * @param string  $p_base_name Plugin base name (defaults to current plugin).
  * @return string
  */
-function plugin_file( $p_file, $p_redirect = false, $p_base_name = null ) {
-	if( is_null( $p_base_name ) ) {
+function plugin_file($p_file, $p_redirect = false, $p_base_name = null)
+{
+	if (is_null($p_base_name)) {
 		$t_current = plugin_get_current();
 	} else {
 		$t_current = $p_base_name;
 	}
-	if( $p_redirect ) {
+	if ($p_redirect) {
 		return 'plugin_file.php?file=' . $t_current . '/' . $p_file;
 	} else {
-		return helper_mantis_url( 'plugin_file.php?file=' . $t_current . '/' . $p_file );
+		return helper_mantis_url('plugin_file.php?file=' . $t_current . '/' . $p_file);
 	}
 }
 
@@ -224,41 +233,42 @@ function plugin_file( $p_file, $p_redirect = false, $p_base_name = null ) {
  * @param string $p_basename Plugin basename.
  * @return void
  */
-function plugin_file_include( $p_filename, $p_basename = null ) {
+function plugin_file_include($p_filename, $p_basename = null)
+{
 	global $g_plugin_mime_types;
 
-	if( is_null( $p_basename ) ) {
+	if (is_null($p_basename)) {
 		$t_current = plugin_get_current();
 	} else {
 		$t_current = $p_basename;
 	}
 
-	$t_file_path = plugin_file_path( $p_filename, $t_current );
-	if( false === $t_file_path ) {
-		error_parameters( $t_current, $p_filename );
-		trigger_error( ERROR_PLUGIN_FILE_NOT_FOUND, ERROR );
+	$t_file_path = plugin_file_path($p_filename, $t_current);
+	if (false === $t_file_path) {
+		error_parameters($t_current, $p_filename);
+		trigger_error(ERROR_PLUGIN_FILE_NOT_FOUND, ERROR);
 	}
 
 	$t_content_type = '';
-	$t_file_info_type = file_get_mime_type( $t_file_path );
-	if( $t_file_info_type !== false ) {
+	$t_file_info_type = file_get_mime_type($t_file_path);
+	if ($t_file_info_type !== false) {
 		$t_content_type = $t_file_info_type;
 	}
 
 	# allow overriding the content type for specific text and image extensions
 	# see bug #13193 for details
-	if( strpos( $t_content_type, 'text/' ) === 0 || strpos( $t_content_type, 'image/' ) === 0 ) {
-		$t_extension = pathinfo( $t_file_path, PATHINFO_EXTENSION );
-		if( $t_extension && array_key_exists( $t_extension, $g_plugin_mime_types ) ) {
+	if (strpos($t_content_type, 'text/') === 0 || strpos($t_content_type, 'image/') === 0) {
+		$t_extension = pathinfo($t_file_path, PATHINFO_EXTENSION);
+		if ($t_extension && array_key_exists($t_extension, $g_plugin_mime_types)) {
 			$t_content_type =  $g_plugin_mime_types[$t_extension];
 		}
 	}
 
-	if( $t_content_type ) {
-		header( 'Content-Type: ' . $t_content_type );
+	if ($t_content_type) {
+		header('Content-Type: ' . $t_content_type);
 	}
 
-	readfile( $t_file_path );
+	readfile($t_file_path);
 }
 
 /**
@@ -268,20 +278,21 @@ function plugin_file_include( $p_filename, $p_basename = null ) {
  * @param string $p_basename Plugin basename (defaults to current plugin).
  * @return string Full table name
  */
-function plugin_table( $p_name, $p_basename = null ) {
-	if( is_null( $p_basename ) ) {
+function plugin_table($p_name, $p_basename = null)
+{
+	if (is_null($p_basename)) {
 		$t_current = plugin_get_current();
 	} else {
 		$t_current = $p_basename;
 	}
 
 	# Determine plugin table prefix including trailing '_'
-	$t_prefix = trim( config_get_global( 'db_table_plugin_prefix' ) );
-	if( !empty( $t_prefix ) && '_' != substr( $t_prefix, -1 ) ) {
+	$t_prefix = trim(config_get_global('db_table_plugin_prefix'));
+	if (!empty($t_prefix) && '_' != substr($t_prefix, -1)) {
 		$t_prefix .= '_';
 	}
 
-	return db_get_table( $t_prefix . $t_current . '_' . $p_name );
+	return db_get_table($t_prefix . $t_current . '_' . $p_name);
 }
 
 /**
@@ -293,14 +304,15 @@ function plugin_table( $p_name, $p_basename = null ) {
  * @param integer $p_project A Project identifier.
  * @return string
  */
-function plugin_config_get( $p_option, $p_default = null, $p_global = false, $p_user = null, $p_project = null ) {
+function plugin_config_get($p_option, $p_default = null, $p_global = false, $p_user = null, $p_project = null)
+{
 	$t_basename = plugin_get_current();
 	$t_full_option = 'plugin_' . $t_basename . '_' . $p_option;
 
-	if( $p_global ) {
-		return config_get_global( $t_full_option, $p_default );
+	if ($p_global) {
+		return config_get_global($t_full_option, $p_default);
 	} else {
-		return config_get( $t_full_option, $p_default, $p_user, $p_project );
+		return config_get($t_full_option, $p_default, $p_user, $p_project);
 	}
 }
 
@@ -313,15 +325,16 @@ function plugin_config_get( $p_option, $p_default = null, $p_global = false, $p_
  * @param integer $p_access  Access threshold.
  * @return void
  */
-function plugin_config_set( $p_option, $p_value, $p_user = NO_USER, $p_project = ALL_PROJECTS, $p_access = DEFAULT_ACCESS_LEVEL ) {
-	if( $p_access == DEFAULT_ACCESS_LEVEL ) {
-		$p_access = config_get_global( 'admin_site_threshold' );
+function plugin_config_set($p_option, $p_value, $p_user = NO_USER, $p_project = ALL_PROJECTS, $p_access = DEFAULT_ACCESS_LEVEL)
+{
+	if ($p_access == DEFAULT_ACCESS_LEVEL) {
+		$p_access = config_get_global('admin_site_threshold');
 	}
 
 	$t_basename = plugin_get_current();
 	$t_full_option = 'plugin_' . $t_basename . '_' . $p_option;
 
-	config_set( $t_full_option, $p_value, $p_user, $p_project, $p_access );
+	config_set($t_full_option, $p_value, $p_user, $p_project, $p_access);
 }
 
 /**
@@ -331,11 +344,12 @@ function plugin_config_set( $p_option, $p_value, $p_user = NO_USER, $p_project =
  * @param integer $p_project A project identifier.
  * @return void
  */
-function plugin_config_delete( $p_option, $p_user = ALL_USERS, $p_project = ALL_PROJECTS ) {
+function plugin_config_delete($p_option, $p_user = ALL_USERS, $p_project = ALL_PROJECTS)
+{
 	$t_basename = plugin_get_current();
 	$t_full_option = 'plugin_' . $t_basename . '_' . $p_option;
 
-	config_delete( $t_full_option, $p_user, $p_project );
+	config_delete($t_full_option, $p_user, $p_project);
 }
 
 /**
@@ -343,18 +357,19 @@ function plugin_config_delete( $p_option, $p_user = ALL_USERS, $p_project = ALL_
  * @param array $p_options Array of configuration option name/value pairs.
  * @return void
  */
-function plugin_config_defaults( array $p_options ) {
-	if( !is_array( $p_options ) ) {
+function plugin_config_defaults(array $p_options)
+{
+	if (!is_array($p_options)) {
 		return;
 	}
 
 	$t_basename = plugin_get_current();
 	$t_option_base = 'plugin_' . $t_basename . '_';
 
-	foreach( $p_options as $t_option => $t_value ) {
+	foreach ($p_options as $t_option => $t_value) {
 		$t_full_option = $t_option_base . $t_option;
 
-		config_set_global( $t_full_option, $t_value, false );
+		config_set_global($t_full_option, $t_value, false);
 	}
 }
 
@@ -365,16 +380,17 @@ function plugin_config_defaults( array $p_options ) {
  * @param string $p_basename Plugin basename.
  * @return string Language string
  */
-function plugin_lang_get( $p_name, $p_basename = null ) {
-	if( !is_null( $p_basename ) ) {
-		plugin_push_current( $p_basename );
+function plugin_lang_get($p_name, $p_basename = null)
+{
+	if (!is_null($p_basename)) {
+		plugin_push_current($p_basename);
 	}
 
 	$t_basename = plugin_get_current();
 	$t_name = 'plugin_' . $t_basename . '_' . $p_name;
-	$t_string = lang_get( $t_name );
+	$t_string = lang_get($t_name);
 
-	if( !is_null( $p_basename ) ) {
+	if (!is_null($p_basename)) {
 		plugin_pop_current();
 	}
 	return $t_string;
@@ -394,15 +410,16 @@ function plugin_lang_get( $p_name, $p_basename = null ) {
  *
  * @return string Language string
  */
-function plugin_lang_get_defaulted( $p_name, $p_default = null, $p_basename = null ) {
-	if( !is_null( $p_basename ) ) {
-		plugin_push_current( $p_basename );
+function plugin_lang_get_defaulted($p_name, $p_default = null, $p_basename = null)
+{
+	if (!is_null($p_basename)) {
+		plugin_push_current($p_basename);
 	}
 	$t_basename = plugin_get_current();
 	$t_name = 'plugin_' . $t_basename . '_' . $p_name;
-	$t_string = lang_get_defaulted( $t_name, $p_default );
+	$t_string = lang_get_defaulted($t_name, $p_default);
 
-	if( !is_null( $p_basename ) ) {
+	if (!is_null($p_basename)) {
 		plugin_pop_current();
 	}
 	return $t_string;
@@ -418,8 +435,9 @@ function plugin_lang_get_defaulted( $p_name, $p_default = null, $p_basename = nu
  * @param string  $p_basename   The plugin basename (or current plugin if null).
  * @return void
  */
-function plugin_history_log( $p_bug_id, $p_field_name, $p_old_value, $p_new_value = '', $p_user_id = null, $p_basename = null ) {
-	if( is_null( $p_basename ) ) {
+function plugin_history_log($p_bug_id, $p_field_name, $p_old_value, $p_new_value = '', $p_user_id = null, $p_basename = null)
+{
+	if (is_null($p_basename)) {
 		$t_basename = plugin_get_current();
 	} else {
 		$t_basename = $p_basename;
@@ -427,7 +445,7 @@ function plugin_history_log( $p_bug_id, $p_field_name, $p_old_value, $p_new_valu
 
 	$t_field_name = $t_basename . '_' . $p_field_name;
 
-	history_log_event_direct( $p_bug_id, $t_field_name, $p_old_value, $p_new_value, $p_user_id, PLUGIN_HISTORY );
+	history_log_event_direct($p_bug_id, $t_field_name, $p_old_value, $p_new_value, $p_user_id, PLUGIN_HISTORY);
 }
 
 /**
@@ -437,8 +455,9 @@ function plugin_history_log( $p_bug_id, $p_field_name, $p_old_value, $p_new_valu
  * @param string  $p_basename   The plugin basename (or current plugin if null).
  * @return void
  */
-function plugin_error( $p_error_name, $p_error_type = ERROR, $p_basename = null ) {
-	if( is_null( $p_basename ) ) {
+function plugin_error($p_error_name, $p_error_type = ERROR, $p_basename = null)
+{
+	if (is_null($p_basename)) {
 		$t_basename = plugin_get_current();
 	} else {
 		$t_basename = $p_basename;
@@ -446,7 +465,7 @@ function plugin_error( $p_error_name, $p_error_type = ERROR, $p_basename = null 
 
 	$t_error_code = "plugin_${t_basename}_${p_error_name}";
 
-	trigger_error( $t_error_code, $p_error_type );
+	trigger_error($t_error_code, $p_error_type);
 }
 
 /**
@@ -455,9 +474,10 @@ function plugin_error( $p_error_name, $p_error_type = ERROR, $p_basename = null 
  * @param string $p_callback Callback function.
  * @return void
  */
-function plugin_event_hook( $p_name, $p_callback ) {
+function plugin_event_hook($p_name, $p_callback)
+{
 	$t_basename = plugin_get_current();
-	event_hook( $p_name, $p_callback, $t_basename );
+	event_hook($p_name, $p_callback, $t_basename);
 }
 
 /**
@@ -465,21 +485,22 @@ function plugin_event_hook( $p_name, $p_callback ) {
  * @param array $p_hooks Array of event name/callback key/value pairs.
  * @return void
  */
-function plugin_event_hook_many( array $p_hooks ) {
-	if( !is_array( $p_hooks ) ) {
+function plugin_event_hook_many(array $p_hooks)
+{
+	if (!is_array($p_hooks)) {
 		return;
 	}
 
 	$t_basename = plugin_get_current();
 
-	foreach( $p_hooks as $t_event => $t_callbacks ) {
-		if( !is_array( $t_callbacks ) ) {
-			event_hook( $t_event, $t_callbacks, $t_basename );
+	foreach ($p_hooks as $t_event => $t_callbacks) {
+		if (!is_array($t_callbacks)) {
+			event_hook($t_event, $t_callbacks, $t_basename);
 			continue;
 		}
 
-		foreach( $t_callbacks as $t_callback ) {
-			event_hook( $t_event, $t_callback, $t_basename );
+		foreach ($t_callbacks as $t_callback) {
+			event_hook($t_event, $t_callback, $t_basename);
 		}
 	}
 }
@@ -490,13 +511,14 @@ function plugin_event_hook_many( array $p_hooks ) {
  * @param string $p_child Child plugin basename.
  * @return MantisPlugin
  */
-function plugin_child( $p_child ) {
+function plugin_child($p_child)
+{
 	$t_base_name = plugin_get_current();
 
-	$t_plugin = plugin_register( $t_base_name, false, $p_child );
+	$t_plugin = plugin_register($t_base_name, false, $p_child);
 
-	if( !is_null( $t_plugin ) ) {
-		plugin_init( $p_child );
+	if (!is_null($t_plugin)) {
+		plugin_init($p_child);
 	}
 
 	return $t_plugin;
@@ -508,10 +530,11 @@ function plugin_child( $p_child ) {
  * @param string $p_base_name Plugin basename.
  * @return boolean Plugin loaded
  */
-function plugin_is_loaded( $p_base_name ) {
+function plugin_is_loaded($p_base_name)
+{
 	global $g_plugin_cache_init;
 
-	return ( isset( $g_plugin_cache_init[$p_base_name] ) && $g_plugin_cache_init[$p_base_name] );
+	return (isset($g_plugin_cache_init[$p_base_name]) && $g_plugin_cache_init[$p_base_name]);
 }
 
 /**
@@ -521,13 +544,14 @@ function plugin_is_loaded( $p_base_name ) {
  * @param boolean $p_maximum  Minimum (false) or maximum (true) version check.
  * @return integer 1 if the version dependency succeeds, -1 if it fails
  */
-function plugin_version_check( $p_version, $p_required, $p_maximum = false ) {
-	if( $p_maximum ) {
+function plugin_version_check($p_version, $p_required, $p_maximum = false)
+{
+	if ($p_maximum) {
 		$t_operator = '<';
 	} else {
 		$t_operator = '>=';
 	}
-	$t_result = version_compare( $p_version, $p_required, $t_operator );
+	$t_result = version_compare($p_version, $p_required, $t_operator);
 	return $t_result ? 1 : -1;
 }
 
@@ -542,59 +566,60 @@ function plugin_version_check( $p_version, $p_required, $p_maximum = false ) {
  * @param boolean $p_initialized Whether plugin is initialized.
  * @return integer Plugin dependency status
  */
-function plugin_dependency( $p_base_name, $p_required, $p_initialized = false ) {
+function plugin_dependency($p_base_name, $p_required, $p_initialized = false)
+{
 	global $g_plugin_cache, $g_plugin_cache_init;
 
 	# check for registered dependency
-	if( isset( $g_plugin_cache[$p_base_name] ) ) {
+	if (isset($g_plugin_cache[$p_base_name])) {
 
 		# require dependency initialized?
-		if( $p_initialized && !isset( $g_plugin_cache_init[$p_base_name] ) ) {
+		if ($p_initialized && !isset($g_plugin_cache_init[$p_base_name])) {
 			return 0;
 		}
 
 		$t_plugin_version = $g_plugin_cache[$p_base_name]->version;
 
-		$t_required_array = explode( ',', $p_required );
+		$t_required_array = explode(',', $p_required);
 
 		# Set maximum dependency for MantisCore if none is specified.
 		# This effectively disables plugins which have not been specifically
 		# designed for a new major Mantis release to force authors to review
 		# their code, adapt it if necessary, and release a new version of the
 		# plugin with updated dependencies.
-		if( $p_base_name == 'MantisCore' && strpos( $p_required, '<' ) === false ) {
-			$t_version_core = mb_substr( $t_plugin_version, 0, strpos( $t_plugin_version, '.' ) );
+		if ($p_base_name == 'MantisCore' && strpos($p_required, '<') === false) {
+			$t_version_core = mb_substr($t_plugin_version, 0, strpos($t_plugin_version, '.'));
 			$t_is_current_core_supported = false;
-			foreach( $t_required_array as $t_version_required ) {
+			foreach ($t_required_array as $t_version_required) {
 				$t_is_current_core_supported = $t_is_current_core_supported
-					|| version_compare( trim( $t_version_required ), $t_version_core, '>=' );
+					|| version_compare(trim($t_version_required), $t_version_core, '>=');
 			}
-			if( !$t_is_current_core_supported ) {
+			if (!$t_is_current_core_supported) {
 				# Add current major version as maximum
 				$t_required_array[] = '<' . $t_version_core;
 			}
 		}
 
-		foreach( $t_required_array as $t_required ) {
-			$t_required = trim( $t_required );
+		foreach ($t_required_array as $t_required) {
+			$t_required = trim($t_required);
 			$t_maximum = false;
 
 			# check for a less-than-or-equal version requirement
-			$t_ltpos = strpos( $t_required, '<=' );
-			if( $t_ltpos !== false ) {
-				$t_required = trim( mb_substr( $t_required, $t_ltpos + 2 ) );
+			$t_ltpos = strpos($t_required, '<=');
+			if ($t_ltpos !== false) {
+				$t_required = trim(mb_substr($t_required, $t_ltpos + 2));
 				$t_maximum = true;
 			} else {
-				$t_ltpos = strpos( $t_required, '<' );
-				if( $t_ltpos !== false ) {
-					$t_required = trim( mb_substr( $t_required, $t_ltpos + 1 ) );
+				$t_ltpos = strpos($t_required, '<');
+				if ($t_ltpos !== false) {
+					$t_required = trim(mb_substr($t_required, $t_ltpos + 1));
 					$t_maximum = true;
 				}
 			}
 
-			$t_check = plugin_version_check( $t_plugin_version, $t_required, $t_maximum );
+			$t_check = plugin_version_check($t_plugin_version, $t_required, $t_maximum);
 
-			if( $t_check < 1 ) {
+			if ($t_check < 1) {
 				return $t_check;
 			}
 		}
@@ -610,7 +635,8 @@ function plugin_dependency( $p_base_name, $p_required, $p_initialized = false ) 
  * @param string $p_base_name Plugin base name.
  * @return boolean True if plugin is protected
  */
-function plugin_protected( $p_base_name ) {
+function plugin_protected($p_base_name)
+{
 	global $g_plugin_cache_protected;
 
 	return $g_plugin_cache_protected[$p_base_name];
@@ -621,7 +647,8 @@ function plugin_protected( $p_base_name ) {
  * @param string $p_base_name Plugin base name.
  * @return int Plugin priority
  */
-function plugin_priority( $p_base_name ) {
+function plugin_priority($p_base_name)
+{
 	global $g_plugin_cache_priority;
 
 	return $g_plugin_cache_priority[$p_base_name];
@@ -632,17 +659,18 @@ function plugin_priority( $p_base_name ) {
  * @param string $p_basename Plugin basename.
  * @return boolean True if plugin is installed
  */
-function plugin_is_installed( $p_basename ) {
-	foreach( plugin_get_force_installed() as $t_basename => $t_priority ) {
-		if( $t_basename == $p_basename ) {
+function plugin_is_installed($p_basename)
+{
+	foreach (plugin_get_force_installed() as $t_basename => $t_priority) {
+		if ($t_basename == $p_basename) {
 			return true;
 		}
 	}
 
 	db_param_push();
 	$t_query = 'SELECT COUNT(*) FROM {plugin} WHERE basename=' . db_param();
-	$t_result = db_query( $t_query, array( $p_basename ) );
-	return( 0 < db_result( $t_result ) );
+	$t_result = db_query($t_query, array($p_basename));
+	return (0 < db_result($t_result));
 }
 
 /**
@@ -650,15 +678,16 @@ function plugin_is_installed( $p_basename ) {
  * @param MantisPlugin $p_plugin Plugin basename.
  * @return void
  */
-function plugin_install( MantisPlugin $p_plugin ) {
-	if( plugin_is_installed( $p_plugin->basename ) ) {
-		error_parameters( $p_plugin->basename );
-		trigger_error( ERROR_PLUGIN_ALREADY_INSTALLED, WARNING );
+function plugin_install(MantisPlugin $p_plugin)
+{
+	if (plugin_is_installed($p_plugin->basename)) {
+		error_parameters($p_plugin->basename);
+		trigger_error(ERROR_PLUGIN_ALREADY_INSTALLED, WARNING);
 	}
 
-	plugin_push_current( $p_plugin->basename );
+	plugin_push_current($p_plugin->basename);
 
-	if( !$p_plugin->install() ) {
+	if (!$p_plugin->install()) {
 		plugin_pop_current();
 		return;
 	}
@@ -666,13 +695,13 @@ function plugin_install( MantisPlugin $p_plugin ) {
 	db_param_push();
 	$t_query = 'INSERT INTO {plugin} ( basename, enabled )
 				VALUES ( ' . db_param() . ', ' . db_param() . ' )';
-	db_query( $t_query, array( $p_plugin->basename, true ) );
+	db_query($t_query, array($p_plugin->basename, true));
 
-	if( false === ( plugin_config_get( 'schema', false ) ) ) {
-		plugin_config_set( 'schema', -1 );
+	if (false === (plugin_config_get('schema', false))) {
+		plugin_config_set('schema', -1);
 	}
 
-	plugin_upgrade( $p_plugin );
+	plugin_upgrade($p_plugin);
 
 	plugin_pop_current();
 }
@@ -682,18 +711,19 @@ function plugin_install( MantisPlugin $p_plugin ) {
  * @param MantisPlugin $p_plugin Plugin basename.
  * @return boolean True if plugin needs schema upgrades.
  */
-function plugin_needs_upgrade( MantisPlugin $p_plugin ) {
-	plugin_push_current( $p_plugin->name );
+function plugin_needs_upgrade(MantisPlugin $p_plugin)
+{
+	plugin_push_current($p_plugin->name);
 	$t_plugin_schema = $p_plugin->schema();
 	plugin_pop_current();
-	if( is_null( $t_plugin_schema ) ) {
+	if (is_null($t_plugin_schema)) {
 		return false;
 	}
 
 	$t_config_option = 'plugin_' . $p_plugin->basename . '_schema';
-	$t_plugin_schema_version = config_get( $t_config_option, -1, ALL_USERS, ALL_PROJECTS );
+	$t_plugin_schema_version = config_get($t_config_option, -1, ALL_USERS, ALL_PROJECTS);
 
-	return( $t_plugin_schema_version < count( $t_plugin_schema ) - 1 );
+	return ($t_plugin_schema_version < count($t_plugin_schema) - 1);
 }
 
 /**
@@ -703,30 +733,31 @@ function plugin_needs_upgrade( MantisPlugin $p_plugin ) {
  * @param MantisPlugin $p_plugin Plugin basename.
  * @return boolean|null True if upgrade completed, null if problem
  */
-function plugin_upgrade( MantisPlugin $p_plugin ) {
-	if( !plugin_is_installed( $p_plugin->basename ) ) {
+function plugin_upgrade(MantisPlugin $p_plugin)
+{
+	if (!plugin_is_installed($p_plugin->basename)) {
 		return null;
 	}
 
-	require_api( 'install_helper_functions_api.php' );
+	require_api('install_helper_functions_api.php');
 
-	plugin_push_current( $p_plugin->basename );
+	plugin_push_current($p_plugin->basename);
 
-	$t_schema_version = (int)plugin_config_get( 'schema', -1 );
+	$t_schema_version = (int)plugin_config_get('schema', -1);
 	$t_schema = $p_plugin->schema();
 
 	global $g_db;
-	$t_dict = NewDataDictionary( $g_db );
+	$t_dict = NewDataDictionary($g_db);
 
 	$i = $t_schema_version + 1;
-	while( $i < count( $t_schema ) ) {
-		if( !$p_plugin->upgrade( $i ) ) {
+	while ($i < count($t_schema)) {
+		if (!$p_plugin->upgrade($i)) {
 			plugin_pop_current();
 			return false;
 		}
 		$t_status = false;
 
-		switch( $t_schema[$i][0] ) {
+		switch ($t_schema[$i][0]) {
 			case 'InsertData':
 				$t_sqlarray = array(
 					'INSERT INTO ' . $t_schema[$i][1][0] . $t_schema[$i][1][1],
@@ -741,10 +772,10 @@ function plugin_upgrade( MantisPlugin $p_plugin ) {
 
 			case 'UpdateFunction':
 				$t_sqlarray = false;
-				if( isset( $t_schema[$i][2] ) ) {
-					$t_status = call_user_func( 'install_' . $t_schema[$i][1], $t_schema[$i][2] );
+				if (isset($t_schema[$i][2])) {
+					$t_status = call_user_func('install_' . $t_schema[$i][1], $t_schema[$i][2]);
 				} else {
-					$t_status = call_user_func( 'install_' . $t_schema[$i][1] );
+					$t_status = call_user_func('install_' . $t_schema[$i][1]);
 				}
 				break;
 
@@ -756,24 +787,24 @@ function plugin_upgrade( MantisPlugin $p_plugin ) {
 
 			default:
 				$t_sqlarray = call_user_func_array(
-					array( $t_dict, $t_schema[$i][0] ),
+					array($t_dict, $t_schema[$i][0]),
 					$t_schema[$i][1]
 				);
 		}
 
-		if( $t_sqlarray ) {
-			$t_status = $t_dict->ExecuteSQLArray( $t_sqlarray );
+		if ($t_sqlarray) {
+			$t_status = $t_dict->ExecuteSQLArray($t_sqlarray);
 		}
 
-		if( 2 == $t_status ) {
-			plugin_config_set( 'schema', $i );
+		if (2 == $t_status) {
+			plugin_config_set('schema', $i);
 		} else {
-			error_parameters( 
-				$i, 
-				$g_db->ErrorMsg(), 
-				implode( '<br>', $t_sqlarray ) 
+			error_parameters(
+				$i,
+				$g_db->ErrorMsg(),
+				implode('<br>', $t_sqlarray)
 			);
-			trigger_error( ERROR_PLUGIN_UPGRADE_FAILED, ERROR );
+			trigger_error(ERROR_PLUGIN_UPGRADE_FAILED, ERROR);
 			return null;
 		}
 
@@ -794,20 +825,22 @@ function plugin_upgrade( MantisPlugin $p_plugin ) {
  *
  * @return void
  */
-function plugin_uninstall( MantisPlugin $p_plugin ) {
-	access_ensure_global_level( config_get_global( 'manage_plugin_threshold' ) );
+function plugin_uninstall(MantisPlugin $p_plugin)
+{
+	access_ensure_global_level(config_get_global('manage_plugin_threshold'));
 
-	if( !$p_plugin->status == MantisPlugin::STATUS_MISSING_BASE_CLASS &&
-		( !plugin_is_installed( $p_plugin->basename ) || plugin_protected( $p_plugin->basename ) )
+	if (
+		!$p_plugin->status == MantisPlugin::STATUS_MISSING_BASE_CLASS &&
+		(!plugin_is_installed($p_plugin->basename) || plugin_protected($p_plugin->basename))
 	) {
 		return;
 	}
 
 	db_param_push();
 	$t_query = 'DELETE FROM {plugin} WHERE basename=' . db_param();
-	db_query( $t_query, array( $p_plugin->basename ) );
+	db_query($t_query, array($p_plugin->basename));
 
-	plugin_push_current( $p_plugin->basename );
+	plugin_push_current($p_plugin->basename);
 
 	$p_plugin->uninstall();
 
@@ -825,40 +858,41 @@ function plugin_uninstall( MantisPlugin $p_plugin ) {
  *
  * @return MantisPlugin[] List of found plugins, with basename as key.
  */
-function plugin_find_all() {
-	$t_plugin_path = config_get_global( 'plugin_path' );
+function plugin_find_all()
+{
+	$t_plugin_path = config_get_global('plugin_path');
 	$t_plugins = array(
-		'MantisCore' => new MantisCorePlugin( 'MantisCore' ),
+		'MantisCore' => new MantisCorePlugin('MantisCore'),
 	);
 
 	# Get list of installed plugins
-	$t_query = new DbQuery( 'SELECT basename FROM {plugin}' );
+	$t_query = new DbQuery('SELECT basename FROM {plugin}');
 	$t_installed_plugins = array();
-	while( $t_query->fetch() ) {
+	while ($t_query->fetch()) {
 		$t_installed_plugins[] = $t_query->value();
 	}
 
 	# Register all plugins found in directory
-	if( $t_dir = opendir( $t_plugin_path ) ) {
-		while( ( $t_file = readdir( $t_dir ) ) !== false ) {
-			if( '.' == $t_file || '..' == $t_file ) {
+	if ($t_dir = opendir($t_plugin_path)) {
+		while (($t_file = readdir($t_dir)) !== false) {
+			if ('.' == $t_file || '..' == $t_file) {
 				continue;
 			}
-			if( is_dir( $t_plugin_path . $t_file ) ) {
-				$t_plugin = plugin_register( $t_file, true );
+			if (is_dir($t_plugin_path . $t_file)) {
+				$t_plugin = plugin_register($t_file, true);
 
-				if( !is_null( $t_plugin ) ) {
+				if (!is_null($t_plugin)) {
 					$t_plugins[$t_file] = $t_plugin;
 				}
 			}
 		}
-		closedir( $t_dir );
+		closedir($t_dir);
 	}
 
 	# Process missing plugins (i.e. installed without code in plugins directory)
-	$t_missing_plugins = array_diff( $t_installed_plugins, array_keys( $t_plugins ) );
-	foreach( $t_missing_plugins as $t_missing_plugin ) {
-		$t_plugins[$t_missing_plugin] = new MissingPlugin( $t_missing_plugin );
+	$t_missing_plugins = array_diff($t_installed_plugins, array_keys($t_plugins));
+	foreach ($t_missing_plugins as $t_missing_plugin) {
+		$t_plugins[$t_missing_plugin] = new MissingPlugin($t_missing_plugin);
 	}
 
 	return $t_plugins;
@@ -870,18 +904,19 @@ function plugin_find_all() {
  * @param string $p_child    Child filename.
  * @return boolean
  */
-function plugin_include( $p_basename, $p_child = null ) {
-	$t_path = config_get_global( 'plugin_path' ) . $p_basename . DIRECTORY_SEPARATOR;
+function plugin_include($p_basename, $p_child = null)
+{
+	$t_path = config_get_global('plugin_path') . $p_basename . DIRECTORY_SEPARATOR;
 
-	if( is_null( $p_child ) ) {
+	if (is_null($p_child)) {
 		$t_plugin_file = $t_path . $p_basename . '.php';
 	} else {
 		$t_plugin_file = $t_path . $p_child . '.php';
 	}
 	$t_included = false;
-	if( is_file( $t_plugin_file ) ) {
+	if (is_file($t_plugin_file)) {
 		/** @noinspection PhpIncludeInspection */
-		include_once( $t_plugin_file );
+		include_once($t_plugin_file);
 		$t_included = true;
 	}
 
@@ -894,17 +929,18 @@ function plugin_include( $p_basename, $p_child = null ) {
  * @param string $p_basename Plugin's basename (defaults to current plugin).
  * @return void
  */
-function plugin_require_api( $p_file, $p_basename = null ) {
-	if( is_null( $p_basename ) ) {
+function plugin_require_api($p_file, $p_basename = null)
+{
+	if (is_null($p_basename)) {
 		$t_current = plugin_get_current();
 	} else {
 		$t_current = $p_basename;
 	}
 
-	$t_path = config_get_global( 'plugin_path' ) . $t_current . '/';
+	$t_path = config_get_global('plugin_path') . $t_current . '/';
 
 	/** @noinspection PhpIncludeInspection */
-	require_once( $t_path . $p_file );
+	require_once($t_path . $p_file);
 }
 
 /**
@@ -912,10 +948,11 @@ function plugin_require_api( $p_file, $p_basename = null ) {
  * @param string $p_basename Plugin basename.
  * @return boolean True if plugin is registered
  */
-function plugin_is_registered( $p_basename ) {
+function plugin_is_registered($p_basename)
+{
 	global $g_plugin_cache;
 
-	return isset( $g_plugin_cache[$p_basename] );
+	return isset($g_plugin_cache[$p_basename]);
 }
 
 /**
@@ -933,30 +970,31 @@ function plugin_is_registered( $p_basename ) {
  *
  * @return MantisPlugin
  */
-function plugin_register( $p_basename, $p_return = false, $p_child = null ) {
+function plugin_register($p_basename, $p_return = false, $p_child = null)
+{
 	global $g_plugin_cache;
 
-	$t_basename = is_null( $p_child ) ? $p_basename : $p_child;
-	if( !isset( $g_plugin_cache[$t_basename] ) ) {
+	$t_basename = is_null($p_child) ? $p_basename : $p_child;
+	if (!isset($g_plugin_cache[$t_basename])) {
 		$t_classname = $t_basename . 'Plugin';
 
 		# Include the plugin script if the class is not already declared.
-		if( !class_exists( $t_classname ) ) {
-			if( !plugin_include( $p_basename, $p_child ) ) {
-				log_event( LOG_PLUGIN, "Source code for Plugin '$t_basename' not found");
-				return new MissingClassPlugin( $t_basename );
+		if (!class_exists($t_classname)) {
+			if (!plugin_include($p_basename, $p_child)) {
+				log_event(LOG_PLUGIN, "Source code for Plugin '$t_basename' not found");
+				return new MissingClassPlugin($t_basename);
 			}
 		}
 
 		# Make sure the class exists and that it's of the right type.
-		if( class_exists( $t_classname ) && is_subclass_of( $t_classname, 'MantisPlugin' ) ) {
-			plugin_push_current( $t_basename );
+		if (class_exists($t_classname) && is_subclass_of($t_classname, 'MantisPlugin')) {
+			plugin_push_current($t_basename);
 			/** @var MantisPlugin $t_plugin */
-			$t_plugin = new $t_classname( $t_basename );
+			$t_plugin = new $t_classname($t_basename);
 			plugin_pop_current();
 
 			# Final check on the class
-			if( !$t_plugin->isValid() ) {
+			if (!$t_plugin->isValid()) {
 				log_event(
 					LOG_PLUGIN,
 					"Plugin '$t_basename' is invalid (undefined Name or Version)"
@@ -964,14 +1002,14 @@ function plugin_register( $p_basename, $p_return = false, $p_child = null ) {
 				return $t_plugin->getInvalidPlugin();
 			}
 
-			if( $p_return ) {
+			if ($p_return) {
 				return $t_plugin;
 			} else {
 				$g_plugin_cache[$t_basename] = $t_plugin;
 			}
 		} else {
-			error_parameters( $t_basename, $t_classname );
-			trigger_error( ERROR_PLUGIN_CLASS_NOT_FOUND, ERROR );
+			error_parameters($t_basename, $t_classname);
+			trigger_error(ERROR_PLUGIN_CLASS_NOT_FOUND, ERROR);
 		}
 	}
 
@@ -983,29 +1021,31 @@ function plugin_register( $p_basename, $p_return = false, $p_child = null ) {
  * This includes the MantisCore pseudo-plugin.
  * @return void
  */
-function plugin_register_installed() {
+function plugin_register_installed()
+{
 	global $g_plugin_cache_priority, $g_plugin_cache_protected;
 
 	# register plugins specified in the site configuration
 	$t_plugins_to_register = plugin_get_force_installed();
-	arsort( $t_plugins_to_register );
-	foreach( $t_plugins_to_register as $t_basename => $t_priority ) {
-		plugin_register( $t_basename );
+	arsort($t_plugins_to_register);
+	foreach ($t_plugins_to_register as $t_basename => $t_priority) {
+		plugin_register($t_basename);
 		$g_plugin_cache_priority[$t_basename] = $t_priority;
 		$g_plugin_cache_protected[$t_basename] = true;
 	}
 
 	# register plugins installed via the interface/database
-	$t_query = new DbQuery( 'SELECT basename, priority, protected 
+	$t_query = new DbQuery(
+		'SELECT basename, priority, protected 
 		FROM {plugin} 
 		WHERE enabled=:enabled
 		ORDER BY priority DESC'
 	);
-	$t_query->bind( 'enabled', true );
-	foreach( $t_query->fetch_all() as $t_row ) {
+	$t_query->bind('enabled', true);
+	foreach ($t_query->fetch_all() as $t_row) {
 		$t_basename = $t_row['basename'];
-		if( !plugin_is_registered( $t_basename ) ) {
-			plugin_register( $t_basename );
+		if (!plugin_is_registered($t_basename)) {
+			plugin_register($t_basename);
 			$g_plugin_cache_priority[$t_basename] = (int)$t_row['priority'];
 			$g_plugin_cache_protected[$t_basename] = (bool)$t_row['protected'];
 		}
@@ -1017,8 +1057,9 @@ function plugin_register_installed() {
  * Post-signals EVENT_PLUGIN_INIT.
  * @return void
  */
-function plugin_init_installed() {
-	if( OFF == config_get_global( 'plugins_enabled' ) || !db_table_exists( db_get_table( 'plugin' ) ) ) {
+function plugin_init_installed()
+{
+	if (OFF == config_get_global('plugins_enabled') || !db_table_exists(db_get_table('plugin'))) {
 		return;
 	}
 
@@ -1031,16 +1072,15 @@ function plugin_init_installed() {
 
 	plugin_register_installed();
 
-	$t_plugins = array_keys( $g_plugin_cache );
+	$t_plugins = array_keys($g_plugin_cache);
 
 	do {
 		$t_continue = false;
 		$t_plugins_retry = array();
 
-		foreach( $t_plugins as $t_basename ) {
-			if( plugin_init( $t_basename ) ) {
+		foreach ($t_plugins as $t_basename) {
+			if (plugin_init($t_basename)) {
 				$t_continue = true;
-
 			} else {
 				# Dependent plugin
 				$t_plugins_retry[] = $t_basename;
@@ -1048,9 +1088,9 @@ function plugin_init_installed() {
 		}
 
 		$t_plugins = $t_plugins_retry;
-	} while( $t_continue );
+	} while ($t_continue);
 
-	event_signal( 'EVENT_PLUGIN_INIT' );
+	event_signal('EVENT_PLUGIN_INIT');
 }
 
 /**
@@ -1058,18 +1098,19 @@ function plugin_init_installed() {
  * @param string $p_basename Plugin basename.
  * @return boolean True if plugin initialized, false otherwise.
  */
-function plugin_init( $p_basename ) {
+function plugin_init($p_basename)
+{
 	global $g_plugin_cache, $g_plugin_cache_init;
 
 	# handle dependent plugins
-	if( isset( $g_plugin_cache[$p_basename] ) ) {
+	if (isset($g_plugin_cache[$p_basename])) {
 		$t_plugin = $g_plugin_cache[$p_basename];
 
 		# hard dependencies; return false if the dependency is not registered,
 		# does not meet the version requirement, or is not yet initialized.
-		if( is_array( $t_plugin->requires ) ) {
-			foreach( $t_plugin->requires as $t_required => $t_version ) {
-				if( plugin_dependency( $t_required, $t_version, true ) !== 1 ) {
+		if (is_array($t_plugin->requires)) {
+			foreach ($t_plugin->requires as $t_required => $t_version) {
+				if (plugin_dependency($t_required, $t_version, true) !== 1) {
 					return false;
 				}
 			}
@@ -1077,27 +1118,27 @@ function plugin_init( $p_basename ) {
 
 		# soft dependencies; only return false if the soft dependency is
 		# registered, but not yet initialized.
-		if( is_array( $t_plugin->uses ) ) {
-			foreach( $t_plugin->uses as $t_used => $t_version ) {
-				if( isset( $g_plugin_cache[$t_used] ) && !isset( $g_plugin_cache_init[$t_used] ) ) {
+		if (is_array($t_plugin->uses)) {
+			foreach ($t_plugin->uses as $t_used => $t_version) {
+				if (isset($g_plugin_cache[$t_used]) && !isset($g_plugin_cache_init[$t_used])) {
 					return false;
 				}
 			}
 		}
 
 		# if plugin schema needs an upgrade, do not initialize
-		if( plugin_needs_upgrade( $t_plugin ) ) {
+		if (plugin_needs_upgrade($t_plugin)) {
 			return false;
 		}
 
-		plugin_push_current( $p_basename );
+		plugin_push_current($p_basename);
 
 		# load plugin error strings
 		global $g_lang_strings;
 		$t_lang = lang_get_current();
 		$t_plugin_errors = $t_plugin->errors();
 
-		foreach( $t_plugin_errors as $t_error_name => $t_error_string ) {
+		foreach ($t_plugin_errors as $t_error_name => $t_error_string) {
 			$t_error_code = "plugin_${p_basename}_${t_error_name}";
 			$g_lang_strings[$t_lang]['MANTIS_ERROR'][$t_error_code] = $t_error_string;
 		}
@@ -1121,20 +1162,21 @@ function plugin_init( $p_basename ) {
  *                                  structured as (string,execution time).
  * @param string        $p_basename Plugin's basename (defaults to current plugin)
  */
-function plugin_log_event( $p_msg, $p_basename = null ) {
+function plugin_log_event($p_msg, $p_basename = null)
+{
 	$t_current_plugin = plugin_get_current();
-	if( is_null( $p_basename ) ) {
+	if (is_null($p_basename)) {
 		$t_basename = $t_current_plugin;
 	} else {
 		$t_basename = $p_basename;
 	}
 
-	if( $t_basename != $t_current_plugin ) {
-		plugin_push_current( $t_basename );
-		log_event( LOG_PLUGIN, $p_msg);
+	if ($t_basename != $t_current_plugin) {
+		plugin_push_current($t_basename);
+		log_event(LOG_PLUGIN, $p_msg);
 		plugin_pop_current();
 	} else {
-		log_event( LOG_PLUGIN, $p_msg);
+		log_event(LOG_PLUGIN, $p_msg);
 	}
 }
 
@@ -1146,19 +1188,19 @@ function plugin_log_event( $p_msg, $p_basename = null ) {
  * @param string $p_event Plugin event to signal
  * @return array
  */
-function plugin_menu_items( $p_event ) {
+function plugin_menu_items($p_event)
+{
 	$t_items = array();
 
-	if( $p_event ) {
-		$t_event_items = event_signal( $p_event );
+	if ($p_event) {
+		$t_event_items = event_signal($p_event);
 
-		foreach( $t_event_items as $t_plugin => $t_plugin_items ) {
-			foreach( $t_plugin_items as $t_callback => $t_callback_items ) {
-				if( is_array( $t_callback_items ) ) {
-					$t_items = array_merge( $t_items, $t_callback_items );
-				}
-				else {
-					if( $t_callback_items !== null ) {
+		foreach ($t_event_items as $t_plugin => $t_plugin_items) {
+			foreach ($t_plugin_items as $t_callback => $t_callback_items) {
+				if (is_array($t_callback_items)) {
+					$t_items = array_merge($t_items, $t_callback_items);
+				} else {
+					if ($t_callback_items !== null) {
 						$t_items[] = $t_callback_items;
 					}
 				}

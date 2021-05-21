@@ -109,7 +109,7 @@ layout_page_begin();
 							</label>
 						</div>
 						&#160;&#160;&#160;&#160;
-					<?php }
+					<?php  }
 					?>
 					<div class="checkbox">
 						<label>
@@ -123,7 +123,7 @@ layout_page_begin();
 				</form>
 				<div class="space-10"></div>
 				<form action="view_all_bug_page.php">
-					<?php # CSRF protection not required here - form does not result in modifications
+					<?php  # CSRF protection not required here - form does not result in modifications
 					if (filter_is_temporary($t_filter)) {
 						echo '<input type="hidden" name="filter" value="' . filter_get_temporary_key($t_filter) . '" />';
 					}

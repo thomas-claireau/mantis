@@ -694,7 +694,7 @@ if ($t_flags['monitor_show']) {
 										<input type="text" class="input-sm" id="bug_monitor_list_user_to_add" name="user_to_add" />
 										<input type="submit" class="btn btn-primary btn-sm btn-white btn-round" value="<?php echo lang_get('add') ?>" />
 									</form>
-								<?php } ?>
+								<?php  } ?>
 							</td>
 						</tr>
 					</table>

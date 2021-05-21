@@ -158,7 +158,7 @@ function edit_printing_prefs($p_user_id = null, $p_error_if_protected = true, $p
 				</tr>
 
 
-				<?php # display the checkboxes
+				<?php  # display the checkboxes
 				for ($i = 0; $i < $t_field_name_count; $i++) {
 
 					echo '<tr>';

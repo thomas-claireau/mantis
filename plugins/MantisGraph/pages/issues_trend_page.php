@@ -29,80 +29,80 @@
  * @uses plugin_api.php
  */
 
-access_ensure_project_level( config_get( 'view_summary_threshold' ) );
+access_ensure_project_level(config_get('view_summary_threshold'));
 
-$f_interval = gpc_get_int( 'interval', 0 );
-$t_today = date( 'Y-m-d' );
-$f_type = gpc_get_int( 'graph_type', 0 );
-$f_show_as_table = gpc_get_bool( 'show_table', false );
+$f_interval = gpc_get_int('interval', 0);
+$t_today = date('Y-m-d');
+$f_type = gpc_get_int('graph_type', 0);
+$f_show_as_table = gpc_get_bool('show_table', false);
 
-layout_page_header_begin( plugin_lang_get( 'graph_page' ) );
-$t_path = config_get_global( 'path' );
+layout_page_header_begin(plugin_lang_get('graph_page'));
+$t_path = config_get_global('path');
 layout_page_header_end();
 
 layout_page_begin();
 
 $t_period = new Period();
-$t_period->set_period_from_selector( 'interval' );
+$t_period->set_period_from_selector('interval');
 $t_types = array(
-				1 => plugin_lang_get( 'status_link' ),
-				2 => plugin_lang_get( 'category_link' ),
-		   );
+	1 => plugin_lang_get('status_link'),
+	2 => plugin_lang_get('category_link'),
+);
 ?>
 <div class="col-md-12 col-xs-12">
 	<div class="space-10"></div>
-	<form id="graph_form" method="post" action="<?php echo plugin_page( 'issues_trend_page.php' ); ?>" class="form-inline">
+	<form id="graph_form" method="post" action="<?php echo plugin_page('issues_trend_page.php'); ?>" class="form-inline">
 		<div class="widget-box widget-color-blue2">
-		<div class="widget-body">
-		<div class="widget-main no-padding">
-			<div class="table-responsive">
-			<table class="table table-condensed">
-				<tr>
-					<td class="center">
-					<div class="form-group">
-						<?php echo get_dropdown( $t_types, 'graph_type', $f_type ); ?>
+			<div class="widget-body">
+				<div class="widget-main no-padding">
+					<div class="table-responsive">
+						<table class="table table-condensed">
+							<tr>
+								<td class="center">
+									<div class="form-group">
+										<?php echo get_dropdown($t_types, 'graph_type', $f_type); ?>
+									</div>
+								</td>
+								<td class="center">
+									<div class="form-group">
+										<?php echo $t_period->period_selector('interval'); ?>
+									</div>
+								</td>
+								<td class="center">
+									<div class="form-group">
+										<input type="submit" class="btn btn-sm btn-primary btn-white btn-round" name="show" value="<?php echo lang_get('proceed'); ?>" />
+									</div>
+								</td>
+							</tr>
+						</table>
 					</div>
-					</td>
-					<td class="center">
-					<div class="form-group">
-						<?php echo $t_period->period_selector( 'interval' ); ?>
-					</div>
-					</td>
-					<td class="center">
-					<div class="form-group">
-						<input type="submit" class="btn btn-sm btn-primary btn-white btn-round" name="show" value="<?php echo lang_get( 'proceed' ); ?>"/>
-					</div>
-					</td>
-				</tr>
-			</table>
+				</div>
 			</div>
 		</div>
-		</div>
-		</div>
 	</form>
-<?php
-# build the graphs if both an interval and graph type are selected
-if( ( 0 != $f_type ) && ( $f_interval > 0 ) ) {
-	$f_start = $t_period->get_start_formatted();
-	$f_end = $t_period->get_end_formatted();
+	<?php
+	# build the graphs if both an interval and graph type are selected
+	if ((0 != $f_type) && ($f_interval > 0)) {
+		$f_start = $t_period->get_start_formatted();
+		$f_end = $t_period->get_end_formatted();
 
-	switch( $f_type ) {
-		case 1:
-			$t_page_to_include = 'issues_trend_bystatus_table.php';
-			break;
-		case 2:
-			$t_page_to_include = 'issues_trend_bycategory_table.php';
-			break;
-		default:
-			$t_page_to_include = '';
-			break;
-	}
+		switch ($f_type) {
+			case 1:
+				$t_page_to_include = 'issues_trend_bystatus_table.php';
+				break;
+			case 2:
+				$t_page_to_include = 'issues_trend_bycategory_table.php';
+				break;
+			default:
+				$t_page_to_include = '';
+				break;
+		}
 
-	if( !is_blank( $t_page_to_include ) ) {
-		include( config_get_global( 'plugin_path' ) . plugin_get_current() . '/pages/' . $t_page_to_include );
+		if (!is_blank($t_page_to_include)) {
+			include(config_get_global('plugin_path') . plugin_get_current() . '/pages/' . $t_page_to_include);
+		}
 	}
-}
-?>
+	?>
 
 </div>
 <?php

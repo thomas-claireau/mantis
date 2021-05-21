@@ -322,11 +322,11 @@ $t_prefix_array['NEW'] = lang_get('users_new');
 						<div class="pull-left">
 							<?php print_form_button('manage_user_prune.php', lang_get('prune_accounts'), null, null, 'btn btn-primary btn-sm btn-white btn-round') ?>
 						</div>
-					<?php } ?>
+					<?php  } ?>
 					<div class="pull-right">
 						<form id="manage-user-filter" method="post" action="manage_user_page.php" class="form-inline">
 							<fieldset>
-								<?php # CSRF protection not required here - form does not result in modifications 
+								<?php  # CSRF protection not required here - form does not result in modifications 
 								?>
 								<input type="hidden" name="sort" value="<?php echo $c_sort ?>" />
 								<input type="hidden" name="dir" value="<?php echo $c_dir ?>" />
@@ -461,7 +461,7 @@ $t_prefix_array['NEW'] = lang_get('users_new');
 						?>
 					</div>
 				</div>
-			<?php } ?>
+			<?php  } ?>
 
 		</div>
 	</div>

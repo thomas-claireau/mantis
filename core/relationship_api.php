@@ -81,30 +81,31 @@
  * @uses utility_api.php
  */
 
-require_api( 'access_api.php' );
-require_api( 'bug_api.php' );
-require_api( 'collapse_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'current_user_api.php' );
-require_api( 'database_api.php' );
-require_api( 'form_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'prepare_api.php' );
-require_api( 'print_api.php' );
-require_api( 'project_api.php' );
-require_api( 'string_api.php' );
-require_api( 'utility_api.php' );
+require_api('access_api.php');
+require_api('bug_api.php');
+require_api('collapse_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('current_user_api.php');
+require_api('database_api.php');
+require_api('form_api.php');
+require_api('helper_api.php');
+require_api('lang_api.php');
+require_api('prepare_api.php');
+require_api('print_api.php');
+require_api('project_api.php');
+require_api('string_api.php');
+require_api('utility_api.php');
 
-require_css( 'status_config.php' );
+require_css('status_config.php');
 
 use Mantis\Exceptions\ClientException;
 
 /**
  * RelationshipData Structure Definition
  */
-class BugRelationshipData {
+class BugRelationshipData
+{
 	/**
 	 * Relationship id
 	 */
@@ -190,8 +191,8 @@ $g_relationships[BUG_RELATED] = array(
 	'#notify_deleted' => 'email_notification_title_for_action_related_to_relationship_deleted',
 );
 
-if( file_exists( config_get_global( 'config_path' ) . 'custom_relationships_inc.php' ) ) {
-	include_once( config_get_global( 'config_path' ) . 'custom_relationships_inc.php' );
+if (file_exists(config_get_global('config_path') . 'custom_relationships_inc.php')) {
+	include_once(config_get_global('config_path') . 'custom_relationships_inc.php');
 }
 
 /**
@@ -200,12 +201,13 @@ if( file_exists( config_get_global( 'config_path' ) . 'custom_relationships_inc.
  * @param integer $p_relationship_type The relationship type id.
  * @return void
  */
-function relationship_type_ensure_valid( $p_relationship_type ) {
+function relationship_type_ensure_valid($p_relationship_type)
+{
 	global $g_relationships;
 
-	if( !is_numeric( $p_relationship_type ) || !isset( $g_relationships[$p_relationship_type] ) ) {
+	if (!is_numeric($p_relationship_type) || !isset($g_relationships[$p_relationship_type])) {
 		throw new ClientException(
-			sprintf( "Relation type '%s' not found.", $p_relationship_type ),
+			sprintf("Relation type '%s' not found.", $p_relationship_type),
 			ERROR_RELATIONSHIP_NOT_FOUND
 		);
 	}
@@ -216,10 +218,11 @@ function relationship_type_ensure_valid( $p_relationship_type ) {
  * @param integer $p_relationship_type A Relationship type.
  * @return integer Complementary type
  */
-function relationship_get_complementary_type( $p_relationship_type ) {
+function relationship_get_complementary_type($p_relationship_type)
+{
 	global $g_relationships;
-	if( !isset( $g_relationships[$p_relationship_type] ) ) {
-		trigger_error( ERROR_GENERIC, ERROR );
+	if (!isset($g_relationships[$p_relationship_type])) {
+		trigger_error(ERROR_GENERIC, ERROR);
 	}
 	return $g_relationships[$p_relationship_type]['#complementary'];
 }
@@ -232,12 +235,13 @@ function relationship_get_complementary_type( $p_relationship_type ) {
  * @param bool $p_email_for_source     Should an email be triggered for source issue?
  * @return integer The new bug relationship id.
  */
-function relationship_add( $p_src_bug_id, $p_dest_bug_id, $p_relationship_type, $p_email_for_source = true ) {
+function relationship_add($p_src_bug_id, $p_dest_bug_id, $p_relationship_type, $p_email_for_source = true)
+{
 	global $g_relationships;
-	if( $g_relationships[$p_relationship_type]['#forward'] === false ) {
+	if ($g_relationships[$p_relationship_type]['#forward'] === false) {
 		$c_src_bug_id = (int)$p_dest_bug_id;
 		$c_dest_bug_id = (int)$p_src_bug_id;
-		$c_relationship_type = (int)relationship_get_complementary_type( $p_relationship_type );
+		$c_relationship_type = (int)relationship_get_complementary_type($p_relationship_type);
 	} else {
 		$c_src_bug_id = (int)$p_src_bug_id;
 		$c_dest_bug_id = (int)$p_dest_bug_id;
@@ -249,17 +253,17 @@ function relationship_add( $p_src_bug_id, $p_dest_bug_id, $p_relationship_type, 
 				( source_bug_id, destination_bug_id, relationship_type )
 				VALUES
 				( ' . db_param() . ',' . db_param() . ',' . db_param() . ')';
-	db_query( $t_query, array( $c_src_bug_id, $c_dest_bug_id, $c_relationship_type ) );
+	db_query($t_query, array($c_src_bug_id, $c_dest_bug_id, $c_relationship_type));
 
-	$t_relationship_id = db_insert_id( db_get_table( 'bug_relationship' ) );
+	$t_relationship_id = db_insert_id(db_get_table('bug_relationship'));
 
-	history_log_event_special( $p_src_bug_id, BUG_ADD_RELATIONSHIP, $p_relationship_type, $p_dest_bug_id );
-	history_log_event_special( $p_dest_bug_id, BUG_ADD_RELATIONSHIP, relationship_get_complementary_type( $p_relationship_type ), $p_src_bug_id );
+	history_log_event_special($p_src_bug_id, BUG_ADD_RELATIONSHIP, $p_relationship_type, $p_dest_bug_id);
+	history_log_event_special($p_dest_bug_id, BUG_ADD_RELATIONSHIP, relationship_get_complementary_type($p_relationship_type), $p_src_bug_id);
 
-	bug_update_date( $p_src_bug_id );
-	bug_update_date( $p_dest_bug_id );
+	bug_update_date($p_src_bug_id);
+	bug_update_date($p_dest_bug_id);
 
-	email_relationship_added( $p_src_bug_id, $p_dest_bug_id, $p_relationship_type, $p_email_for_source );
+	email_relationship_added($p_src_bug_id, $p_dest_bug_id, $p_relationship_type, $p_email_for_source);
 
 	return $t_relationship_id;
 }
@@ -273,12 +277,13 @@ function relationship_add( $p_src_bug_id, $p_dest_bug_id, $p_relationship_type, 
  * @param bool $p_email_for_source     Should an email be triggered for source issue?
  * @return void
  */
-function relationship_update( $p_relationship_id, $p_src_bug_id, $p_dest_bug_id, $p_relationship_type, $p_email_for_source = true ) {
+function relationship_update($p_relationship_id, $p_src_bug_id, $p_dest_bug_id, $p_relationship_type, $p_email_for_source = true)
+{
 	global $g_relationships;
-	if( $g_relationships[$p_relationship_type]['#forward'] === false ) {
+	if ($g_relationships[$p_relationship_type]['#forward'] === false) {
 		$c_src_bug_id = (int)$p_dest_bug_id;
 		$c_dest_bug_id = (int)$p_src_bug_id;
-		$c_relationship_type = (int)relationship_get_complementary_type( $p_relationship_type );
+		$c_relationship_type = (int)relationship_get_complementary_type($p_relationship_type);
 	} else {
 		$c_src_bug_id = (int)$p_src_bug_id;
 		$c_dest_bug_id = (int)$p_dest_bug_id;
@@ -291,15 +296,15 @@ function relationship_update( $p_relationship_id, $p_src_bug_id, $p_dest_bug_id,
 					destination_bug_id=' . db_param() . ',
 					relationship_type=' . db_param() . '
 				WHERE id=' . db_param();
-	db_query( $t_query, array( $c_src_bug_id, $c_dest_bug_id, $c_relationship_type, (int)$p_relationship_id ) );
+	db_query($t_query, array($c_src_bug_id, $c_dest_bug_id, $c_relationship_type, (int)$p_relationship_id));
 
-	history_log_event_special( $p_src_bug_id, BUG_REPLACE_RELATIONSHIP, $p_relationship_type, $p_dest_bug_id );
-	history_log_event_special( $p_dest_bug_id, BUG_REPLACE_RELATIONSHIP, relationship_get_complementary_type( $p_relationship_type ), $p_src_bug_id );
+	history_log_event_special($p_src_bug_id, BUG_REPLACE_RELATIONSHIP, $p_relationship_type, $p_dest_bug_id);
+	history_log_event_special($p_dest_bug_id, BUG_REPLACE_RELATIONSHIP, relationship_get_complementary_type($p_relationship_type), $p_src_bug_id);
 
-	bug_update_date( $p_src_bug_id );
-	bug_update_date( $p_dest_bug_id );
+	bug_update_date($p_src_bug_id);
+	bug_update_date($p_dest_bug_id);
 
-	email_relationship_added( $p_src_bug_id, $p_dest_bug_id, $p_relationship_type, $p_email_for_source );
+	email_relationship_added($p_src_bug_id, $p_dest_bug_id, $p_relationship_type, $p_email_for_source);
 }
 
 /**
@@ -311,18 +316,19 @@ function relationship_update( $p_relationship_id, $p_src_bug_id, $p_dest_bug_id,
  * @param bool $p_email_for_source     Should an email be triggered for source issue?
  * @return integer The new bug relationship id.
  */
-function relationship_upsert( $p_src_bug_id, $p_dest_bug_id, $p_relationship_type, $p_email_for_source = true ) {
+function relationship_upsert($p_src_bug_id, $p_dest_bug_id, $p_relationship_type, $p_email_for_source = true)
+{
 	# Check if there is other relationship between the bugs.
-	$t_id_relationship = relationship_same_type_exists( $p_src_bug_id, $p_dest_bug_id, $p_relationship_type );
+	$t_id_relationship = relationship_same_type_exists($p_src_bug_id, $p_dest_bug_id, $p_relationship_type);
 
-	if( $t_id_relationship > 0 ) {
-		relationship_update( $t_id_relationship, $p_src_bug_id, $p_dest_bug_id, $p_relationship_type, $p_email_for_source );
+	if ($t_id_relationship > 0) {
+		relationship_update($t_id_relationship, $p_src_bug_id, $p_dest_bug_id, $p_relationship_type, $p_email_for_source);
 		$t_relationship_id = $t_id_relationship;
-	} else if( $t_id_relationship != -1 ) {
-		$t_relationship_id = relationship_add( $p_src_bug_id, $p_dest_bug_id, $p_relationship_type, $p_email_for_source );
+	} else if ($t_id_relationship != -1) {
+		$t_relationship_id = relationship_add($p_src_bug_id, $p_dest_bug_id, $p_relationship_type, $p_email_for_source);
 	} else {
 		# else relationship is -1 - same type exists
-		$t_relationship_id = relationship_exists( $p_src_bug_id, $p_dest_bug_id );
+		$t_relationship_id = relationship_exists($p_src_bug_id, $p_dest_bug_id);
 	}
 
 	return $t_relationship_id;
@@ -334,32 +340,34 @@ function relationship_upsert( $p_src_bug_id, $p_dest_bug_id, $p_relationship_typ
  * @param bool $p_send_email Send email?
  * @return void
  */
-function relationship_delete( $p_relationship_id, $p_send_email = true ) {
-	$t_relationship = relationship_get( $p_relationship_id );
+function relationship_delete($p_relationship_id, $p_send_email = true)
+{
+	$t_relationship = relationship_get($p_relationship_id);
 
 	db_param_push();
 	$t_query = 'DELETE FROM {bug_relationship} WHERE id=' . db_param();
-	db_query( $t_query, array( (int)$p_relationship_id ) );
+	db_query($t_query, array((int)$p_relationship_id));
 
 	$t_src_bug_id = $t_relationship->src_bug_id;
 	$t_dest_bug_id = $t_relationship->dest_bug_id;
 	$t_rel_type = $t_relationship->type;
 
-	bug_update_date( $t_src_bug_id );
-	bug_update_date( $t_dest_bug_id );
+	bug_update_date($t_src_bug_id);
+	bug_update_date($t_dest_bug_id);
 
-	history_log_event_special( $t_src_bug_id, BUG_DEL_RELATIONSHIP, $t_rel_type, $t_dest_bug_id );
+	history_log_event_special($t_src_bug_id, BUG_DEL_RELATIONSHIP, $t_rel_type, $t_dest_bug_id);
 
-	if( bug_exists( $t_dest_bug_id ) ) {
+	if (bug_exists($t_dest_bug_id)) {
 		history_log_event_special(
 			$t_dest_bug_id,
 			BUG_DEL_RELATIONSHIP,
-			relationship_get_complementary_type( $t_rel_type ),
-			$t_src_bug_id );
+			relationship_get_complementary_type($t_rel_type),
+			$t_src_bug_id
+		);
 	}
 
-	if( $p_send_email ) {
-		email_relationship_deleted( $t_src_bug_id, $t_dest_bug_id, $t_rel_type );
+	if ($p_send_email) {
+		email_relationship_deleted($t_src_bug_id, $t_dest_bug_id, $t_rel_type);
 	}
 }
 
@@ -368,11 +376,12 @@ function relationship_delete( $p_relationship_id, $p_send_email = true ) {
  * @param integer $p_bug_id A bug Identifier.
  * @return void
  */
-function relationship_delete_all( $p_bug_id ) {
+function relationship_delete_all($p_bug_id)
+{
 	$t_is_different_projects = false;
-	$t_relationships = relationship_get_all( $p_bug_id, $t_is_different_projects );
-	foreach( $t_relationships as $t_relationship ) {
-		relationship_delete( $t_relationship->id, /* send_email */ false );
+	$t_relationships = relationship_get_all($p_bug_id, $t_is_different_projects);
+	foreach ($t_relationships as $t_relationship) {
+		relationship_delete($t_relationship->id, /* send_email */ false);
 	}
 }
 
@@ -382,23 +391,28 @@ function relationship_delete_all( $p_bug_id ) {
  * @param integer $p_new_bug_id Destination bug identifier.
  * @return void
  */
-function relationship_copy_all( $p_bug_id, $p_new_bug_id ) {
-	$t_relationships = relationship_get_all_src( $p_bug_id );
-	foreach( $t_relationships as $t_relationship ) {
+function relationship_copy_all($p_bug_id, $p_new_bug_id)
+{
+	$t_relationships = relationship_get_all_src($p_bug_id);
+	foreach ($t_relationships as $t_relationship) {
 		relationship_add(
 			$p_new_bug_id,
 			$t_relationship->dest_bug_id,
 			$t_relationship->type,
-			/* email_for_source */ false );
+			/* email_for_source */
+			false
+		);
 	}
 
-	$t_relationships = relationship_get_all_dest( $p_bug_id );
-	foreach( $t_relationships as $t_relationship ) {
+	$t_relationships = relationship_get_all_dest($p_bug_id);
+	foreach ($t_relationships as $t_relationship) {
 		relationship_add(
 			$p_new_bug_id,
 			$t_relationship->src_bug_id,
-			relationship_get_complementary_type( $t_relationship->type ),
-			/* email_for_source */ false );
+			relationship_get_complementary_type($t_relationship->type),
+			/* email_for_source */
+			false
+		);
 	}
 }
 
@@ -407,14 +421,15 @@ function relationship_copy_all( $p_bug_id, $p_new_bug_id ) {
  * @param integer $p_relationship_id Relationship Identifier.
  * @return null|BugRelationshipData BugRelationshipData object
  */
-function relationship_get( $p_relationship_id ) {
+function relationship_get($p_relationship_id)
+{
 	db_param_push();
 	$t_query = 'SELECT * FROM {bug_relationship} WHERE id=' . db_param();
-	$t_result = db_query( $t_query, array( (int)$p_relationship_id ) );
+	$t_result = db_query($t_query, array((int)$p_relationship_id));
 
-	$t_relationship = db_fetch_array( $t_result );
+	$t_relationship = db_fetch_array($t_result);
 
-	if( $t_relationship ) {
+	if ($t_relationship) {
 		$t_bug_relationship_data = new BugRelationshipData;
 		$t_bug_relationship_data->id = $t_relationship['id'];
 		$t_bug_relationship_data->src_bug_id = $t_relationship['source_bug_id'];
@@ -432,7 +447,8 @@ function relationship_get( $p_relationship_id ) {
  * @param integer $p_src_bug_id Source Bug identifier.
  * @return array Array of BugRelationshipData objects
  */
-function relationship_get_all_src( $p_src_bug_id ) {
+function relationship_get_all_src($p_src_bug_id)
+{
 	db_param_push();
 	$t_query = 'SELECT {bug_relationship}.id, {bug_relationship}.relationship_type,
 				{bug_relationship}.source_bug_id, {bug_relationship}.destination_bug_id,
@@ -441,15 +457,15 @@ function relationship_get_all_src( $p_src_bug_id ) {
 				INNER JOIN {bug} ON {bug_relationship}.destination_bug_id = {bug}.id
 				WHERE source_bug_id=' . db_param() . '
 				ORDER BY relationship_type, {bug_relationship}.id';
-	$t_result = db_query( $t_query, array( $p_src_bug_id ) );
+	$t_result = db_query($t_query, array($p_src_bug_id));
 
-	$t_src_project_id = bug_get_field( $p_src_bug_id, 'project_id' );
+	$t_src_project_id = bug_get_field($p_src_bug_id, 'project_id');
 
 	$t_bug_relationship_data = array();
 	$t_bug_array = array();
 	$i = 0;
 
-	while( $t_row = db_fetch_array( $t_result ) ) {
+	while ($t_row = db_fetch_array($t_result)) {
 		$t_bug_relationship_data[$i] = new BugRelationshipData;
 		$t_bug_relationship_data[$i]->id = $t_row['id'];
 		$t_bug_relationship_data[$i]->src_bug_id = $t_row['source_bug_id'];
@@ -461,8 +477,8 @@ function relationship_get_all_src( $p_src_bug_id ) {
 		$i++;
 	}
 
-	if( !empty( $t_bug_array ) ) {
-		bug_cache_array_rows( $t_bug_array );
+	if (!empty($t_bug_array)) {
+		bug_cache_array_rows($t_bug_array);
 	}
 
 	return $t_bug_relationship_data;
@@ -473,7 +489,8 @@ function relationship_get_all_src( $p_src_bug_id ) {
  * @param integer $p_dest_bug_id Destination bug identifier.
  * @return array Array of BugRelationshipData objects
  */
-function relationship_get_all_dest( $p_dest_bug_id ) {
+function relationship_get_all_dest($p_dest_bug_id)
+{
 	db_param_push();
 	$t_query = 'SELECT {bug_relationship}.id, {bug_relationship}.relationship_type,
 				{bug_relationship}.source_bug_id, {bug_relationship}.destination_bug_id,
@@ -482,15 +499,15 @@ function relationship_get_all_dest( $p_dest_bug_id ) {
 				INNER JOIN {bug} ON {bug_relationship}.source_bug_id = {bug}.id
 				WHERE destination_bug_id=' . db_param() . '
 				ORDER BY relationship_type, {bug_relationship}.id';
-	$t_result = db_query( $t_query, array( (int)$p_dest_bug_id ) );
+	$t_result = db_query($t_query, array((int)$p_dest_bug_id));
 
-	$t_dest_project_id = bug_get_field( $p_dest_bug_id, 'project_id' );
+	$t_dest_project_id = bug_get_field($p_dest_bug_id, 'project_id');
 
 	$t_bug_relationship_data = array();
 	$t_bug_array = array();
 	$i = 0;
 
-	while( $t_row = db_fetch_array( $t_result ) ) {
+	while ($t_row = db_fetch_array($t_result)) {
 		$t_bug_relationship_data[$i] = new BugRelationshipData;
 		$t_bug_relationship_data[$i]->id = $t_row['id'];
 		$t_bug_relationship_data[$i]->src_bug_id = $t_row['source_bug_id'];
@@ -502,8 +519,8 @@ function relationship_get_all_dest( $p_dest_bug_id ) {
 		$i++;
 	}
 
-	if( !empty( $t_bug_array ) ) {
-		bug_cache_array_rows( $t_bug_array );
+	if (!empty($t_bug_array)) {
+		bug_cache_array_rows($t_bug_array);
 	}
 	return $t_bug_relationship_data;
 }
@@ -514,15 +531,16 @@ function relationship_get_all_dest( $p_dest_bug_id ) {
  * @param boolean &$p_is_different_projects Returned Boolean value indicating if some relationships cross project boundaries.
  * @return array Array of BugRelationshipData objects
  */
-function relationship_get_all( $p_bug_id, &$p_is_different_projects ) {
-	$t_src = relationship_get_all_src( $p_bug_id );
-	$t_dest = relationship_get_all_dest( $p_bug_id );
-	$t_all = array_merge( $t_src, $t_dest );
+function relationship_get_all($p_bug_id, &$p_is_different_projects)
+{
+	$t_src = relationship_get_all_src($p_bug_id);
+	$t_dest = relationship_get_all_dest($p_bug_id);
+	$t_all = array_merge($t_src, $t_dest);
 
 	$p_is_different_projects = false;
-	$t_count = count( $t_all );
-	for( $i = 0;$i < $t_count;$i++ ) {
-		$p_is_different_projects |= ( $t_all[$i]->src_project_id != $t_all[$i]->dest_project_id );
+	$t_count = count($t_all);
+	for ($i = 0; $i < $t_count; $i++) {
+		$p_is_different_projects |= ($t_all[$i]->src_project_id != $t_all[$i]->dest_project_id);
 	}
 	return $t_all;
 }
@@ -534,7 +552,8 @@ function relationship_get_all( $p_bug_id, &$p_is_different_projects ) {
  * @param integer $p_dest_bug_id Destination bug identifier.
  * @return integer Relationship ID
  */
-function relationship_exists( $p_src_bug_id, $p_dest_bug_id ) {
+function relationship_exists($p_src_bug_id, $p_dest_bug_id)
+{
 	$c_src_bug_id = (int)$p_src_bug_id;
 	$c_dest_bug_id = (int)$p_dest_bug_id;
 
@@ -544,9 +563,9 @@ function relationship_exists( $p_src_bug_id, $p_dest_bug_id ) {
 				OR
 				(source_bug_id=' . db_param() . '
 				AND destination_bug_id=' . db_param() . ')';
-	$t_result = db_query( $t_query, array( $c_src_bug_id, $c_dest_bug_id, $c_dest_bug_id, $c_src_bug_id ), 1 );
+	$t_result = db_query($t_query, array($c_src_bug_id, $c_dest_bug_id, $c_dest_bug_id, $c_src_bug_id), 1);
 
-	if( $t_row = db_fetch_array( $t_result ) ) {
+	if ($t_row = db_fetch_array($t_result)) {
 		# return the first id
 		return $t_row['id'];
 	} else {
@@ -566,21 +585,22 @@ function relationship_exists( $p_src_bug_id, $p_dest_bug_id ) {
  * @param integer $p_rel_type    Relationship Type.
  * @return integer 0, -1 or id
  */
-function relationship_same_type_exists( $p_src_bug_id, $p_dest_bug_id, $p_rel_type ) {
+function relationship_same_type_exists($p_src_bug_id, $p_dest_bug_id, $p_rel_type)
+{
 	# Check if there is already a relationship set between them
-	$t_id_relationship = relationship_exists( $p_src_bug_id, $p_dest_bug_id );
+	$t_id_relationship = relationship_exists($p_src_bug_id, $p_dest_bug_id);
 
-	if( $t_id_relationship > 0 ) {
+	if ($t_id_relationship > 0) {
 		# if there is...
 		# get all the relationship info
-		$t_relationship = relationship_get( $t_id_relationship );
+		$t_relationship = relationship_get($t_id_relationship);
 
-		if( $t_relationship->src_bug_id == $p_src_bug_id && $t_relationship->dest_bug_id == $p_dest_bug_id ) {
-			if( $t_relationship->type == $p_rel_type ) {
+		if ($t_relationship->src_bug_id == $p_src_bug_id && $t_relationship->dest_bug_id == $p_dest_bug_id) {
+			if ($t_relationship->type == $p_rel_type) {
 				$t_id_relationship = -1;
 			}
 		} else {
-			if( $t_relationship->type == relationship_get_complementary_type( $p_rel_type ) ) {
+			if ($t_relationship->type == relationship_get_complementary_type($p_rel_type)) {
 				$t_id_relationship = -1;
 			}
 		}
@@ -594,18 +614,19 @@ function relationship_same_type_exists( $p_src_bug_id, $p_dest_bug_id, $p_rel_ty
  * @param integer $p_bug_id          A bug identifier.
  * @return int Complementary bug id
  */
-function relationship_get_linked_bug_id( $p_relationship_id, $p_bug_id ) {
-	$t_bug_relationship_data = relationship_get( $p_relationship_id );
+function relationship_get_linked_bug_id($p_relationship_id, $p_bug_id)
+{
+	$t_bug_relationship_data = relationship_get($p_relationship_id);
 
-	if( $t_bug_relationship_data->src_bug_id == $p_bug_id ) {
+	if ($t_bug_relationship_data->src_bug_id == $p_bug_id) {
 		return $t_bug_relationship_data->dest_bug_id;
 	}
 
-	if( $t_bug_relationship_data->dest_bug_id == $p_bug_id ) {
+	if ($t_bug_relationship_data->dest_bug_id == $p_bug_id) {
 		return $t_bug_relationship_data->src_bug_id;
 	}
 
-	trigger_error( ERROR_RELATIONSHIP_NOT_FOUND, ERROR );
+	trigger_error(ERROR_RELATIONSHIP_NOT_FOUND, ERROR);
 }
 
 /**
@@ -613,10 +634,11 @@ function relationship_get_linked_bug_id( $p_relationship_id, $p_bug_id ) {
  * @param integer $p_relationship_type Relationship type.
  * @return string Relationship description
  */
-function relationship_get_description_src_side( $p_relationship_type ) {
+function relationship_get_description_src_side($p_relationship_type)
+{
 	global $g_relationships;
-	relationship_type_ensure_valid( $p_relationship_type );
-	return lang_get( $g_relationships[$p_relationship_type]['#description'] );
+	relationship_type_ensure_valid($p_relationship_type);
+	return lang_get($g_relationships[$p_relationship_type]['#description']);
 }
 
 /**
@@ -624,13 +646,14 @@ function relationship_get_description_src_side( $p_relationship_type ) {
  * @param integer $p_relationship_type Relationship type.
  * @return string Relationship description
  */
-function relationship_get_description_dest_side( $p_relationship_type ) {
+function relationship_get_description_dest_side($p_relationship_type)
+{
 	global $g_relationships;
 
-	relationship_type_ensure_valid( $p_relationship_type );
-	relationship_type_ensure_valid( $g_relationships[$p_relationship_type]['#complementary'] );
+	relationship_type_ensure_valid($p_relationship_type);
+	relationship_type_ensure_valid($g_relationships[$p_relationship_type]['#complementary']);
 
-	return lang_get( $g_relationships[$g_relationships[$p_relationship_type]['#complementary']]['#description'] );
+	return lang_get($g_relationships[$g_relationships[$p_relationship_type]['#complementary']]['#description']);
 }
 
 /**
@@ -638,8 +661,9 @@ function relationship_get_description_dest_side( $p_relationship_type ) {
  * @param integer $p_relationship_code Relationship Type.
  * @return string Relationship description
  */
-function relationship_get_description_for_history( $p_relationship_code ) {
-	return relationship_get_description_src_side( $p_relationship_code );
+function relationship_get_description_for_history($p_relationship_code)
+{
+	return relationship_get_description_src_side($p_relationship_code);
 }
 
 /**
@@ -647,18 +671,19 @@ function relationship_get_description_for_history( $p_relationship_code ) {
  * @param integer $p_relationship_type Relationship Type.
  * @return string Relationship API name
  */
-function relationship_get_name_for_api( $p_relationship_type ) {
+function relationship_get_name_for_api($p_relationship_type)
+{
 	global $g_relationships;
 
-	if( !isset( $g_relationships[$p_relationship_type] ) ) {
-		switch( $p_relationship_type ) {
+	if (!isset($g_relationships[$p_relationship_type])) {
+		switch ($p_relationship_type) {
 			case BUG_REL_NONE:
 				return 'none';
 			case BUG_REL_ANY:
 				return 'any';
 			default:
 				# This will trigger the invalid relationship type exception.
-				relationship_type_ensure_valid( $p_relationship_type );
+				relationship_type_ensure_valid($p_relationship_type);
 		}
 	}
 
@@ -672,20 +697,21 @@ function relationship_get_name_for_api( $p_relationship_type ) {
  * @return integer relationship type id
  * @throws ClientException unknown relationship type name.
  */
-function relationship_get_id_from_api_name( $p_relationship_type_name ) {
+function relationship_get_id_from_api_name($p_relationship_type_name)
+{
 	global $g_relationships;
 
-	$t_relationship_type_name = strtolower( $p_relationship_type_name );
-	foreach( $g_relationships as $t_id => $t_relationship ) {
-		if( $t_relationship['#name'] == $t_relationship_type_name ) {
+	$t_relationship_type_name = strtolower($p_relationship_type_name);
+	foreach ($g_relationships as $t_id => $t_relationship) {
+		if ($t_relationship['#name'] == $t_relationship_type_name) {
 			return $t_id;
 		}
 	}
 
 	throw new ClientException(
-		sprintf( "Unknown relationship type '%s'", $p_relationship_type_name ),
+		sprintf("Unknown relationship type '%s'", $p_relationship_type_name),
 		ERROR_INVALID_FIELD_VALUE,
-		array( 'relationship_type' )
+		array('relationship_type')
 	);
 }
 
@@ -696,16 +722,17 @@ function relationship_get_id_from_api_name( $p_relationship_type_name ) {
  * @param integer $p_bug_id A bug identifier.
  * @return boolean
  */
-function relationship_can_resolve_bug( $p_bug_id ) {
+function relationship_can_resolve_bug($p_bug_id)
+{
 	# retrieve all the relationships in which the bug is the source bug
-	$t_relationships = relationship_get_all_src( $p_bug_id );
+	$t_relationships = relationship_get_all_src($p_bug_id);
 
-	foreach( $t_relationships as $t_relationship ) {
+	foreach ($t_relationships as $t_relationship) {
 		# verify if each bug in relation BUG_DEPENDANT is already marked as resolved
-		if( $t_relationship->type == BUG_DEPENDANT ) {
-			$t_status = bug_get_field( $t_relationship->dest_bug_id, 'status' );
+		if ($t_relationship->type == BUG_DEPENDANT) {
+			$t_status = bug_get_field($t_relationship->dest_bug_id, 'status');
 
-			if( $t_status < config_get( 'bug_resolved_status_threshold', null, null, $t_relationship->dest_project_id ) ) {
+			if ($t_status < config_get('bug_resolved_status_threshold', null, null, $t_relationship->dest_project_id)) {
 				# the bug is NOT marked as resolved/closed
 				return false;
 			}
@@ -714,5 +741,3 @@ function relationship_can_resolve_bug( $p_bug_id ) {
 
 	return true;
 }
-
-

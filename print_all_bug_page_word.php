@@ -268,7 +268,7 @@ for ($j = 0; $j < $t_row_count; $j++) {
 				} else {
 						?>
 						<td colspan="2">&#160;</td>
-					<?php } ?>
+					<?php  } ?>
 			</tr>
 			<tr>
 				<td class="bold">
@@ -429,7 +429,7 @@ for ($j = 0; $j < $t_row_count; $j++) {
 						<?php echo string_display_links(tag_bug_get_all($t_bug->id)) ?>
 					</td>
 				</tr>
-			<?php } ?>
+			<?php  } ?>
 			<tr>
 				<td class="bold">
 					<?php echo sprintf(lang_get('label'), $t_lang_steps_to_reproduce) ?>
@@ -572,7 +572,7 @@ for ($j = 0; $j < $t_row_count; $j++) {
 			?>
 		</table>
 
-		<?php # Bugnotes END 
+		<?php  # Bugnotes END 
 		?>
 
 

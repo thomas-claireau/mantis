@@ -99,7 +99,7 @@ $t_filter = filter_ensure_valid_filter($t_filter);
 
 	<form method="post" name="filters" id="filters_form_open" action="<?php echo $t_action; ?>">
 
-		<?php # CSRF protection not required here - form does not result in modifications 
+		<?php  # CSRF protection not required here - form does not result in modifications 
 		?>
 		<input type="hidden" name="type" value="1" />
 		<input type="hidden" name="view_type" value="<?php echo $t_filter['_view_type']; ?>" />

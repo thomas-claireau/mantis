@@ -29,10 +29,10 @@
  * @uses utility_api.php
  */
 
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'error_api.php' );
-require_api( 'utility_api.php' );
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('error_api.php');
+require_api('utility_api.php');
 
 /**
  * Initialise the CryptoAPI subsystem. This function checks whether the master
@@ -41,10 +41,11 @@ require_api( 'utility_api.php' );
  * of the MantisBT installation.
  * @return void
  */
-function crypto_init() {
-	if( !defined( 'MANTIS_MAINTENANCE_MODE' ) ) {
-		if( strlen( config_get_global( 'crypto_master_salt' ) ) < 16 ) {
-			trigger_error( ERROR_CRYPTO_MASTER_SALT_INVALID, ERROR );
+function crypto_init()
+{
+	if (!defined('MANTIS_MAINTENANCE_MODE')) {
+		if (strlen(config_get_global('crypto_master_salt')) < 16) {
+			trigger_error(ERROR_CRYPTO_MASTER_SALT_INVALID, ERROR);
 		}
 	}
 	return;
@@ -62,14 +63,15 @@ function crypto_init() {
  * @param boolean $p_require_strong_generator Whether or not a weak source of randomness can be used by this function.
  * @return string|null Raw binary string containing the requested number of bytes of random output or null if the output couldn't be created
  */
-function crypto_generate_random_string( $p_bytes, $p_require_strong_generator = true ) {
+function crypto_generate_random_string($p_bytes, $p_require_strong_generator = true)
+{
 	# First we attempt to use the secure PRNG provided by OpenSSL in PHP
-	if( function_exists( 'openssl_random_pseudo_bytes' ) ) {
-		$t_random_bytes = openssl_random_pseudo_bytes( $p_bytes, $t_strong );
-		if( $t_random_bytes !== false ) {
-			if( $p_require_strong_generator && $t_strong === true ) {
+	if (function_exists('openssl_random_pseudo_bytes')) {
+		$t_random_bytes = openssl_random_pseudo_bytes($p_bytes, $t_strong);
+		if ($t_random_bytes !== false) {
+			if ($p_require_strong_generator && $t_strong === true) {
 				$t_random_string = $t_random_bytes;
-			} else if( !$p_require_strong_generator ) {
+			} else if (!$p_require_strong_generator) {
 				$t_random_string = $t_random_bytes;
 			}
 		}
@@ -77,10 +79,10 @@ function crypto_generate_random_string( $p_bytes, $p_require_strong_generator = 
 
 	# Attempt to use mcrypt_create_iv - this is built into newer versions of php on windows
 	# if the mcrypt extension is enabled on Linux, it takes random data from /dev/urandom
-	if( !isset( $t_random_string ) ) {
-		if( function_exists( 'mcrypt_create_iv' ) ) {
-			$t_random_bytes = mcrypt_create_iv( $p_bytes, MCRYPT_DEV_URANDOM );
-			if( $t_random_bytes !== false && strlen( $t_random_bytes ) === $p_bytes ) {
+	if (!isset($t_random_string)) {
+		if (function_exists('mcrypt_create_iv')) {
+			$t_random_bytes = mcrypt_create_iv($p_bytes, MCRYPT_DEV_URANDOM);
+			if ($t_random_bytes !== false && strlen($t_random_bytes) === $p_bytes) {
 				$t_random_string = $t_random_bytes;
 			}
 		}
@@ -90,15 +92,15 @@ function crypto_generate_random_string( $p_bytes, $p_require_strong_generator = 
 	# is nowhere near as secure as /dev/random but it is still satisfactory for
 	# the needs of MantisBT, especially given the fact that we don't want this
 	# function to block while waiting for the system to generate more entropy.
-	if( !isset( $t_random_string ) ) {
-		if( !is_windows_server() ) {
-			$t_urandom_fp = @fopen( '/dev/urandom', 'rb' );
-			if( $t_urandom_fp !== false ) {
-				$t_random_bytes = @fread( $t_urandom_fp, $p_bytes );
-				if( $t_random_bytes !== false ) {
+	if (!isset($t_random_string)) {
+		if (!is_windows_server()) {
+			$t_urandom_fp = @fopen('/dev/urandom', 'rb');
+			if ($t_urandom_fp !== false) {
+				$t_random_bytes = @fread($t_urandom_fp, $p_bytes);
+				if ($t_random_bytes !== false) {
 					$t_random_string = $t_random_bytes;
 				}
-				@fclose( $t_urandom_fp );
+				@fclose($t_urandom_fp);
 			}
 		}
 	}
@@ -107,7 +109,7 @@ function crypto_generate_random_string( $p_bytes, $p_require_strong_generator = 
 	# from a strong source. Unless weak output is specifically allowed by the
 	# $p_require_strong_generator argument, we should return null as we've
 	# failed to generate randomness to a satisfactory security level.
-	if( !isset( $t_random_string ) && $p_require_strong_generator ) {
+	if (!isset($t_random_string) && $p_require_strong_generator) {
 		return null;
 	}
 
@@ -117,20 +119,20 @@ function crypto_generate_random_string( $p_bytes, $p_require_strong_generator = 
 	# PRNG is easily guessable. In an attempt to make it harder to guess the
 	# internal state of the PRNG, we salt the PRNG output with a known secret
 	# and hash it.
-	if( !isset( $t_random_string ) ) {
-		$t_secret_key = 'prng' . config_get_global( 'crypto_master_salt' );
+	if (!isset($t_random_string)) {
+		$t_secret_key = 'prng' . config_get_global('crypto_master_salt');
 		$t_random_bytes = '';
-		for( $i = 0; $i < $p_bytes; $i += 64 ) {
+		for ($i = 0; $i < $p_bytes; $i += 64) {
 			$t_random_segment = '';
-			for( $j = 0; $j < 64; $j++ ) {
-				$t_random_segment .= base_convert( mt_rand(), 10, 36 );
+			for ($j = 0; $j < 64; $j++) {
+				$t_random_segment .= base_convert(mt_rand(), 10, 36);
 			}
 			$t_random_segment .= $i;
 			$t_random_segment .= $t_secret_key;
-			$t_random_bytes .= hash( 'whirlpool', $t_random_segment, true );
+			$t_random_bytes .= hash('whirlpool', $t_random_segment, true);
 		}
-		$t_random_string = substr( $t_random_bytes, 0, $p_bytes );
-		if( $t_random_string === false ) {
+		$t_random_string = substr($t_random_bytes, 0, $p_bytes);
+		if ($t_random_string === false) {
 			return null; # Unexpected error
 		}
 	}
@@ -149,10 +151,11 @@ function crypto_generate_random_string( $p_bytes, $p_require_strong_generator = 
  * @param integer $p_bytes Number of bytes of strong randomness required.
  * @return string Raw binary string containing the requested number of bytes of random output
  */
-function crypto_generate_strong_random_string( $p_bytes ) {
-	$t_random_string = crypto_generate_random_string( $p_bytes, true );
-	if( $t_random_string === null ) {
-		trigger_error( ERROR_CRYPTO_CAN_NOT_GENERATE_STRONG_RANDOMNESS, ERROR );
+function crypto_generate_strong_random_string($p_bytes)
+{
+	$t_random_string = crypto_generate_random_string($p_bytes, true);
+	if ($t_random_string === null) {
+		trigger_error(ERROR_CRYPTO_CAN_NOT_GENERATE_STRONG_RANDOMNESS, ERROR);
 	}
 	return $t_random_string;
 }
@@ -169,21 +172,22 @@ function crypto_generate_strong_random_string( $p_bytes ) {
  * @param integer $p_minimum_length Minimum number of characters required for the nonce.
  * @return string Nonce encoded according to the base64 with URI safe alphabet approach described in RFC4648
  */
-function crypto_generate_uri_safe_nonce( $p_minimum_length ) {
+function crypto_generate_uri_safe_nonce($p_minimum_length)
+{
 	$t_length_mod4 = $p_minimum_length % 4;
 	$t_adjusted_length = $p_minimum_length + 4 - ($t_length_mod4 ? $t_length_mod4 : 4);
-	$t_raw_bytes_required = ( $t_adjusted_length / 4 ) * 3;
-	if( !is_windows_server() ) {
-		$t_random_bytes = crypto_generate_strong_random_string( $t_raw_bytes_required );
+	$t_raw_bytes_required = ($t_adjusted_length / 4) * 3;
+	if (!is_windows_server()) {
+		$t_random_bytes = crypto_generate_strong_random_string($t_raw_bytes_required);
 	} else {
 		# It's currently not possible to generate strong random numbers
 		# with PHP on Windows so we have to resort to using PHP's
 		# built-in insecure PRNG.
-		$t_random_bytes = crypto_generate_random_string( $t_raw_bytes_required, false );
+		$t_random_bytes = crypto_generate_random_string($t_raw_bytes_required, false);
 	}
-	$t_base64_encoded = base64_encode( $t_random_bytes );
+	$t_base64_encoded = base64_encode($t_random_bytes);
 	# Note: no need to translate trailing = padding characters because our
 	# length rounding ensures that padding is never required.
-	$t_random_nonce = strtr( $t_base64_encoded, '+/', '-_' );
+	$t_random_nonce = strtr($t_base64_encoded, '+/', '-_');
 	return $t_random_nonce;
 }

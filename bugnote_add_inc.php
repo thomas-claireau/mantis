@@ -53,7 +53,7 @@ require_api('lang_api.php');
 <?php if ((!bug_is_readonly($f_bug_id)) &&
 	(access_has_bug_level(config_get('add_bugnote_threshold'), $f_bug_id))
 ) { ?>
-	<?php # Bugnote Add Form BEGIN 
+	<?php  # Bugnote Add Form BEGIN 
 	?>
 
 	<div class="col-md-12 col-xs-12 noprint">
@@ -107,7 +107,7 @@ require_api('lang_api.php');
 												</label>
 											</td>
 										</tr>
-									<?php } ?>
+									<?php  } ?>
 
 									<tr>
 										<th class="category" width="15%">
@@ -131,9 +131,9 @@ require_api('lang_api.php');
 														<input type="text" name="time_tracking" class="stopwatch_time input-sm" size="8" placeholder="hh:mm:ss" />
 														<input type="button" name="time_tracking_toggle" class="stopwatch_toggle btn btn-sm btn-white btn-round" value="<?php echo lang_get('time_tracking_stopwatch_start') ?>" />
 														<input type="button" name="time_tracking_reset" class="stopwatch_reset btn btn-sm btn-white btn-round" value="<?php echo lang_get('time_tracking_stopwatch_reset') ?>" />
-													<?php } else { ?>
+													<?php  } else { ?>
 														<input type="text" name="time_tracking" class="input-sm" size="5" placeholder="hh:mm" />
-													<?php } ?>
+													<?php  } ?>
 												</td>
 											</tr>
 										<?php

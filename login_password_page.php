@@ -234,7 +234,7 @@ layout_login_page_begin();
 											<span class="lbl padding-6"><?php echo lang_get('save_login') ?></span>
 										</label>
 									</div>
-								<?php } ?>
+								<?php  } ?>
 								<?php if ($t_session_validation) { ?>
 									<div class="clearfix">
 										<label for="secure-session" class="inline">
@@ -242,7 +242,7 @@ layout_login_page_begin();
 											<span class="lbl padding-6"><?php echo lang_get('secure_session_long') ?></span>
 										</label>
 									</div>
-								<?php } ?>
+								<?php  } ?>
 
 								<?php if ($f_reauthenticate) {
 									echo '<input id="reauthenticate" type="hidden" name="reauthenticate" value="1" />';

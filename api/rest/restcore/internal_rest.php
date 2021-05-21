@@ -22,14 +22,14 @@
  * @link http://www.mantisbt.org
  */
 
-require_api( 'helper_api.php' );
+require_api('helper_api.php');
 
 /**
  * WARNING: All APIs under the internal route are considered private and can break anytime.
  */
-$g_app->group('/internal', function() use ( $g_app ) {
-	$g_app->any( '/autocomplete', 'rest_internal_autocomplete' );
-	$g_app->any( '/config_display', 'rest_internal_config_display' );
+$g_app->group('/internal', function () use ($g_app) {
+	$g_app->any('/autocomplete', 'rest_internal_autocomplete');
+	$g_app->any('/config_display', 'rest_internal_config_display');
 });
 
 /**
@@ -40,59 +40,61 @@ $g_app->group('/internal', function() use ( $g_app ) {
  * @param array $p_args Arguments
  * @return \Slim\Http\Response The augmented response.
  */
-function rest_internal_autocomplete( \Slim\Http\Request $p_request, \Slim\Http\Response $p_response, array $p_args ) {
-	$t_field = $p_request->getParam( 'field' );
-	$t_prefix = $p_request->getParam( 'prefix' );
+function rest_internal_autocomplete(\Slim\Http\Request $p_request, \Slim\Http\Response $p_response, array $p_args)
+{
+	$t_field = $p_request->getParam('field');
+	$t_prefix = $p_request->getParam('prefix');
 
-	switch( $t_field ) {
+	switch ($t_field) {
 		case 'platform':
-			$t_unique_entries = profile_get_field_all_for_user( 'platform' );
-			$t_matches = helper_filter_by_prefix( $t_unique_entries, $t_prefix );
+			$t_unique_entries = profile_get_field_all_for_user('platform');
+			$t_matches = helper_filter_by_prefix($t_unique_entries, $t_prefix);
 			break;
 		case 'os':
-			$t_unique_entries = profile_get_field_all_for_user( 'os' );
-			$t_matches = helper_filter_by_prefix( $t_unique_entries, $t_prefix );
+			$t_unique_entries = profile_get_field_all_for_user('os');
+			$t_matches = helper_filter_by_prefix($t_unique_entries, $t_prefix);
 			break;
 		case 'os_build':
-			$t_unique_entries = profile_get_field_all_for_user( 'os_build' );
-			$t_matches = helper_filter_by_prefix( $t_unique_entries, $t_prefix );
+			$t_unique_entries = profile_get_field_all_for_user('os_build');
+			$t_matches = helper_filter_by_prefix($t_unique_entries, $t_prefix);
 			break;
 		default:
-			return $p_response->withStatus( HTTP_STATUS_NOT_FOUND, "Field '$t_field' doesn't have auto-complete." );
+			return $p_response->withStatus(HTTP_STATUS_NOT_FOUND, "Field '$t_field' doesn't have auto-complete.");
 	}
 
-	return $p_response->withStatus( HTTP_STATUS_SUCCESS )->withJson( $t_matches );
+	return $p_response->withStatus(HTTP_STATUS_SUCCESS)->withJson($t_matches);
 }
 
-function rest_internal_config_display( \Slim\Http\Request $p_request, \Slim\Http\Response $p_response, array $p_args ) {
-	$t_config_id = $p_request->getParam( 'config_id' );
-	$t_user_id = $p_request->getParam( 'user_id' );
-	$t_project_id = $p_request->getParam( 'project_id' );
+function rest_internal_config_display(\Slim\Http\Request $p_request, \Slim\Http\Response $p_response, array $p_args)
+{
+	$t_config_id = $p_request->getParam('config_id');
+	$t_user_id = $p_request->getParam('user_id');
+	$t_project_id = $p_request->getParam('project_id');
 
-	if( !access_has_global_level( config_get( 'view_configuration_threshold' ), auth_get_current_user_id() ) ) {
-		return $p_response->withStatus( HTTP_STATUS_FORBIDDEN );
+	if (!access_has_global_level(config_get('view_configuration_threshold'), auth_get_current_user_id())) {
+		return $p_response->withStatus(HTTP_STATUS_FORBIDDEN);
 	}
-	if( null === $t_user_id || null === $t_project_id || null === $t_config_id ) {
+	if (null === $t_user_id || null === $t_project_id || null === $t_config_id) {
 		$t_message = "Missing parameters";
-		return $p_response->withStatus( HTTP_STATUS_BAD_REQUEST, $t_message );
+		return $p_response->withStatus(HTTP_STATUS_BAD_REQUEST, $t_message);
 	}
 
 	$t_sql = 'SELECT config_id, user_id, project_id, type, value, access_reqd FROM {config}'
-			. ' WHERE user_id = :user_id AND project_id = :project_id AND config_id = :config_id';
+		. ' WHERE user_id = :user_id AND project_id = :project_id AND config_id = :config_id';
 	$t_params = array(
 		'user_id' => $t_user_id,
 		'project_id' => $t_project_id,
 		'config_id' => $t_config_id
-		);
-	$t_query = new DbQuery( $t_sql, $t_params );
+	);
+	$t_query = new DbQuery($t_sql, $t_params);
 	$t_row = $t_query->fetch();
 
-	if( !$t_row ) {
+	if (!$t_row) {
 		$t_message = "Requested option/project/user doesn't exist";
-		return $p_response->withStatus( HTTP_STATUS_NOT_FOUND, $t_message );
+		return $p_response->withStatus(HTTP_STATUS_NOT_FOUND, $t_message);
 	}
 
-	$t_output = config_get_value_as_string( $t_row['type'], $t_row['value'], true );
+	$t_output = config_get_value_as_string($t_row['type'], $t_row['value'], true);
 
-	return $p_response->withStatus( HTTP_STATUS_SUCCESS )->write( $t_output );
+	return $p_response->withStatus(HTTP_STATUS_SUCCESS)->write($t_output);
 }

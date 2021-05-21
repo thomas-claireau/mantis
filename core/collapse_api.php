@@ -32,13 +32,13 @@
  * @uses utility_api.php
  */
 
-require_api( 'authentication_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'current_user_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'tokens_api.php' );
-require_api( 'utility_api.php' );
+require_api('authentication_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('current_user_api.php');
+require_api('gpc_api.php');
+require_api('tokens_api.php');
+require_api('utility_api.php');
 
 
 # @global string $g_current_collapse_section
@@ -59,18 +59,19 @@ $g_collapse_cache_token = null;
  * @param string $p_css_class CSS class to apply to the div (defaults to none).
  * @return void
  */
-function collapse_open( $p_name, $p_section = '', $p_css_class = '' ) {
+function collapse_open($p_name, $p_section = '', $p_css_class = '')
+{
 	global $g_current_collapse_section, $g_open_collapse_section;
 
-	$t_block = ( is_blank( $p_section ) ? $p_name : $p_section . '_' . $p_name );
-	$t_display = is_collapsed( $t_block );
+	$t_block = (is_blank($p_section) ? $p_name : $p_section . '_' . $p_name);
+	$t_display = is_collapsed($t_block);
 
 	# make sure no other collapse section is started
-	if( $g_current_collapse_section !== null ) {
-		trigger_error( ERROR_GENERIC, ERROR );
+	if ($g_current_collapse_section !== null) {
+		trigger_error(ERROR_GENERIC, ERROR);
 	}
 
-	if( $t_display ) {
+	if ($t_display) {
 		$p_css_class .= ' collapse-open noprint';
 	} else {
 		$p_css_class .= ' collapse-closed noprint';
@@ -92,15 +93,16 @@ function collapse_open( $p_name, $p_section = '', $p_css_class = '' ) {
  * @param string $p_css_class CSS class to apply to the div (defaults to none).
  * @return void
  */
-function collapse_closed( $p_name, $p_section = '', $p_css_class = '' ) {
+function collapse_closed($p_name, $p_section = '', $p_css_class = '')
+{
 	global $g_current_collapse_section, $g_open_collapse_section;
 
-	$t_block = ( is_blank( $p_section ) ? $p_name : $p_section . '_' . $p_name );
-	$t_display = !is_collapsed( $t_block );
+	$t_block = (is_blank($p_section) ? $p_name : $p_section . '_' . $p_name);
+	$t_display = !is_collapsed($t_block);
 
 	# Make sure a section is opened, and it is the same section.
-	if( $t_block !== $g_current_collapse_section ) {
-		trigger_error( ERROR_GENERIC, ERROR );
+	if ($t_block !== $g_current_collapse_section) {
+		trigger_error(ERROR_GENERIC, ERROR);
 	}
 
 	echo '</div>';
@@ -110,7 +112,7 @@ function collapse_closed( $p_name, $p_section = '', $p_css_class = '' ) {
 	$t_div_id = $t_block . '_closed';
 	$p_css_class .= $t_display ? ' collapse-open' : ' collapse-closed';
 	echo "\n" . '<div id="', $t_div_id,
-		'" class="collapse-section-closed ' . $p_css_class . '">';
+	'" class="collapse-section-closed ' . $p_css_class . '">';
 }
 
 /**
@@ -120,21 +122,22 @@ function collapse_closed( $p_name, $p_section = '', $p_css_class = '' ) {
  * @param string $p_name    Collapse block name.
  * @return void
  */
-function collapse_icon( $p_name ) {
+function collapse_icon($p_name)
+{
 	global $g_open_collapse_section;
 
-	if( $g_open_collapse_section === true ) {
+	if ($g_open_collapse_section === true) {
 		$t_icon = 'fa-chevron-up';
 		$t_alt = '-';
 		$t_id = $p_name . '_open_link';
 	} else {
 		$t_icon = 'fa-chevron-down';
 		$t_alt = '+';
-		$t_id = $p_name. '_closed_link';
+		$t_id = $p_name . '_closed_link';
 	}
 
 	echo '&nbsp;&nbsp;<a id="', $t_id, '" class="collapse-link noprint">';
-	print_icon( $t_icon, 'bigger-120', $t_alt);
+	print_icon($t_icon, 'bigger-120', $t_alt);
 	echo '</a>';
 }
 
@@ -144,15 +147,16 @@ function collapse_icon( $p_name ) {
  * @param string $p_section Collapse block section.
  * @return void
  */
-function collapse_end( $p_name, $p_section = '' ) {
+function collapse_end($p_name, $p_section = '')
+{
 	global $g_current_collapse_section, $g_open_collapse_section;
 
-	$t_block = ( is_blank( $p_section ) ? $p_name : $p_section . '_' . $p_name );
-	is_collapsed( $t_block );
+	$t_block = (is_blank($p_section) ? $p_name : $p_section . '_' . $p_name);
+	is_collapsed($t_block);
 
 	# Make sure a section is opened, and it is the same section.
-	if( $t_block !== $g_current_collapse_section ) {
-		trigger_error( ERROR_GENERIC, ERROR );
+	if ($t_block !== $g_current_collapse_section) {
+		trigger_error(ERROR_GENERIC, ERROR);
 	}
 
 	echo '</div>';
@@ -166,14 +170,15 @@ function collapse_end( $p_name, $p_section = '' ) {
  * @param string $p_block Collapse block.
  * @return boolean
  */
-function is_collapsed( $p_block ) {
+function is_collapsed($p_block)
+{
 	global $g_collapse_cache_token;
 
-	if( !isset( $g_collapse_cache_token[$p_block] ) ) {
+	if (!isset($g_collapse_cache_token[$p_block])) {
 		return false;
 	}
 
-	return( true == $g_collapse_cache_token[$p_block] );
+	return (true == $g_collapse_cache_token[$p_block]);
 }
 
 /**
@@ -182,22 +187,23 @@ function is_collapsed( $p_block ) {
  * the token, or touch it otherwise.
  * @return void
  */
-function collapse_cache_token() {
+function collapse_cache_token()
+{
 	global $g_collapse_cache_token;
 
-	if( !auth_is_user_authenticated() || current_user_is_anonymous() ) {
+	if (!auth_is_user_authenticated() || current_user_is_anonymous()) {
 		$g_collapse_cache_token = array();
 		return;
 	}
 
-	if( isset( $g_collapse_cache_token ) ) {
+	if (isset($g_collapse_cache_token)) {
 		return;
 	}
 
-	$t_token = token_get_value( TOKEN_COLLAPSE );
+	$t_token = token_get_value(TOKEN_COLLAPSE);
 
-	if( !is_null( $t_token ) ) {
-		$t_data = json_decode( $t_token, true );
+	if (!is_null($t_token)) {
+		$t_data = json_decode($t_token, true);
 	} else {
 		$t_data = array();
 		$t_data['filter'] = false;
@@ -205,32 +211,32 @@ function collapse_cache_token() {
 
 	$g_collapse_cache_token = $t_data;
 
-	$t_cookie = gpc_get_cookie( 'MANTIS_collapse_settings', '' );
+	$t_cookie = gpc_get_cookie('MANTIS_collapse_settings', '');
 
-	if( false !== $t_cookie && !is_blank( $t_cookie ) ) {
+	if (false !== $t_cookie && !is_blank($t_cookie)) {
 		$t_update = false;
-		$t_data = explode( '|', $t_cookie );
+		$t_data = explode('|', $t_cookie);
 
-		foreach( $t_data as $t_pair ) {
-			$t_pair = explode( ':', $t_pair );
+		foreach ($t_data as $t_pair) {
+			$t_pair = explode(':', $t_pair);
 
-			if( false !== $t_pair && count( $t_pair ) == 2 ) {
-				$g_collapse_cache_token[$t_pair[0]] = ( true == $t_pair[1] );
+			if (false !== $t_pair && count($t_pair) == 2) {
+				$g_collapse_cache_token[$t_pair[0]] = (true == $t_pair[1]);
 				$t_update = true;
 			}
 		}
 
-		if( !$t_update ) {
-			$t_token = token_get( TOKEN_COLLAPSE );
+		if (!$t_update) {
+			$t_token = token_get(TOKEN_COLLAPSE);
 			$t_update = $t_token !== null;
 		}
-		if( $t_update ) {
-			$t_value = json_encode( $g_collapse_cache_token );
-			token_set( TOKEN_COLLAPSE, $t_value, TOKEN_EXPIRY_COLLAPSE );
-		} elseif( token_exists( $t_token['id'] ) ) {
-			token_touch( $t_token['id'] );
+		if ($t_update) {
+			$t_value = json_encode($g_collapse_cache_token);
+			token_set(TOKEN_COLLAPSE, $t_value, TOKEN_EXPIRY_COLLAPSE);
+		} elseif (token_exists($t_token['id'])) {
+			token_touch($t_token['id']);
 		}
 
-		gpc_clear_cookie( 'MANTIS_collapse_settings' );
+		gpc_clear_cookie('MANTIS_collapse_settings');
 	}
 }

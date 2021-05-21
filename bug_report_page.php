@@ -370,7 +370,7 @@ if ($t_show_attachments) {
 										<?php print_icon('fa-calendar', 'fa-xlg datetimepicker'); ?>
 									</td>
 								</tr>
-							<?php } ?>
+							<?php  } ?>
 							<?php if ($t_show_platform || $t_show_os || $t_show_os_build) { ?>
 								<tr>
 									<th class="category">
@@ -381,7 +381,7 @@ if ($t_show_attachments) {
 											<select <?php echo helper_get_tab_index() ?> id="profile_id" name="profile_id" class="input-sm">
 												<?php print_profile_option_list(auth_get_current_user_id(), $f_profile_id) ?>
 											</select>
-										<?php } ?>
+										<?php  } ?>
 										<?php collapse_open('profile'); ?>
 										<?php echo lang_get('or_fill_in');
 										collapse_icon('profile'); ?>
@@ -446,7 +446,7 @@ if ($t_show_attachments) {
 										<?php collapse_end('profile'); ?>
 									</td>
 								</tr>
-							<?php } ?>
+							<?php  } ?>
 							<?php
 							if ($t_show_product_version) {
 								$t_product_version_released_mask = VERSION_RELEASED;
@@ -477,7 +477,7 @@ if ($t_show_attachments) {
 										<input <?php echo helper_get_tab_index() ?> type="text" id="build" name="build" size="32" maxlength="32" value="<?php echo string_attribute($f_build) ?>" />
 									</td>
 								</tr>
-							<?php } ?>
+							<?php  } ?>
 
 							<?php if ($t_show_handler) { ?>
 								<tr>
@@ -491,7 +491,7 @@ if ($t_show_attachments) {
 										</select>
 									</td>
 								</tr>
-							<?php } ?>
+							<?php  } ?>
 
 							<?php if ($t_show_monitors) { ?>
 								<tr>
@@ -504,7 +504,7 @@ if ($t_show_attachments) {
 										</select>
 									</td>
 								</tr>
-							<?php } ?>
+							<?php  } ?>
 
 							<?php if ($t_show_status) { ?>
 								<tr>
@@ -526,11 +526,11 @@ if ($t_show_attachments) {
 												<option value="<?php echo $t_key ?>" <?php check_selected($t_key, config_get('bug_submit_status')); ?>>
 													<?php echo $t_value ?>
 												</option>
-											<?php } ?>
+											<?php  } ?>
 										</select>
 									</td>
 								</tr>
-							<?php } ?>
+							<?php  } ?>
 
 							<?php if ($t_show_resolution) { ?>
 								<tr>
@@ -545,9 +545,9 @@ if ($t_show_attachments) {
 										</select>
 									</td>
 								</tr>
-							<?php } ?>
+							<?php  } ?>
 
-							<?php # Target Version (if permissions allow)
+							<?php  # Target Version (if permissions allow)
 							if ($t_show_target_version) { ?>
 								<tr>
 									<th class="category">
@@ -559,7 +559,7 @@ if ($t_show_attachments) {
 										</select>
 									</td>
 								</tr>
-							<?php } ?>
+							<?php  } ?>
 							<?php event_signal('EVENT_REPORT_BUG_FORM', array($t_project_id)) ?>
 							<tr>
 								<th class="category">
@@ -574,7 +574,7 @@ if ($t_show_attachments) {
 									<span class="required">*</span><label for="description"><?php print_documentation_link('description') ?></label>
 								</th>
 								<td>
-									<?php # Newline after opening textarea tag is intentional, see #25839 
+									<?php  # Newline after opening textarea tag is intentional, see #25839 
 									?>
 									<textarea class="form-control" <?php echo helper_get_tab_index() ?> id="description" name="description" cols="80" rows="10" required>
 <?php echo string_textarea($f_description) ?>
@@ -588,14 +588,14 @@ if ($t_show_attachments) {
 										<label for="steps_to_reproduce"><?php print_documentation_link('steps_to_reproduce') ?></label>
 									</th>
 									<td>
-										<?php # Newline after opening textarea tag is intentional, see #25839 
+										<?php  # Newline after opening textarea tag is intentional, see #25839 
 										?>
 										<textarea class="form-control" <?php echo helper_get_tab_index() ?> id="steps_to_reproduce" name="steps_to_reproduce" cols="80" rows="10">
 <?php echo string_textarea($f_steps_to_reproduce) ?>
 </textarea>
 									</td>
 								</tr>
-							<?php } ?>
+							<?php  } ?>
 
 							<?php if ($t_show_additional_info) { ?>
 								<tr>
@@ -603,14 +603,14 @@ if ($t_show_attachments) {
 										<label for="additional_info"><?php print_documentation_link('additional_information') ?></label>
 									</th>
 									<td>
-										<?php # Newline after opening textarea tag is intentional, see #25839 
+										<?php  # Newline after opening textarea tag is intentional, see #25839 
 										?>
 										<textarea class="form-control" <?php echo helper_get_tab_index() ?> id="additional_info" name="additional_info" cols="80" rows="10">
 <?php echo string_textarea($f_additional_info) ?>
 </textarea>
 									</td>
 								</tr>
-							<?php } ?>
+							<?php  } ?>
 							<?php if ($t_show_tags) { ?>
 								<tr>
 									<th class="category">
@@ -655,12 +655,12 @@ if ($t_show_attachments) {
 								?>
 									<tr>
 										<th class="category">
-											<?php if ($t_def['require_report']) { ?><span class="required">*</span><?php } ?>
+											<?php if ($t_def['require_report']) { ?><span class="required">*</span><?php  } ?>
 											<?php if ($t_def['type'] != CUSTOM_FIELD_TYPE_RADIO && $t_def['type'] != CUSTOM_FIELD_TYPE_CHECKBOX) { ?>
 												<label for="custom_field_<?php echo string_attribute($t_def['id']) ?>">
 													<?php echo string_display_line(lang_get_defaulted($t_def['name'])) ?>
 												</label>
-											<?php } else {
+											<?php  } else {
 												echo string_display_line(lang_get_defaulted($t_def['name']));
 											} ?>
 										</th>

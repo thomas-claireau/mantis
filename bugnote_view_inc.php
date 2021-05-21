@@ -93,7 +93,7 @@ user_cache_array_rows(array_keys($t_users_to_cache));
 $t_activities_count = count($t_activities);
 ?>
 
-<?php # Bugnotes BEGIN 
+<?php  # Bugnotes BEGIN 
 ?>
 <div class="col-md-12 col-xs-12">
 	<a id="attachments"></a>
@@ -131,7 +131,7 @@ $t_activities_count = count($t_activities);
 									<?php echo lang_get('no_bugnotes_msg') ?>
 								</td>
 							</tr>
-						<?php }
+						<?php  }
 
 						event_signal('EVENT_VIEW_BUGNOTES_START', array($f_bug_id, $t_bugnotes));
 
@@ -172,7 +172,7 @@ $t_activities_count = count($t_activities);
 												&#160;&#160;
 												<?php print_icon('fa-eye', 'red'); ?>
 												<?php echo lang_get('private') ?>
-											<?php } ?>
+											<?php  } ?>
 										</p>
 										<p class="no-margin">
 											<?php
@@ -188,7 +188,7 @@ $t_activities_count = count($t_activities);
 												<a rel="bookmark" href="<?php echo string_get_bugnote_view_url($t_activity['note']->bug_id, $t_activity['note']->id) ?>" class="lighter" title="<?php echo lang_get('bugnote_link_title') ?>">
 													<?php echo htmlentities(config_get_global('bugnote_link_tag')) . $t_activity['id_formatted'] ?>
 												</a>
-											<?php } ?>
+											<?php  } ?>
 										</p>
 										<?php
 										if ($t_activity['modified']) {

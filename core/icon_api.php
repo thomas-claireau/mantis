@@ -29,10 +29,10 @@
  * @uses utility_api.php
  */
 
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'helper_api.php' );
-require_api( 'utility_api.php' );
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('helper_api.php');
+require_api('utility_api.php');
 
 /**
  * Returns HTML to display an icon with optional title pop-up.
@@ -44,18 +44,19 @@ require_api( 'utility_api.php' );
  *
  * @return string
  */
-function icon_get( $p_icon, $p_classes = '', $p_title = '', $p_inner_html = '' ) {
+function icon_get($p_icon, $p_classes = '', $p_title = '', $p_inner_html = '')
+{
 	# Add 'fa-' prefix if missing
-	if( substr( $p_icon, 0, 3 ) != 'fa-' ) {
+	if (substr($p_icon, 0, 3) != 'fa-') {
 		$p_icon = 'fa-' . $p_icon;
 	}
 
-	if( $p_title ) {
+	if ($p_title) {
 		$p_title = 'title="' . $p_title . '"';
 	}
 
 	/** @noinspection HtmlUnknownAttribute */
-	return sprintf( '<i class="fa %s %s" %s>%s</i>', $p_icon, $p_classes, $p_title, $p_inner_html );
+	return sprintf('<i class="fa %s %s" %s>%s</i>', $p_icon, $p_classes, $p_title, $p_inner_html);
 }
 
 /**
@@ -66,8 +67,9 @@ function icon_get( $p_icon, $p_classes = '', $p_title = '', $p_inner_html = '' )
  * @param string $p_title   Optional pop-up text
  * @param string $p_inner_html Optional html to insert with the icon.
  */
-function print_icon( $p_icon, $p_classes = '', $p_title = '', $p_inner_html = '' ) {
-	echo icon_get( $p_icon, $p_classes, $p_title, $p_inner_html );
+function print_icon($p_icon, $p_classes = '', $p_title = '', $p_inner_html = '')
+{
+	echo icon_get($p_icon, $p_classes, $p_title, $p_inner_html);
 }
 
 /**
@@ -76,11 +78,12 @@ function print_icon( $p_icon, $p_classes = '', $p_title = '', $p_inner_html = ''
  * @return string html img tag containing status icon
  * @access public
  */
-function icon_get_status_icon( $p_icon ) {
-	$t_status_icon_arr = config_get( 'status_icon_arr' );
-	$t_priotext = get_enum_element( 'priority', $p_icon );
-	if( isset( $t_status_icon_arr[$p_icon] ) && !is_blank( $t_status_icon_arr[$p_icon] ) ) {
-		return icon_get( $t_status_icon_arr[$p_icon], '', $t_priotext );
+function icon_get_status_icon($p_icon)
+{
+	$t_status_icon_arr = config_get('status_icon_arr');
+	$t_priotext = get_enum_element('priority', $p_icon);
+	if (isset($t_status_icon_arr[$p_icon]) && !is_blank($t_status_icon_arr[$p_icon])) {
+		return icon_get($t_status_icon_arr[$p_icon], '', $t_priotext);
 	} else {
 		return '&#160;';
 	}
@@ -92,8 +95,9 @@ function icon_get_status_icon( $p_icon ) {
  * @return void
  * @access public
  */
-function print_status_icon( $p_icon ) {
-	echo icon_get_status_icon( $p_icon );
+function print_status_icon($p_icon)
+{
+	echo icon_get_status_icon($p_icon);
 }
 
 /**
@@ -110,21 +114,22 @@ function print_status_icon( $p_icon ) {
  * @return void
  * @access public
  */
-function print_sort_icon( $p_dir, $p_sort_by, $p_field ) {
-	$t_sort_icon_arr = config_get( 'sort_icon_arr' );
+function print_sort_icon($p_dir, $p_sort_by, $p_field)
+{
+	$t_sort_icon_arr = config_get('sort_icon_arr');
 
-	if( $p_sort_by != $p_field ) {
+	if ($p_sort_by != $p_field) {
 		return;
 	}
 
-	if( ( 'DESC' == $p_dir ) || ( DESCENDING == $p_dir ) ) {
+	if (('DESC' == $p_dir) || (DESCENDING == $p_dir)) {
 		$t_dir = DESCENDING;
 	} else {
 		$t_dir = ASCENDING;
 	}
 
 	echo '&#160;';
-	if( !is_blank( $t_sort_icon_arr[$t_dir] ) ) {
-		echo icon_get( $t_sort_icon_arr[$t_dir], 'fa-lg blue' );
+	if (!is_blank($t_sort_icon_arr[$t_dir])) {
+		echo icon_get($t_sort_icon_arr[$t_dir], 'fa-lg blue');
 	}
 }

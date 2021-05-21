@@ -45,24 +45,24 @@
 
 use Mantis\Exceptions\ClientException;
 
-require_api( 'access_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'crypto_api.php' );
-require_api( 'current_user_api.php' );
-require_api( 'database_api.php' );
-require_api( 'error_api.php' );
-require_api( 'gpc_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'html_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'ldap_api.php' );
-require_api( 'print_api.php' );
-require_api( 'session_api.php' );
-require_api( 'string_api.php' );
-require_api( 'tokens_api.php' );
-require_api( 'user_api.php' );
-require_api( 'utility_api.php' );
+require_api('access_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('crypto_api.php');
+require_api('current_user_api.php');
+require_api('database_api.php');
+require_api('error_api.php');
+require_api('gpc_api.php');
+require_api('helper_api.php');
+require_api('html_api.php');
+require_api('lang_api.php');
+require_api('ldap_api.php');
+require_api('print_api.php');
+require_api('session_api.php');
+require_api('string_api.php');
+require_api('tokens_api.php');
+require_api('user_api.php');
+require_api('utility_api.php');
 
 # @global array $g_script_login_cookie
 $g_script_login_cookie = null;
@@ -85,11 +85,12 @@ $g_cache_current_user_id = NO_USER;
  * @return AuthFlags The auth flags object to use.
  * @throws ClientException
  */
-function auth_flags( $p_user_id = null, $p_username = '' ) {
-	if( !$p_user_id ) {
+function auth_flags($p_user_id = null, $p_username = '')
+{
+	if (!$p_user_id) {
 		# If user id is not provided and user is not authenticated return default flags.
 		# Otherwise, we can get into a loop as in #22740
-		if( !auth_is_user_authenticated() ) {
+		if (!auth_is_user_authenticated()) {
 			return new AuthFlags();
 		}
 
@@ -98,14 +99,14 @@ function auth_flags( $p_user_id = null, $p_username = '' ) {
 		$t_user_id = (int)$p_user_id;
 	}
 
-	if( !$t_user_id && is_blank( $p_username ) ) {
+	if (!$t_user_id && is_blank($p_username)) {
 		# If user is not in db, must supply the name.
-		trigger_error( ERROR_GENERIC, ERROR );
+		trigger_error(ERROR_GENERIC, ERROR);
 	}
 
-	if( $t_user_id ) {
-		$t_username = user_get_username( $t_user_id );
-		$t_email = user_get_email( $t_user_id );
+	if ($t_user_id) {
+		$t_username = user_get_username($t_user_id);
+		$t_email = user_get_email($t_user_id);
 	} else {
 		$t_username = $p_username;
 
@@ -121,18 +122,18 @@ function auth_flags( $p_user_id = null, $p_username = '' ) {
 	);
 
 	static $s_flags_cache = array();
-	if( !isset( $s_flags_cache[$t_user_id] ) ) {
-		$t_flags = event_signal( 'EVENT_AUTH_USER_FLAGS', array( $t_event_arguments ) );
+	if (!isset($s_flags_cache[$t_user_id])) {
+		$t_flags = event_signal('EVENT_AUTH_USER_FLAGS', array($t_event_arguments));
 
 		# Don't cache in case of user not in db.
-		if( $t_user_id ) {
+		if ($t_user_id) {
 			$s_flags_cache[$t_user_id] = $t_flags;
 		}
 	} else {
 		$t_flags = $s_flags_cache[$t_user_id];
 	}
 
-	if( is_null( $t_flags ) ) {
+	if (is_null($t_flags)) {
 		$t_flags = new AuthFlags();
 	}
 
@@ -144,7 +145,8 @@ function auth_flags( $p_user_id = null, $p_username = '' ) {
  * @return string The message.
  * @throws ClientException
  */
-function auth_password_managed_elsewhere_message() {
+function auth_password_managed_elsewhere_message()
+{
 	$t_auth_flags = auth_flags();
 	return $t_auth_flags->getPasswordManagedExternallyMessage();
 }
@@ -156,8 +158,9 @@ function auth_password_managed_elsewhere_message() {
  * @return boolean true: yes, false: otherwise.
  * @throws ClientException
  */
-function auth_allow_perm_login( $p_user_id, $p_username ) {
-	$t_auth_flags = auth_flags( $p_user_id, $p_username );
+function auth_allow_perm_login($p_user_id, $p_username)
+{
+	$t_auth_flags = auth_flags($p_user_id, $p_username);
 	return $t_auth_flags->getPermSessionEnabled();
 }
 
@@ -165,32 +168,36 @@ function auth_allow_perm_login( $p_user_id, $p_username ) {
  * Check if signup is enabled.
  * @return bool true: enabled, false otherwise.
  */
-function auth_signup_enabled() {
-	return config_get_global( 'allow_signup' );
+function auth_signup_enabled()
+{
+	return config_get_global('allow_signup');
 }
 
 /**
  * Get the access level for users that signup.
  * @return integer The access level to use.
  */
-function auth_signup_access_level() {
-	return config_get( 'default_new_account_access_level' );
+function auth_signup_access_level()
+{
+	return config_get('default_new_account_access_level');
 }
 
 /**
  * Anonymous login enabled.
  * @return bool true: enabled; false: otherwise.
  */
-function auth_anonymous_enabled() {
-	return config_get_global( 'allow_anonymous_login' ) && auth_anonymous_account();
+function auth_anonymous_enabled()
+{
+	return config_get_global('allow_anonymous_login') && auth_anonymous_account();
 }
 
 /**
  * Get the anonymous account username.
  * @return string Anonymous account username.
  */
-function auth_anonymous_account() {
-	return config_get_global( 'anonymous_account' );
+function auth_anonymous_account()
+{
+	return config_get_global('anonymous_account');
 }
 
 /**
@@ -200,14 +207,15 @@ function auth_anonymous_account() {
  * @return integer cookie lifetime or 0 for browser session.
  * @throws ClientException
  */
-function auth_session_expiry( $p_user_id, $p_perm_login ) {
-	$t_auth_flags = auth_flags( $p_user_id );
+function auth_session_expiry($p_user_id, $p_perm_login)
+{
+	$t_auth_flags = auth_flags($p_user_id);
 	$t_perm_login = $p_perm_login;
-	if( !$t_auth_flags->getPermSessionEnabled() ) {
+	if (!$t_auth_flags->getPermSessionEnabled()) {
 		$t_perm_login = false;
 	}
 
-	if( $t_perm_login ) {
+	if ($t_perm_login) {
 		$t_lifetime = $t_auth_flags->getPermSessionLifetime();
 	} else {
 		$t_lifetime = $t_auth_flags->getSessionLifetime();
@@ -223,11 +231,12 @@ function auth_session_expiry( $p_user_id, $p_perm_login ) {
  * @return string login page (e.g. 'login_page.php' )
  * @throws ClientException
  */
-function auth_login_page( $p_query_string = '' ) {
+function auth_login_page($p_query_string = '')
+{
 	$t_auth_flags = auth_flags();
 	$t_login_page = $t_auth_flags->getLoginPage();
 
-	return helper_url_combine( $t_login_page, $p_query_string );
+	return helper_url_combine($t_login_page, $p_query_string);
 }
 
 /**
@@ -240,9 +249,10 @@ function auth_login_page( $p_query_string = '' ) {
  * @return string The credentials page with query string.
  * @throws ClientException
  */
-function auth_credential_page( $p_query_string, $p_user_id = null, $p_username = '' ) {
-	$t_auth_flags = auth_flags( $p_user_id, $p_username );
-	return $t_auth_flags->getCredentialsPage( $p_query_string );
+function auth_credential_page($p_query_string, $p_user_id = null, $p_username = '')
+{
+	$t_auth_flags = auth_flags($p_user_id, $p_username);
+	return $t_auth_flags->getCredentialsPage($p_query_string);
 }
 
 /**
@@ -251,7 +261,8 @@ function auth_credential_page( $p_query_string, $p_user_id = null, $p_username =
  * @return string logout page (e.g. 'logout_page.php' )
  * @throws ClientException
  */
-function auth_logout_page() {
+function auth_logout_page()
+{
 	$t_auth_flags = auth_flags();
 	return $t_auth_flags->getLogoutPage();
 }
@@ -261,7 +272,8 @@ function auth_logout_page() {
  * @return string the logout redirect page.
  * @throws ClientException
  */
-function auth_logout_redirect_page() {
+function auth_logout_redirect_page()
+{
 	$t_auth_flags = auth_flags();
 	return $t_auth_flags->getLogoutRedirectPage();
 }
@@ -272,14 +284,15 @@ function auth_logout_redirect_page() {
  * @return bool true: can set password, false: otherwise.
  * @throws ClientException
  */
-function auth_can_set_password( $p_user_id = null ) {
-	$t_auth_flags = auth_flags( $p_user_id );
+function auth_can_set_password($p_user_id = null)
+{
+	$t_auth_flags = auth_flags($p_user_id);
 
-	if( !$t_auth_flags->getCanUseStandardLogin() ) {
+	if (!$t_auth_flags->getCanUseStandardLogin()) {
 		return false;
 	}
 
-	return helper_call_custom_function( 'auth_can_change_password', array() );
+	return helper_call_custom_function('auth_can_change_password', array());
 }
 
 /**
@@ -288,8 +301,9 @@ function auth_can_set_password( $p_user_id = null ) {
  * @return bool true: can login using username and password, false otherwise.
  * @throws ClientException
  */
-function auth_can_use_standard_login( $p_user_id = null ) {
-	$t_auth_flags = auth_flags( $p_user_id );
+function auth_can_use_standard_login($p_user_id = null)
+{
+	$t_auth_flags = auth_flags($p_user_id);
 	return $t_auth_flags->getCanUseStandardLogin();
 }
 
@@ -304,24 +318,25 @@ function auth_can_use_standard_login( $p_user_id = null ) {
  * @return void
  * @throws ClientException
  */
-function auth_ensure_user_authenticated( $p_return_page = '' ) {
+function auth_ensure_user_authenticated($p_return_page = '')
+{
 	# if logged in
-	if( auth_is_user_authenticated() ) {
+	if (auth_is_user_authenticated()) {
 		# check for access enabled
 		#  This also makes sure the cookie is valid
-		if( OFF == current_user_get_field( 'enabled' ) ) {
-			print_header_redirect( auth_logout_page() );
+		if (OFF == current_user_get_field('enabled')) {
+			print_header_redirect(auth_logout_page());
 		}
 	} else {
 		# not logged in
-		if( is_blank( $p_return_page ) ) {
-			if( !isset( $_SERVER['REQUEST_URI'] ) ) {
+		if (is_blank($p_return_page)) {
+			if (!isset($_SERVER['REQUEST_URI'])) {
 				$_SERVER['REQUEST_URI'] = $_SERVER['SCRIPT_NAME'] . '?' . $_SERVER['QUERY_STRING'];
 			}
 			$p_return_page = $_SERVER['REQUEST_URI'];
 		}
-		$p_return_page = string_url( $p_return_page );
-		print_header_redirect( auth_login_page( 'return=' . $p_return_page ) );
+		$p_return_page = string_url($p_return_page);
+		print_header_redirect(auth_login_page('return=' . $p_return_page));
 	}
 }
 
@@ -332,12 +347,13 @@ function auth_ensure_user_authenticated( $p_return_page = '' ) {
  * @access public
  * @throws ClientException
  */
-function auth_is_user_authenticated() {
+function auth_is_user_authenticated()
+{
 	global $g_cache_cookie_valid, $g_login_anonymous;
-	if( $g_cache_cookie_valid == true ) {
+	if ($g_cache_cookie_valid == true) {
 		return $g_cache_cookie_valid;
 	}
-	$g_cache_cookie_valid = auth_is_cookie_valid( auth_get_current_user_cookie( $g_login_anonymous ) );
+	$g_cache_cookie_valid = auth_is_cookie_valid(auth_get_current_user_cookie($g_login_anonymous));
 	return $g_cache_cookie_valid;
 }
 
@@ -348,22 +364,23 @@ function auth_is_user_authenticated() {
  * @return string|null prepared username
  * @access public
  */
-function auth_prepare_username( $p_username ) {
+function auth_prepare_username($p_username)
+{
 	$t_username = null;
 
-	switch( config_get_global( 'login_method' ) ) {
+	switch (config_get_global('login_method')) {
 		case BASIC_AUTH:
-			if( isset( $_SERVER['REMOTE_USER'] ) ) {
+			if (isset($_SERVER['REMOTE_USER'])) {
 				$t_username = $_SERVER['REMOTE_USER'];
 			}
 			break;
 		case HTTP_AUTH:
-			if( !auth_http_is_logout_pending() ) {
-				if( isset( $_SERVER['PHP_AUTH_USER'] ) ) {
+			if (!auth_http_is_logout_pending()) {
+				if (isset($_SERVER['PHP_AUTH_USER'])) {
 					$t_username = $_SERVER['PHP_AUTH_USER'];
 				}
 			} else {
-				auth_http_set_logout_pending( false );
+				auth_http_set_logout_pending(false);
 				auth_http_prompt();
 			}
 			break;
@@ -372,8 +389,8 @@ function auth_prepare_username( $p_username ) {
 			break;
 	}
 
-	if( !is_null( $t_username ) ) {
-		$t_username = user_is_name_valid( $t_username ) ? $t_username : null;
+	if (!is_null($t_username)) {
+		$t_username = user_is_name_valid($t_username) ? $t_username : null;
 	}
 
 	return $t_username;
@@ -386,21 +403,22 @@ function auth_prepare_username( $p_username ) {
  * @return string prepared password
  * @access public
  */
-function auth_prepare_password( $p_password ) {
+function auth_prepare_password($p_password)
+{
 	$f_password = $p_password;
-	switch( config_get_global( 'login_method' ) ) {
+	switch (config_get_global('login_method')) {
 		case BASIC_AUTH:
 			$f_password = $_SERVER['PHP_AUTH_PW'];
 			break;
 		case HTTP_AUTH:
-			if( !auth_http_is_logout_pending() ) {
+			if (!auth_http_is_logout_pending()) {
 
 				# this will never get hit - see auth_prepare_username
-				if( isset( $_SERVER['PHP_AUTH_PW'] ) ) {
+				if (isset($_SERVER['PHP_AUTH_PW'])) {
 					$f_password = $_SERVER['PHP_AUTH_PW'];
 				}
 			} else {
-				auth_http_set_logout_pending( false );
+				auth_http_set_logout_pending(false);
 				auth_http_prompt();
 
 				# calls exit
@@ -423,27 +441,28 @@ function auth_prepare_password( $p_password ) {
  *
  * @throws ClientException
  */
-function auth_auto_create_user( $p_username, $p_password ) {
-	$t_login_method = config_get_global( 'login_method' );
+function auth_auto_create_user($p_username, $p_password)
+{
+	$t_login_method = config_get_global('login_method');
 
-	if( $t_login_method == BASIC_AUTH ) {
+	if ($t_login_method == BASIC_AUTH) {
 		$t_auto_create = true;
-	} else if( $t_login_method == LDAP && ldap_authenticate_by_username( $p_username, $p_password ) ) {
+	} else if ($t_login_method == LDAP && ldap_authenticate_by_username($p_username, $p_password)) {
 		$t_auto_create = true;
 	} else {
 		$t_auto_create = false;
 	}
 
-	if( $t_auto_create ) {
+	if ($t_auto_create) {
 		# attempt to create the user
-		$t_cookie_string = user_create( $p_username, md5( $p_password ) );
-		if( $t_cookie_string === false ) {
+		$t_cookie_string = user_create($p_username, md5($p_password));
+		if ($t_cookie_string === false) {
 			# it didn't work
 			return false;
 		}
 
 		# ok, we created the user, get the row again
-		return user_get_id_by_name( $p_username );
+		return user_get_id_by_name($p_username);
 	}
 
 	return false;
@@ -460,18 +479,20 @@ function auth_auto_create_user( $p_username, $p_password ) {
  *
  * @throws ClientException
  */
-function auth_get_user_id_from_login_name( $p_login_name ) {
-	$t_user_id = user_get_id_by_name( $p_login_name );
+function auth_get_user_id_from_login_name($p_login_name)
+{
+	$t_user_id = user_get_id_by_name($p_login_name);
 
 	# If user is not found by name, check by email as long as there is only
 	# a single match.
-	if( $t_user_id === false
-		&& !is_blank( $p_login_name )
-		&& config_get_global( 'email_login_enabled' )
-		&& email_is_valid( $p_login_name )
+	if (
+		$t_user_id === false
+		&& !is_blank($p_login_name)
+		&& config_get_global('email_login_enabled')
+		&& email_is_valid($p_login_name)
 	) {
-		$t_user_ids_by_email = user_get_enabled_ids_by_email( $p_login_name );
-		if ( count( $t_user_ids_by_email ) == 1 ) {
+		$t_user_ids_by_email = user_get_enabled_ids_by_email($p_login_name);
+		if (count($t_user_ids_by_email) == 1) {
 			$t_user_id = $t_user_ids_by_email[0];
 		}
 	}
@@ -493,31 +514,32 @@ function auth_get_user_id_from_login_name( $p_login_name ) {
  *
  * @throws ClientException
  */
-function auth_attempt_login( $p_username, $p_password, $p_perm_login = false ) {
-	$t_user_id = auth_get_user_id_from_login_name( $p_username );
+function auth_attempt_login($p_username, $p_password, $p_perm_login = false)
+{
+	$t_user_id = auth_get_user_id_from_login_name($p_username);
 
-	if( $t_user_id === false ) {
-		$t_user_id = auth_auto_create_user( $p_username, $p_password );
-		if( $t_user_id === false ) {
+	if ($t_user_id === false) {
+		$t_user_id = auth_auto_create_user($p_username, $p_password);
+		if ($t_user_id === false) {
 			return false;
 		}
 	}
 
 	# max. failed login attempts achieved...
-	if( !user_is_login_request_allowed( $t_user_id ) ) {
+	if (!user_is_login_request_allowed($t_user_id)) {
 		return false;
 	}
 
 	# check for anonymous login
-	if( !user_is_anonymous( $t_user_id ) ) {
+	if (!user_is_anonymous($t_user_id)) {
 		# anonymous login didn't work, so check the password
-		if( !auth_does_password_match( $t_user_id, $p_password ) ) {
-			user_increment_failed_login_count( $t_user_id );
+		if (!auth_does_password_match($t_user_id, $p_password)) {
+			user_increment_failed_login_count($t_user_id);
 			return false;
 		}
 	}
 
-	return auth_login_user( $t_user_id, $p_perm_login );
+	return auth_login_user($t_user_id, $p_perm_login);
 }
 
 /**
@@ -530,22 +552,23 @@ function auth_attempt_login( $p_username, $p_password, $p_perm_login = false ) {
  * @return bool true: success; false; otherwise.
  * @throws ClientException
  */
-function auth_login_user( $p_user_id, $p_perm_login = false ) {
+function auth_login_user($p_user_id, $p_perm_login = false)
+{
 	# check for disabled account
-	if( !user_is_enabled( $p_user_id ) ) {
+	if (!user_is_enabled($p_user_id)) {
 		return false;
 	}
 
 	# ok, we're good to login now
 	# increment login count
-	user_increment_login_count( $p_user_id );
+	user_increment_login_count($p_user_id);
 
-	user_reset_failed_login_count_to_zero( $p_user_id );
-	user_reset_lost_password_in_progress_count_to_zero( $p_user_id );
+	user_reset_failed_login_count_to_zero($p_user_id);
+	user_reset_lost_password_in_progress_count_to_zero($p_user_id);
 
 	# set the cookies
-	auth_set_cookies( $p_user_id, $p_perm_login );
-	auth_set_tokens( $p_user_id );
+	auth_set_cookies($p_user_id, $p_perm_login);
+	auth_set_tokens($p_user_id);
 
 	return true;
 }
@@ -557,11 +580,12 @@ function auth_login_user( $p_user_id, $p_perm_login = false ) {
  * @return void
  * @throws ClientException
  */
-function auth_impersonate( $p_user_id ) {
-	auth_ensure_can_impersonate( $p_user_id );
+function auth_impersonate($p_user_id)
+{
+	auth_ensure_can_impersonate($p_user_id);
 
-	auth_set_cookies( $p_user_id );
-	auth_set_tokens( $p_user_id );
+	auth_set_cookies($p_user_id);
+	auth_set_tokens($p_user_id);
 }
 
 /**
@@ -571,17 +595,18 @@ function auth_impersonate( $p_user_id ) {
  * @return bool true: can impersonate, false: can't.
  * @throws ClientException
  */
-function auth_can_impersonate( $p_user_id ) {
-	if( !access_has_global_level( config_get_global( 'impersonate_user_threshold' ) ) ) {
+function auth_can_impersonate($p_user_id)
+{
+	if (!access_has_global_level(config_get_global('impersonate_user_threshold'))) {
 		return false;
 	}
 
 	# User can't impersonate themselves
-	if( $p_user_id == auth_get_current_user_id() ) {
+	if ($p_user_id == auth_get_current_user_id()) {
 		return false;
 	}
 
-	if( !user_is_enabled( $p_user_id ) ) {
+	if (!user_is_enabled($p_user_id)) {
 		return false;
 	}
 
@@ -596,8 +621,9 @@ function auth_can_impersonate( $p_user_id ) {
  * @return void.
  * @throws ClientException
  */
-function auth_ensure_can_impersonate( $p_user_id ) {
-	if( !auth_can_impersonate( $p_user_id ) ) {
+function auth_ensure_can_impersonate($p_user_id)
+{
+	if (!auth_can_impersonate($p_user_id)) {
 		access_denied();
 	}
 }
@@ -620,22 +646,23 @@ function auth_ensure_can_impersonate( $p_user_id ) {
  *
  * @throws ClientException
  */
-function auth_attempt_script_login( $p_username, $p_password = null ) {
+function auth_attempt_script_login($p_username, $p_password = null)
+{
 	global $g_script_login_cookie;
 
 	$t_username = $p_username;
 	$t_password = $p_password;
 
 	$t_anon_allowed = auth_anonymous_enabled();
-	if( $t_anon_allowed == ON ) {
+	if ($t_anon_allowed == ON) {
 		$t_anonymous_account = auth_anonymous_account();
 	} else {
 		$t_anonymous_account = '';
 	}
 
 	# if no user name supplied, then attempt to login as anonymous user.
-	if( is_blank( $t_username ) || ( strcasecmp( $t_username, $t_anonymous_account ) == 0 ) ) {
-		if( $t_anon_allowed == OFF ) {
+	if (is_blank($t_username) || (strcasecmp($t_username, $t_anonymous_account) == 0)) {
+		if ($t_anon_allowed == OFF) {
 			return false;
 		}
 
@@ -645,24 +672,24 @@ function auth_attempt_script_login( $p_username, $p_password = null ) {
 		$t_password = null;
 	}
 
-	$t_user_id = auth_get_user_id_from_login_name( $t_username );
-	if( $t_user_id === false ) {
-		$t_user_id = auth_auto_create_user( $t_username, $p_password );
-		if( $t_user_id === false ) {
+	$t_user_id = auth_get_user_id_from_login_name($t_username);
+	if ($t_user_id === false) {
+		$t_user_id = auth_auto_create_user($t_username, $p_password);
+		if ($t_user_id === false) {
 			return false;
 		}
 	}
 
-	$t_user = user_get_row( $t_user_id );
+	$t_user = user_get_row($t_user_id);
 
 	# check for disabled account
-	if( OFF == $t_user['enabled'] ) {
+	if (OFF == $t_user['enabled']) {
 		return false;
 	}
 
 	# validate password if supplied
-	if( null !== $t_password ) {
-		if( !auth_does_password_match( $t_user_id, $t_password ) ) {
+	if (null !== $t_password) {
+		if (!auth_does_password_match($t_user_id, $t_password)) {
 			return false;
 		}
 	}
@@ -676,7 +703,7 @@ function auth_attempt_script_login( $p_username, $p_password = null ) {
 	$g_script_login_cookie = $t_user['cookie_string'];
 
 	# cache user id for future reference
-	current_user_set( $t_user_id );
+	current_user_set($t_user_id);
 
 	return true;
 }
@@ -688,10 +715,11 @@ function auth_attempt_script_login( $p_username, $p_password = null ) {
  * @return void
  * @throws ClientException
  */
-function auth_logout() {
+function auth_logout()
+{
 	global $g_cache_current_user_id, $g_cache_cookie_valid;
 
-	if( !user_is_protected( $g_cache_current_user_id ) ) {
+	if (!user_is_protected($g_cache_current_user_id)) {
 		# Reset the user's cookie string
 		user_set_field(
 			$g_cache_current_user_id,
@@ -701,17 +729,17 @@ function auth_logout() {
 	}
 
 	# clear cached userid
-	user_clear_cache( $g_cache_current_user_id );
-	current_user_set( null );
+	user_clear_cache($g_cache_current_user_id);
+	current_user_set(null);
 	$g_cache_cookie_valid = null;
 
 	# clear cookies, if they were set
-	if( auth_clear_cookies() ) {
+	if (auth_clear_cookies()) {
 		helper_clear_pref_cookies();
 	}
 
-	if( HTTP_AUTH == config_get_global( 'login_method' ) ) {
-		auth_http_set_logout_pending( true );
+	if (HTTP_AUTH == config_get_global('login_method')) {
+		auth_http_set_logout_pending(true);
 	}
 
 	session_clean();
@@ -722,8 +750,9 @@ function auth_logout() {
  * @return boolean true: bypass, false: show form.
  * @access public
  */
-function auth_automatic_logon_bypass_form() {
-	return config_get_global( 'login_method' ) == HTTP_AUTH;
+function auth_automatic_logon_bypass_form()
+{
+	return config_get_global('login_method') == HTTP_AUTH;
 }
 
 /**
@@ -732,15 +761,16 @@ function auth_automatic_logon_bypass_form() {
  * @return integer
  * @access public
  */
-function auth_get_password_max_size() {
-	switch( config_get_global( 'login_method' ) ) {
-		# Max password size cannot be bigger than the database field
+function auth_get_password_max_size()
+{
+	switch (config_get_global('login_method')) {
+			# Max password size cannot be bigger than the database field
 		case PLAIN:
 		case BASIC_AUTH:
 		case HTTP_AUTH:
 			return DB_FIELD_SIZE_PASSWORD;
 
-		# All other cases, i.e. password is stored as a hash
+			# All other cases, i.e. password is stored as a hash
 		default:
 			return PASSWORD_MAX_SIZE_BEFORE_HASH;
 	}
@@ -755,18 +785,19 @@ function auth_get_password_max_size() {
  * @access public
  * @throws ClientException
  */
-function auth_does_password_match( $p_user_id, $p_test_password ) {
-	$t_configured_login_method = config_get_global( 'login_method' );
+function auth_does_password_match($p_user_id, $p_test_password)
+{
+	$t_configured_login_method = config_get_global('login_method');
 
-	if( LDAP == $t_configured_login_method ) {
-		return ldap_authenticate( $p_user_id, $p_test_password );
+	if (LDAP == $t_configured_login_method) {
+		return ldap_authenticate($p_user_id, $p_test_password);
 	}
 
-	if( !auth_can_use_standard_login( $p_user_id ) ) {
+	if (!auth_can_use_standard_login($p_user_id)) {
 		return false;
 	}
 
-	$t_password = user_get_field( $p_user_id, 'password' );
+	$t_password = user_get_field($p_user_id, 'password');
 	$t_login_methods = array(
 		MD5,
 		CRYPT,
@@ -774,21 +805,22 @@ function auth_does_password_match( $p_user_id, $p_test_password ) {
 		BASIC_AUTH,
 	);
 
-	foreach( $t_login_methods as $t_login_method ) {
+	foreach ($t_login_methods as $t_login_method) {
 		# pass the stored password in as the salt
-		if( auth_process_plain_password( $p_test_password, $t_password, $t_login_method ) == $t_password ) {
+		if (auth_process_plain_password($p_test_password, $t_password, $t_login_method) == $t_password) {
 			# Do not support migration to PLAIN, since this would be a crazy thing to do.
 			# Also if we do, then a user will be able to login by providing the MD5 value
 			# that is copied from the database.  See #8467 for more details.
-			if( ( $t_configured_login_method != PLAIN && $t_login_method == PLAIN ) ||
-				( $t_configured_login_method != BASIC_AUTH && $t_login_method == BASIC_AUTH ) ) {
+			if (($t_configured_login_method != PLAIN && $t_login_method == PLAIN) ||
+				($t_configured_login_method != BASIC_AUTH && $t_login_method == BASIC_AUTH)
+			) {
 				continue;
 			}
 
 			# Check for migration to another login method and test whether the password was encrypted
 			# with our previously insecure implementation of the CRYPT method
-			if( ( $t_login_method != $t_configured_login_method ) || (( CRYPT == $t_configured_login_method ) && mb_substr( $t_password, 0, 2 ) == mb_substr( $p_test_password, 0, 2 ) ) ) {
-				user_set_password( $p_user_id, $p_test_password, true );
+			if (($t_login_method != $t_configured_login_method) || ((CRYPT == $t_configured_login_method) && mb_substr($t_password, 0, 2) == mb_substr($p_test_password, 0, 2))) {
+				user_set_password($p_user_id, $p_test_password, true);
 			}
 
 			return true;
@@ -813,21 +845,22 @@ function auth_does_password_match( $p_user_id, $p_test_password ) {
  * @return string processed password, maximum DB_FIELD_SIZE_PASSWORD chars in length
  * @access public
  */
-function auth_process_plain_password( $p_password, $p_salt = null, $p_method = null ) {
-	$t_login_method = config_get_global( 'login_method' );
-	if( $p_method !== null ) {
+function auth_process_plain_password($p_password, $p_salt = null, $p_method = null)
+{
+	$t_login_method = config_get_global('login_method');
+	if ($p_method !== null) {
 		$t_login_method = $p_method;
 	}
 
-	switch( $t_login_method ) {
+	switch ($t_login_method) {
 		case CRYPT:
 
 			# a null salt is the same as no salt, which causes a salt to be generated
 			# otherwise, use the salt given
-			$t_processed_password = crypt( $p_password, $p_salt );
+			$t_processed_password = crypt($p_password, $p_salt);
 			break;
 		case MD5:
-			$t_processed_password = md5( $p_password );
+			$t_processed_password = md5($p_password);
 			break;
 		case BASIC_AUTH:
 		case PLAIN:
@@ -837,7 +870,7 @@ function auth_process_plain_password( $p_password, $p_salt = null, $p_method = n
 	}
 
 	# cut this off to DB_FIELD_SIZE_PASSWORD characters which the largest possible string in the database
-	return mb_substr( $t_processed_password, 0, DB_FIELD_SIZE_PASSWORD );
+	return mb_substr($t_processed_password, 0, DB_FIELD_SIZE_PASSWORD);
 }
 
 /**
@@ -846,8 +879,9 @@ function auth_process_plain_password( $p_password, $p_salt = null, $p_method = n
  * @return string 16 character random password
  * @access public
  */
-function auth_generate_random_password() {
-	return crypto_generate_uri_safe_nonce( 16 );
+function auth_generate_random_password()
+{
+	return crypto_generate_uri_safe_nonce(16);
 }
 
 /**
@@ -856,16 +890,17 @@ function auth_generate_random_password() {
  * @return string Confirmation code (384bit) encoded according to the base64 with URI safe alphabet approach described in RFC4648
  * @access public
  */
-function auth_generate_confirm_hash( $p_user_id ) {
-	$t_password = user_get_field( $p_user_id, 'password' );
-	$t_last_visit = user_get_field( $p_user_id, 'last_visit' );
+function auth_generate_confirm_hash($p_user_id)
+{
+	$t_password = user_get_field($p_user_id, 'password');
+	$t_last_visit = user_get_field($p_user_id, 'last_visit');
 
-	$t_confirm_hash_raw = hash( 'whirlpool', 'confirm_hash' . config_get_global( 'crypto_master_salt' ) . $t_password . $t_last_visit, true );
+	$t_confirm_hash_raw = hash('whirlpool', 'confirm_hash' . config_get_global('crypto_master_salt') . $t_password . $t_last_visit, true);
 	# Note: We truncate the last 8 bits from the hash output so that base64
 	# encoding can be performed without any trailing padding.
-	$t_confirm_hash_base64_encoded = base64_encode( substr( $t_confirm_hash_raw, 0, 63 ) );
+	$t_confirm_hash_base64_encoded = base64_encode(substr($t_confirm_hash_raw, 0, 63));
 
-	return strtr( $t_confirm_hash_base64_encoded, '+/', '-_' );
+	return strtr($t_confirm_hash_base64_encoded, '+/', '-_');
 }
 
 /**
@@ -877,10 +912,11 @@ function auth_generate_confirm_hash( $p_user_id ) {
  * @return void
  * @throws ClientException
  */
-function auth_set_cookies( $p_user_id, $p_perm_login = false ) {
-	$t_cookie_string = user_get_field( $p_user_id, 'cookie_string' );
-	$t_cookie_name = config_get_global( 'string_cookie' );
-	gpc_set_cookie( $t_cookie_name, $t_cookie_string, auth_session_expiry( $p_user_id, $p_perm_login ) );
+function auth_set_cookies($p_user_id, $p_perm_login = false)
+{
+	$t_cookie_string = user_get_field($p_user_id, 'cookie_string');
+	$t_cookie_name = config_get_global('string_cookie');
+	gpc_set_cookie($t_cookie_name, $t_cookie_string, auth_session_expiry($p_user_id, $p_perm_login));
 }
 
 /**
@@ -888,18 +924,19 @@ function auth_set_cookies( $p_user_id, $p_perm_login = false ) {
  * @return boolean indicating whether cookies were cleared
  * @access public
  */
-function auth_clear_cookies() {
+function auth_clear_cookies()
+{
 	global $g_script_login_cookie, $g_cache_cookie_valid;
 
 	$t_cookies_cleared = false;
 	$g_cache_cookie_valid = null;
 
 	# clear cookie, if not logged in from script
-	if( $g_script_login_cookie == null ) {
-		$t_cookie_name = config_get_global( 'string_cookie' );
-		$t_cookie_path = config_get_global( 'cookie_path' );
+	if ($g_script_login_cookie == null) {
+		$t_cookie_name = config_get_global('string_cookie');
+		$t_cookie_path = config_get_global('cookie_path');
 
-		gpc_clear_cookie( $t_cookie_name, $t_cookie_path );
+		gpc_clear_cookie($t_cookie_name, $t_cookie_path);
 		$t_cookies_cleared = true;
 	} else {
 		$g_script_login_cookie = null;
@@ -917,10 +954,11 @@ function auth_clear_cookies() {
  * @access public
  * @throws ClientException
  */
-function auth_generate_unique_cookie_string() {
+function auth_generate_unique_cookie_string()
+{
 	do {
-		$t_cookie_string = crypto_generate_uri_safe_nonce( 64 );
-	} while( !auth_is_cookie_string_unique( $t_cookie_string ) );
+		$t_cookie_string = crypto_generate_uri_safe_nonce(64);
+	} while (!auth_is_cookie_string_unique($t_cookie_string));
 
 	return $t_cookie_string;
 }
@@ -934,8 +972,9 @@ function auth_generate_unique_cookie_string() {
  *
  * @throws ClientException
  */
-function auth_is_cookie_string_unique( $p_cookie_string ) {
-	return false === user_get_id_by_cookie( $p_cookie_string );
+function auth_is_cookie_string_unique($p_cookie_string)
+{
+	return false === user_get_id_by_cookie($p_cookie_string);
 }
 
 /**
@@ -953,29 +992,30 @@ function auth_is_cookie_string_unique( $p_cookie_string ) {
  * @return string current user login cookie string
  * @access public
  */
-function auth_get_current_user_cookie( $p_login_anonymous = true ) {
+function auth_get_current_user_cookie($p_login_anonymous = true)
+{
 	global $g_script_login_cookie, $g_cache_anonymous_user_cookie_string;
 
 	# if logging in via a script, return that cookie
-	if( $g_script_login_cookie !== null ) {
+	if ($g_script_login_cookie !== null) {
 		return $g_script_login_cookie;
 	}
 
 	# fetch user cookie
-	$t_cookie_name = config_get_global( 'string_cookie' );
-	$t_cookie = gpc_get_cookie( $t_cookie_name, '' );
+	$t_cookie_name = config_get_global('string_cookie');
+	$t_cookie = gpc_get_cookie($t_cookie_name, '');
 
 	# if cookie not found, and anonymous login enabled, use cookie of anonymous account.
-	if( is_blank( $t_cookie ) ) {
-		if( $p_login_anonymous && auth_anonymous_enabled() ) {
-			if( $g_cache_anonymous_user_cookie_string === null ) {
-				if( function_exists( 'db_is_connected' ) && db_is_connected() ) {
+	if (is_blank($t_cookie)) {
+		if ($p_login_anonymous && auth_anonymous_enabled()) {
+			if ($g_cache_anonymous_user_cookie_string === null) {
+				if (function_exists('db_is_connected') && db_is_connected()) {
 					# get anonymous information if database is available
-					$t_row = user_get_row_by_name( auth_anonymous_account() );
-					if( $t_row ) {
+					$t_row = user_get_row_by_name(auth_anonymous_account());
+					if ($t_row) {
 						$t_cookie = $t_row['cookie_string'];
 						$g_cache_anonymous_user_cookie_string = $t_cookie;
-						current_user_set( $t_row['id'] );
+						current_user_set($t_row['id']);
 					}
 				}
 			} else {
@@ -994,12 +1034,13 @@ function auth_get_current_user_cookie( $p_login_anonymous = true ) {
  * @return void
  * @throws ClientException
  */
-function auth_set_tokens( $p_user_id ) {
-	$t_auth_token = token_get( TOKEN_AUTHENTICATED, $p_user_id );
-	if( null == $t_auth_token ) {
-		token_set( TOKEN_AUTHENTICATED, true, auth_reauthentication_expiry(), $p_user_id );
+function auth_set_tokens($p_user_id)
+{
+	$t_auth_token = token_get(TOKEN_AUTHENTICATED, $p_user_id);
+	if (null == $t_auth_token) {
+		token_set(TOKEN_AUTHENTICATED, true, auth_reauthentication_expiry(), $p_user_id);
 	} else {
-		token_touch( $t_auth_token['id'], auth_reauthentication_expiry() );
+		token_touch($t_auth_token['id'], auth_reauthentication_expiry());
 	}
 }
 
@@ -1008,7 +1049,8 @@ function auth_set_tokens( $p_user_id ) {
  * @return bool true: enabled; false: otherwise.
  * @throws ClientException
  */
-function auth_reauthentication_enabled() {
+function auth_reauthentication_enabled()
+{
 	$t_auth_flags = auth_flags();
 	return $t_auth_flags->getReauthenticationEnabled();
 }
@@ -1018,7 +1060,8 @@ function auth_reauthentication_enabled() {
  * @return integer The re-authentication expiry in seconds.
  * @throws ClientException
  */
-function auth_reauthentication_expiry() {
+function auth_reauthentication_expiry()
+{
 	$t_auth_flags = auth_flags();
 	return $t_auth_flags->getReauthenticationLifetime();
 }
@@ -1033,36 +1076,37 @@ function auth_reauthentication_expiry() {
  * @access public
  * @throws ClientException
  */
-function auth_reauthenticate() {
-	$t_login_method = config_get_global( 'login_method' );
-	if( !auth_reauthentication_enabled() || BASIC_AUTH == $t_login_method || HTTP_AUTH == $t_login_method ) {
+function auth_reauthenticate()
+{
+	$t_login_method = config_get_global('login_method');
+	if (!auth_reauthentication_enabled() || BASIC_AUTH == $t_login_method || HTTP_AUTH == $t_login_method) {
 		return true;
 	}
 
-	$t_auth_token = token_get( TOKEN_AUTHENTICATED );
-	if( null != $t_auth_token ) {
-		token_touch( $t_auth_token['id'], auth_reauthentication_expiry() );
+	$t_auth_token = token_get(TOKEN_AUTHENTICATED);
+	if (null != $t_auth_token) {
+		token_touch($t_auth_token['id'], auth_reauthentication_expiry());
 		return true;
 	} else {
 		$t_anon_account = auth_anonymous_account();
 		$t_anon_allowed = auth_anonymous_enabled();
 
 		$t_user_id = auth_get_current_user_id();
-		$t_username = user_get_username( $t_user_id );
+		$t_username = user_get_username($t_user_id);
 
 		# check for anonymous login
-		if( ON == $t_anon_allowed && $t_anon_account == $t_username ) {
+		if (ON == $t_anon_allowed && $t_anon_account == $t_username) {
 			return true;
 		}
 
-		$t_query_params = http_build_query( array(
+		$t_query_params = http_build_query(array(
 			'reauthenticate' => 1,
 			'username' => $t_username,
-			'return' => string_url( $_SERVER['REQUEST_URI'] ),
-		) );
+			'return' => string_url($_SERVER['REQUEST_URI']),
+		));
 
 		# redirect to login page
-		return print_header_redirect( auth_credential_page( $t_query_params ) );
+		return print_header_redirect(auth_credential_page($t_query_params));
 	}
 }
 
@@ -1075,30 +1119,31 @@ function auth_reauthenticate() {
  *
  * @throws ClientException
  */
-function auth_is_cookie_valid( $p_cookie_string ) {
+function auth_is_cookie_valid($p_cookie_string)
+{
 	global $g_cache_current_user_id;
 
 	# fail if DB isn't accessible
-	if( !db_is_connected() ) {
+	if (!db_is_connected()) {
 		return false;
 	}
 
 	# fail if cookie is blank
-	if( '' === $p_cookie_string ) {
+	if ('' === $p_cookie_string) {
 		return false;
 	}
 
 	# succeed if user has already been authenticated
-	if( NO_USER != $g_cache_current_user_id ) {
+	if (NO_USER != $g_cache_current_user_id) {
 		return true;
 	}
 
-	if( user_search_cache( 'cookie_string', $p_cookie_string ) ) {
+	if (user_search_cache('cookie_string', $p_cookie_string)) {
 		return true;
 	}
 
 	# look up cookie in the database to see if it is valid
-	return false !== user_get_id_by_cookie( $p_cookie_string );
+	return false !== user_get_id_by_cookie($p_cookie_string);
 }
 
 /**
@@ -1109,33 +1154,34 @@ function auth_is_cookie_valid( $p_cookie_string ) {
  *
  * @throws ClientException
  */
-function auth_get_current_user_id() {
+function auth_get_current_user_id()
+{
 	global $g_cache_current_user_id;
 
-	if( NO_USER != $g_cache_current_user_id ) {
+	if (NO_USER != $g_cache_current_user_id) {
 		return (int)$g_cache_current_user_id;
 	}
 
 	$t_cookie_string = auth_get_current_user_cookie();
 
-	if( $t_result = user_search_cache( 'cookie_string', $t_cookie_string ) ) {
+	if ($t_result = user_search_cache('cookie_string', $t_cookie_string)) {
 		$t_user_id = (int)$t_result['id'];
-		current_user_set( $t_user_id );
+		current_user_set($t_user_id);
 		return $t_user_id;
 	}
 
 	# @todo error with an error saying they aren't logged in? Or redirect to the login page maybe?
-	$t_user_id = user_get_id_by_cookie( $t_cookie_string );
+	$t_user_id = user_get_id_by_cookie($t_cookie_string);
 
 	# The cookie was invalid. Clear the cookie (to allow people to log in again)
 	# and give them an Access Denied message.
-	if( $t_user_id === false ) {
+	if ($t_user_id === false) {
 		auth_clear_cookies();
 		access_denied();
 		exit();
 	}
 
-	current_user_set( $t_user_id );
+	current_user_set($t_user_id);
 
 	return $t_user_id;
 }
@@ -1149,8 +1195,9 @@ function auth_get_current_user_id() {
  *
  * @throws ClientException
  */
-function auth_user_id_from_cookie( $p_cookie_string ) {
-	return user_get_id_by_cookie( $p_cookie_string );
+function auth_user_id_from_cookie($p_cookie_string)
+{
+	return user_get_id_by_cookie($p_cookie_string);
 }
 
 /**
@@ -1159,13 +1206,14 @@ function auth_user_id_from_cookie( $p_cookie_string ) {
  * @return void
  * @access public
  */
-function auth_http_prompt() {
-	header( 'HTTP/1.0 401 Authorization Required' );
-	header( 'WWW-Authenticate: Basic realm="' . lang_get( 'http_auth_realm' ) . '"' );
-	header( 'status: 401 Unauthorized' );
+function auth_http_prompt()
+{
+	header('HTTP/1.0 401 Authorization Required');
+	header('WWW-Authenticate: Basic realm="' . lang_get('http_auth_realm') . '"');
+	header('status: 401 Unauthorized');
 
-	echo '<p class="center error-msg">' . error_string( ERROR_ACCESS_DENIED ) . '</p>';
-	print_link_button( 'main_page.php', lang_get( 'proceed' ) );
+	echo '<p class="center error-msg">' . error_string(ERROR_ACCESS_DENIED) . '</p>';
+	print_link_button('main_page.php', lang_get('proceed'));
 
 	exit;
 }
@@ -1177,14 +1225,15 @@ function auth_http_prompt() {
  * @access public
  * @return void
  */
-function auth_http_set_logout_pending( $p_pending ) {
-	$t_cookie_name = config_get_global( 'logout_cookie' );
+function auth_http_set_logout_pending($p_pending)
+{
+	$t_cookie_name = config_get_global('logout_cookie');
 
-	if( $p_pending ) {
-		gpc_set_cookie( $t_cookie_name, '1' );
+	if ($p_pending) {
+		gpc_set_cookie($t_cookie_name, '1');
 	} else {
-		$t_cookie_path = config_get_global( 'cookie_path' );
-		gpc_clear_cookie( $t_cookie_name, $t_cookie_path );
+		$t_cookie_path = config_get_global('cookie_path');
+		gpc_clear_cookie($t_cookie_name, $t_cookie_path);
 	}
 }
 
@@ -1194,9 +1243,10 @@ function auth_http_set_logout_pending( $p_pending ) {
  * @return boolean
  * @access public
  */
-function auth_http_is_logout_pending() {
-	$t_cookie_name = config_get_global( 'logout_cookie' );
-	$t_cookie = gpc_get_cookie( $t_cookie_name, '' );
+function auth_http_is_logout_pending()
+{
+	$t_cookie_name = config_get_global('logout_cookie');
+	$t_cookie = gpc_get_cookie($t_cookie_name, '');
 
-	return( $t_cookie > '' );
+	return ($t_cookie > '');
 }

@@ -69,7 +69,7 @@ layout_page_header(bug_format_summary($f_bug_id, SUMMARY_CAPTION));
 layout_page_begin();
 ?>
 
-<?php # Send reminder Form BEGIN 
+<?php  # Send reminder Form BEGIN 
 ?>
 
 <div id="send-reminder-div" class="col-md-12 col-xs-12">

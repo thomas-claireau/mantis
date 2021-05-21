@@ -59,7 +59,8 @@ class MantisMarkdown extends Parsedown
 	/**
 	 * MantisMarkdown constructor.
 	 */
-	public function __construct() {
+	public function __construct()
+	{
 
 		# enable line break by default
 		$this->breaksEnabled = true;
@@ -68,7 +69,7 @@ class MantisMarkdown extends Parsedown
 		$this->table_class = 'table table-nonfluid';
 
 		# XSS protection
-		$this->setSafeMode( true );
+		$this->setSafeMode(true);
 	}
 
 	/**
@@ -76,15 +77,16 @@ class MantisMarkdown extends Parsedown
 	 * @param string $p_text The text to convert.
 	 * @return string  The html text.
 	 */
-	public static function convert_text( $p_text ) {
+	public static function convert_text($p_text)
+	{
 		self::init();
 
 		# Enabled quote conversion
 		# Text processing converts special character to entity name
 		# Make sure to restore "&gt;" entity name to its characted result ">"
-		$p_text = str_replace( "&gt;", ">", $p_text );
+		$p_text = str_replace("&gt;", ">", $p_text);
 
-		return self::$mantis_markdown->text( $p_text );
+		return self::$mantis_markdown->text($p_text);
 	}
 
 	/**
@@ -92,9 +94,10 @@ class MantisMarkdown extends Parsedown
 	 * @param string $p_text The text to convert.
 	 * @return string  The html text.
 	 */
-	public static function convert_line( $p_text ) {
+	public static function convert_line($p_text)
+	{
 		self::init();
-		return self::$mantis_markdown->line( $p_text );
+		return self::$mantis_markdown->line($p_text);
 	}
 
 	/**
@@ -105,12 +108,13 @@ class MantisMarkdown extends Parsedown
 	 * @return string|null HTML representation generated from markdown or null
 	 *                if text is not a valid header per CommonMark spec
 	 */
-	protected function blockHeader( $line ) {
+	protected function blockHeader($line)
+	{
 		# Header detection logic
 		# - the opening # may be indented 0-3 spaces
 		# - a sequence of 1–6 '#' characters
 		# - The #'s must be followed by a space or a newline
-		if ( preg_match( '/^ {0,3}#{1,6}(?: |$)/', $line['text'] ) ) {
+		if (preg_match('/^ {0,3}#{1,6}(?: |$)/', $line['text'])) {
 			return parent::blockHeader($line);
 		}
 	}
@@ -124,8 +128,9 @@ class MantisMarkdown extends Parsedown
 	 * @access private
 	 * @return string html representation generated from markdown.
 	 */
-	private function __doTable( $line, $block, $fn ) {
-		if( $block = call_user_func( 'parent::' . $fn, $line, $block ) ) {
+	private function __doTable($line, $block, $fn)
+	{
+		if ($block = call_user_func('parent::' . $fn, $line, $block)) {
 			$block['element']['attributes']['class'] = $this->table_class;
 		}
 
@@ -140,8 +145,9 @@ class MantisMarkdown extends Parsedown
 	 * @access protected
 	 * @return string html representation generated from markdown.
 	 */
-	protected function blockTable( $line, array $block = null ) {
-		return $this->__doTable( $line, $block, __FUNCTION__ );
+	protected function blockTable($line, array $block = null)
+	{
+		return $this->__doTable($line, $block, __FUNCTION__);
 	}
 
 	/**
@@ -152,8 +158,9 @@ class MantisMarkdown extends Parsedown
 	 * @access protected
 	 * @return string html representation generated from markdown.
 	 */
-	protected function blockTableContinue( $line, array $block ) {
-		return $this->__doTable( $line, $block, __FUNCTION__ );
+	protected function blockTableContinue($line, array $block)
+	{
+		return $this->__doTable($line, $block, __FUNCTION__);
 	}
 
 	/**
@@ -165,9 +172,10 @@ class MantisMarkdown extends Parsedown
 	 * @access private
 	 * @return string html representation generated from markdown.
 	 */
-	private function __quote( $line, $block, $fn ) {
+	private function __quote($line, $block, $fn)
+	{
 
-		if( $block = call_user_func( 'parent::' . $fn, $line, $block ) ) {
+		if ($block = call_user_func('parent::' . $fn, $line, $block)) {
 			# TODO: To open another issue to track css style sheet issue vs. inline style.
 			$block['element']['attributes']['style'] = 'padding:0.13em 1em;color:rgb(119,119,119);border-left:0.25em solid #C0C0C0;font-size:13px;';
 		}
@@ -182,8 +190,9 @@ class MantisMarkdown extends Parsedown
 	 * @access protected
 	 * @return string html representation generated from markdown.
 	 */
-	protected function blockQuote( $line ){
-		return $this->__quote( $line, array(), __FUNCTION__ );
+	protected function blockQuote($line)
+	{
+		return $this->__quote($line, array(), __FUNCTION__);
 	}
 
 	/**
@@ -194,8 +203,9 @@ class MantisMarkdown extends Parsedown
 	 * @access protected
 	 * @return string html representation generated from markdown.
 	 */
-	protected function blockQuoteContinue( $line, array $block ){
-		return $this->__quote( $line, $block, __FUNCTION__ );
+	protected function blockQuoteContinue($line, array $block)
+	{
+		return $this->__quote($line, $block, __FUNCTION__);
 	}
 
 	/**
@@ -205,12 +215,13 @@ class MantisMarkdown extends Parsedown
 	 * @access protected
 	 * @return string html representation generated from markdown.
 	 */
-	protected function inlineCode( $block ) {
+	protected function inlineCode($block)
+	{
 
-		$block = parent::inlineCode( $block );
+		$block = parent::inlineCode($block);
 
-		if( isset( $block['element']['text'] )) {
-			$this->processAmpersand( $block['element']['text'] );
+		if (isset($block['element']['text'])) {
+			$this->processAmpersand($block['element']['text']);
 		}
 
 		return $block;
@@ -223,12 +234,13 @@ class MantisMarkdown extends Parsedown
 	 * @access protected
 	 * @return string html representation generated from markdown.
 	 */
-	protected function blockFencedCodeComplete( $block = null ) {
+	protected function blockFencedCodeComplete($block = null)
+	{
 
-		$block = parent::blockFencedCodeComplete( $block );
+		$block = parent::blockFencedCodeComplete($block);
 
-		if( isset( $block['element']['text']['text'] )) {
-			$this->processAmpersand( $block['element']['text']['text'] );
+		if (isset($block['element']['text']['text'])) {
+			$this->processAmpersand($block['element']['text']['text']);
 		}
 
 		return $block;
@@ -241,12 +253,13 @@ class MantisMarkdown extends Parsedown
 	 * @access protected
 	 * @return string html representation generated from markdown.
 	 */
-	protected function blockCodeComplete( $block ) {
+	protected function blockCodeComplete($block)
+	{
 
-		$block = parent::blockCodeComplete( $block );
+		$block = parent::blockCodeComplete($block);
 
-		if( isset( $block['element']['text']['text'] )) {
-			$this->processAmpersand( $block['element']['text']['text'] );
+		if (isset($block['element']['text']['text'])) {
+			$this->processAmpersand($block['element']['text']['text']);
 		}
 
 		return $block;
@@ -259,12 +272,13 @@ class MantisMarkdown extends Parsedown
 	 * @access protected
 	 * @return string html representation generated from markdown.
 	 */
-	protected function inlineLink( $block ) {
+	protected function inlineLink($block)
+	{
 
-		$block = parent::inlineLink( $block );
+		$block = parent::inlineLink($block);
 
-		if( isset( $block['element']['attributes']['href'] )) {
-			$this->processAmpersand( $block['element']['attributes']['href'] );
+		if (isset($block['element']['attributes']['href'])) {
+			$this->processAmpersand($block['element']['attributes']['href']);
 		}
 
 		return $block;
@@ -273,8 +287,9 @@ class MantisMarkdown extends Parsedown
 	/**
 	 * Initialize the singleton static instance.
 	 */
-	private static function init() {
-		if ( null === static::$mantis_markdown ) {
+	private static function init()
+	{
+		if (null === static::$mantis_markdown) {
 			static::$mantis_markdown = new MantisMarkdown();
 		}
 		return static::$mantis_markdown;
@@ -291,8 +306,8 @@ class MantisMarkdown extends Parsedown
 	 * @param string $p_text Text block to process
 	 * @return void
 	 */
-	private function processAmpersand( &$p_text ) {
-		$p_text = str_replace( '&amp;', '&', $p_text );
+	private function processAmpersand(&$p_text)
+	{
+		$p_text = str_replace('&amp;', '&', $p_text);
 	}
-
 }

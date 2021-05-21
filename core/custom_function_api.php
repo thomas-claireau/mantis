@@ -42,23 +42,23 @@
  * @uses version_api.php
  */
 
-require_api( 'bug_api.php' );
-require_api( 'bugnote_api.php' );
-require_api( 'category_api.php' );
-require_api( 'columns_api.php' );
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'custom_field_api.php' );
-require_api( 'helper_api.php' );
-require_api( 'history_api.php' );
-require_api( 'html_api.php' );
-require_api( 'icon_api.php' );
-require_api( 'lang_api.php' );
-require_api( 'prepare_api.php' );
-require_api( 'print_api.php' );
-require_api( 'string_api.php' );
-require_api( 'utility_api.php' );
-require_api( 'version_api.php' );
+require_api('bug_api.php');
+require_api('bugnote_api.php');
+require_api('category_api.php');
+require_api('columns_api.php');
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('custom_field_api.php');
+require_api('helper_api.php');
+require_api('history_api.php');
+require_api('html_api.php');
+require_api('icon_api.php');
+require_api('lang_api.php');
+require_api('prepare_api.php');
+require_api('print_api.php');
+require_api('string_api.php');
+require_api('utility_api.php');
+require_api('version_api.php');
 
 /**
  * Custom Function API
@@ -68,12 +68,13 @@ require_api( 'version_api.php' );
  * @param integer $p_issue_id Issue id.
  * @return boolean
  */
-function custom_function_default_changelog_include_issue( $p_issue_id ) {
-	$t_issue = bug_get( $p_issue_id );
+function custom_function_default_changelog_include_issue($p_issue_id)
+{
+	$t_issue = bug_get($p_issue_id);
 
-	return( ( $t_issue->resolution >= config_get( 'bug_resolution_fixed_threshold' ) &&
-		$t_issue->resolution < config_get( 'bug_resolution_not_fixed_threshold' ) &&
-		$t_issue->status >= config_get( 'bug_resolved_status_threshold' ) ) );
+	return (($t_issue->resolution >= config_get('bug_resolution_fixed_threshold') &&
+		$t_issue->resolution < config_get('bug_resolution_not_fixed_threshold') &&
+		$t_issue->status >= config_get('bug_resolved_status_threshold')));
 }
 
 /**
@@ -83,36 +84,39 @@ function custom_function_default_changelog_include_issue( $p_issue_id ) {
  * @param integer $p_issue_level Issue level.
  * @return void
  */
-function custom_function_default_changelog_print_issue( $p_issue_id, $p_issue_level = 0 ) {
+function custom_function_default_changelog_print_issue($p_issue_id, $p_issue_level = 0)
+{
 	static $s_status;
 
-	$t_bug = bug_get( $p_issue_id );
+	$t_bug = bug_get($p_issue_id);
 	$t_current_user = auth_get_current_user_id();
 
-	if( $t_bug->category_id ) {
-		$t_category_name = category_get_name( $t_bug->category_id );
+	if ($t_bug->category_id) {
+		$t_category_name = category_get_name($t_bug->category_id);
 	} else {
 		$t_category_name = '';
 	}
 
-	$t_category = is_blank( $t_category_name ) ? '' : '<strong>[' . string_display_line( $t_category_name ) . ']</strong> ';
+	$t_category = is_blank($t_category_name) ? '' : '<strong>[' . string_display_line($t_category_name) . ']</strong> ';
 
-	if( !isset( $s_status[$t_bug->status] ) ) {
-		$s_status[$t_bug->status] = get_enum_element( 'status', $t_bug->status, $t_current_user, $t_bug->project_id );
+	if (!isset($s_status[$t_bug->status])) {
+		$s_status[$t_bug->status] = get_enum_element('status', $t_bug->status, $t_current_user, $t_bug->project_id);
 	}
 
 	# choose color based on status
-	$t_status_css = html_get_status_css_fg( $t_bug->status, $t_current_user, $t_bug->project_id );
-	$t_status_title = string_attribute( get_enum_element( 'status', bug_get_field( $t_bug->id, 'status' ), $t_bug->project_id ) );
+	$t_status_css = html_get_status_css_fg($t_bug->status, $t_current_user, $t_bug->project_id);
+	$t_status_title = string_attribute(get_enum_element('status', bug_get_field($t_bug->id, 'status'), $t_bug->project_id));
 
-	echo utf8_str_pad( '', $p_issue_level * 36, '&#160;' );
-	print_icon( 'fa-square', 'fa-status-box ' . $t_status_css, $t_status_title );
-	echo ' ' . string_get_bug_view_link( $p_issue_id, false );
-	echo ': <span class="label label-light">', $t_category, '</span> ' , string_display_line_links( $t_bug->summary );
-	if( $t_bug->handler_id > 0
-			&& ON == config_get( 'show_assigned_names', null, $t_current_user, $t_bug->project_id )
-			&& access_can_see_handler_for_bug( $t_bug ) ) {
-		echo ' (', prepare_user_name( $t_bug->handler_id ), ')';
+	echo utf8_str_pad('', $p_issue_level * 36, '&#160;');
+	print_icon('fa-square', 'fa-status-box ' . $t_status_css, $t_status_title);
+	echo ' ' . string_get_bug_view_link($p_issue_id, false);
+	echo ': <span class="label label-light">', $t_category, '</span> ', string_display_line_links($t_bug->summary);
+	if (
+		$t_bug->handler_id > 0
+		&& ON == config_get('show_assigned_names', null, $t_current_user, $t_bug->project_id)
+		&& access_can_see_handler_for_bug($t_bug)
+	) {
+		echo ' (', prepare_user_name($t_bug->handler_id), ')';
 	}
 	echo '<div class="space-2"></div>';
 }
@@ -124,7 +128,8 @@ function custom_function_default_changelog_print_issue( $p_issue_id, $p_issue_le
  * @param integer $p_issue_id Issue id.
  * @return boolean
  */
-function custom_function_default_roadmap_include_issue( $p_issue_id ) {
+function custom_function_default_roadmap_include_issue($p_issue_id)
+{
 	return true;
 }
 
@@ -135,43 +140,46 @@ function custom_function_default_roadmap_include_issue( $p_issue_id ) {
  * @param integer $p_issue_level Issue level.
  * @return void
  */
-function custom_function_default_roadmap_print_issue( $p_issue_id, $p_issue_level = 0 ) {
+function custom_function_default_roadmap_print_issue($p_issue_id, $p_issue_level = 0)
+{
 	static $s_status;
 
-	$t_bug = bug_get( $p_issue_id );
+	$t_bug = bug_get($p_issue_id);
 	$t_current_user = auth_get_current_user_id();
 
-	if( bug_is_resolved( $p_issue_id ) ) {
+	if (bug_is_resolved($p_issue_id)) {
 		$t_strike_start = '<s>';
 		$t_strike_end = '</s>';
 	} else {
 		$t_strike_start = $t_strike_end = '';
 	}
 
-	if( $t_bug->category_id ) {
-		$t_category_name = category_get_name( $t_bug->category_id );
+	if ($t_bug->category_id) {
+		$t_category_name = category_get_name($t_bug->category_id);
 	} else {
 		$t_category_name = '';
 	}
 
-	$t_category = is_blank( $t_category_name ) ? '' : '<strong>[' . string_display_line( $t_category_name ) . ']</strong> ';
+	$t_category = is_blank($t_category_name) ? '' : '<strong>[' . string_display_line($t_category_name) . ']</strong> ';
 
-	if( !isset( $s_status[$t_bug->status] ) ) {
-		$s_status[$t_bug->status] = get_enum_element( 'status', $t_bug->status, $t_current_user, $t_bug->project_id );
+	if (!isset($s_status[$t_bug->status])) {
+		$s_status[$t_bug->status] = get_enum_element('status', $t_bug->status, $t_current_user, $t_bug->project_id);
 	}
 
 	# choose color based on status
-	$t_status_css = html_get_status_css_fg( $t_bug->status, $t_current_user, $t_bug->project_id );
-	$t_status_title = string_attribute( get_enum_element( 'status', bug_get_field( $t_bug->id, 'status' ), $t_bug->project_id ) );
+	$t_status_css = html_get_status_css_fg($t_bug->status, $t_current_user, $t_bug->project_id);
+	$t_status_title = string_attribute(get_enum_element('status', bug_get_field($t_bug->id, 'status'), $t_bug->project_id));
 
-	echo utf8_str_pad( '', $p_issue_level * 36, '&#160;' );
-	print_icon( 'fa-square', 'fa-status-box ' . $t_status_css, $t_status_title );
-	echo ' ' . string_get_bug_view_link( $p_issue_id, false );
-	echo ': <span class="label label-light">', $t_category, '</span> ', $t_strike_start, string_display_line_links( $t_bug->summary ), $t_strike_end;
-	if( $t_bug->handler_id > 0
-			&& ON == config_get( 'show_assigned_names', null, $t_current_user, $t_bug->project_id )
-			&& access_can_see_handler_for_bug( $t_bug ) ) {
-		echo ' (', prepare_user_name( $t_bug->handler_id ), ')';
+	echo utf8_str_pad('', $p_issue_level * 36, '&#160;');
+	print_icon('fa-square', 'fa-status-box ' . $t_status_css, $t_status_title);
+	echo ' ' . string_get_bug_view_link($p_issue_id, false);
+	echo ': <span class="label label-light">', $t_category, '</span> ', $t_strike_start, string_display_line_links($t_bug->summary), $t_strike_end;
+	if (
+		$t_bug->handler_id > 0
+		&& ON == config_get('show_assigned_names', null, $t_current_user, $t_bug->project_id)
+		&& access_can_see_handler_for_bug($t_bug)
+	) {
+		echo ' (', prepare_user_name($t_bug->handler_id), ')';
 	}
 	echo '<div class="space-2"></div>';
 }
@@ -183,19 +191,20 @@ function custom_function_default_roadmap_print_issue( $p_issue_id, $p_issue_leve
  * @param integer $p_context  Context SUMMARY_CAPTION | SUMMARY_FIELD | SUMMARY_EMAIL.
  * @return string
  */
-function custom_function_default_format_issue_summary( $p_issue_id, $p_context = 0 ) {
-	switch( $p_context ) {
+function custom_function_default_format_issue_summary($p_issue_id, $p_context = 0)
+{
+	switch ($p_context) {
 		case SUMMARY_CAPTION:
-			$t_string = bug_format_id( $p_issue_id ) . ': ' . string_attribute( bug_get_field( $p_issue_id, 'summary' ) );
+			$t_string = bug_format_id($p_issue_id) . ': ' . string_attribute(bug_get_field($p_issue_id, 'summary'));
 			break;
 		case SUMMARY_FIELD:
-			$t_string = bug_format_id( $p_issue_id ) . ': ' . string_display_line_links( bug_get_field( $p_issue_id, 'summary' ) );
+			$t_string = bug_format_id($p_issue_id) . ': ' . string_display_line_links(bug_get_field($p_issue_id, 'summary'));
 			break;
 		case SUMMARY_EMAIL:
-			$t_string = bug_format_id( $p_issue_id ) . ': ' . string_attribute( bug_get_field( $p_issue_id, 'summary' ) );
+			$t_string = bug_format_id($p_issue_id) . ': ' . string_attribute(bug_get_field($p_issue_id, 'summary'));
 			break;
 		default:
-			$t_string = string_attribute( bug_get_field( $p_issue_id, 'summary' ) );
+			$t_string = string_attribute(bug_get_field($p_issue_id, 'summary'));
 			break;
 	}
 	return $t_string;
@@ -212,7 +221,8 @@ function custom_function_default_format_issue_summary( $p_issue_id, $p_context =
  * @param string  $p_bugnote_text   Bugnote text.
  * @return void
  */
-function custom_function_default_issue_update_validate( $p_issue_id, BugData $p_new_issue_data, $p_bugnote_text ) {
+function custom_function_default_issue_update_validate($p_issue_id, BugData $p_new_issue_data, $p_bugnote_text)
+{
 }
 
 /**
@@ -222,7 +232,8 @@ function custom_function_default_issue_update_validate( $p_issue_id, BugData $p_
  * @param integer $p_issue_id The issue number that can be used to get the existing state.
  * @return void
  */
-function custom_function_default_issue_update_notify( $p_issue_id ) {
+function custom_function_default_issue_update_notify($p_issue_id)
+{
 }
 
 /**
@@ -233,7 +244,8 @@ function custom_function_default_issue_update_notify( $p_issue_id ) {
  * @param BugData $p_new_issue_data Object (BugData) with the appropriate fields updated.
  * @return void
  */
-function custom_function_default_issue_create_validate( BugData $p_new_issue_data ) {
+function custom_function_default_issue_create_validate(BugData $p_new_issue_data)
+{
 }
 
 /**
@@ -243,7 +255,8 @@ function custom_function_default_issue_create_validate( BugData $p_new_issue_dat
  * @param integer $p_issue_id The issue number that can be used to get the existing state.
  * @return void
  */
-function custom_function_default_issue_create_notify( $p_issue_id ) {
+function custom_function_default_issue_create_notify($p_issue_id)
+{
 }
 
 /**
@@ -254,7 +267,8 @@ function custom_function_default_issue_create_notify( $p_issue_id ) {
  * @param integer $p_issue_id The issue number that can be used to get the existing state.
  * @return void
  */
-function custom_function_default_issue_delete_validate( $p_issue_id ) {
+function custom_function_default_issue_delete_validate($p_issue_id)
+{
 }
 
 /**
@@ -266,7 +280,8 @@ function custom_function_default_issue_delete_validate( $p_issue_id ) {
  * @param integer $p_issue_id The issue number that can be used to get the existing state before it is deleted.
  * @return void
  */
-function custom_function_default_issue_delete_notify( $p_issue_id ) {
+function custom_function_default_issue_delete_notify($p_issue_id)
+{
 }
 
 /**
@@ -274,7 +289,8 @@ function custom_function_default_issue_delete_notify( $p_issue_id ) {
  * can MantisBT update the password
  * @return boolean
  */
-function custom_function_default_auth_can_change_password() {
+function custom_function_default_auth_can_change_password()
+{
 	$t_can_change = array(
 		PLAIN,
 		CRYPT,
@@ -282,7 +298,7 @@ function custom_function_default_auth_can_change_password() {
 		MD5,
 	);
 
-	return in_array( config_get_global( 'login_method' ), $t_can_change );
+	return in_array(config_get_global('login_method'), $t_can_change);
 }
 
 /**
@@ -299,20 +315,21 @@ function custom_function_default_auth_can_change_password() {
  * @param integer $p_user_id        The user id or null for current logged in user.
  * @return array
  */
-function custom_function_default_get_columns_to_view( $p_columns_target = COLUMNS_TARGET_VIEW_PAGE, $p_user_id = null ) {
+function custom_function_default_get_columns_to_view($p_columns_target = COLUMNS_TARGET_VIEW_PAGE, $p_user_id = null)
+{
 	$t_project_id = helper_get_current_project();
 
-	if( $p_columns_target == COLUMNS_TARGET_CSV_PAGE ) {
-		$t_columns = config_get( 'csv_columns', '', $p_user_id, $t_project_id );
-	} else if( $p_columns_target == COLUMNS_TARGET_EXCEL_PAGE ) {
-		$t_columns = config_get( 'excel_columns', '', $p_user_id, $t_project_id );
-	} else if( $p_columns_target == COLUMNS_TARGET_VIEW_PAGE ) {
-		$t_columns = config_get( 'view_issues_page_columns', '', $p_user_id, $t_project_id );
+	if ($p_columns_target == COLUMNS_TARGET_CSV_PAGE) {
+		$t_columns = config_get('csv_columns', '', $p_user_id, $t_project_id);
+	} else if ($p_columns_target == COLUMNS_TARGET_EXCEL_PAGE) {
+		$t_columns = config_get('excel_columns', '', $p_user_id, $t_project_id);
+	} else if ($p_columns_target == COLUMNS_TARGET_VIEW_PAGE) {
+		$t_columns = config_get('view_issues_page_columns', '', $p_user_id, $t_project_id);
 	} else {
-		$t_columns = config_get( 'print_issues_page_columns', '', $p_user_id, $t_project_id );
+		$t_columns = config_get('print_issues_page_columns', '', $p_user_id, $t_project_id);
 	}
 
-	$t_columns = columns_remove_invalid( $t_columns, columns_get_all( $t_project_id ) );
+	$t_columns = columns_remove_invalid($t_columns, columns_get_all($t_project_id));
 
 	return $t_columns;
 }
@@ -327,60 +344,59 @@ function custom_function_default_get_columns_to_view( $p_columns_target = COLUMN
  * @param array $p_sort_properties  Array of filter sortin gproeprties, in the format returned from filter_get_visible_sort_properties_array()
  * @return void
  */
-function custom_function_default_print_column_title( $p_column, $p_columns_target = COLUMNS_TARGET_VIEW_PAGE, array $p_sort_properties = null ) {
+function custom_function_default_print_column_title($p_column, $p_columns_target = COLUMNS_TARGET_VIEW_PAGE, array $p_sort_properties = null)
+{
 	global $t_sort, $t_dir;
 
 	# if no sort properties are provided, resort to deprecated golbal vars, to keep compatibility
-	if( null === $p_sort_properties ) {
+	if (null === $p_sort_properties) {
 		$t_main_sort_column = $t_sort;
 		$t_main_sort_dir = $t_dir;
 	} else {
 		# we use only the first ordered column
-		$t_main_sort_column = reset( $p_sort_properties[FILTER_PROPERTY_SORT_FIELD_NAME] );
-		$t_main_sort_dir = reset( $p_sort_properties[FILTER_PROPERTY_SORT_DIRECTION] );
+		$t_main_sort_column = reset($p_sort_properties[FILTER_PROPERTY_SORT_FIELD_NAME]);
+		$t_main_sort_dir = reset($p_sort_properties[FILTER_PROPERTY_SORT_DIRECTION]);
 	}
 
-	$t_custom_field = column_get_custom_field_name( $p_column );
-	if( $t_custom_field !== null ) {
-		if( COLUMNS_TARGET_CSV_PAGE != $p_columns_target ) {
-			echo '<th class="column-' . custom_field_css_name( $t_custom_field ) . '">';
+	$t_custom_field = column_get_custom_field_name($p_column);
+	if ($t_custom_field !== null) {
+		if (COLUMNS_TARGET_CSV_PAGE != $p_columns_target) {
+			echo '<th class="column-' . custom_field_css_name($t_custom_field) . '">';
 		}
 
-		$t_field_id = custom_field_get_id_from_name( $t_custom_field );
-		if( $t_field_id === false ) {
+		$t_field_id = custom_field_get_id_from_name($t_custom_field);
+		if ($t_field_id === false) {
 			echo '@', $t_custom_field, '@';
 		} else {
-			$t_def = custom_field_get_definition( $t_field_id );
-			$t_custom_field = lang_get_defaulted( $t_def['name'] );
+			$t_def = custom_field_get_definition($t_field_id);
+			$t_custom_field = lang_get_defaulted($t_def['name']);
 
-			if( COLUMNS_TARGET_CSV_PAGE != $p_columns_target ) {
-				print_view_bug_sort_link( $t_custom_field, $p_column, $t_main_sort_column, $t_main_sort_dir, $p_columns_target );
-				if( $p_column == $t_main_sort_column ) {
-					print_sort_icon( $t_main_sort_dir, $t_main_sort_column, $p_column );
+			if (COLUMNS_TARGET_CSV_PAGE != $p_columns_target) {
+				print_view_bug_sort_link($t_custom_field, $p_column, $t_main_sort_column, $t_main_sort_dir, $p_columns_target);
+				if ($p_column == $t_main_sort_column) {
+					print_sort_icon($t_main_sort_dir, $t_main_sort_column, $p_column);
 				}
 			} else {
 				echo $t_custom_field;
 			}
 		}
 
-		if( COLUMNS_TARGET_CSV_PAGE != $p_columns_target ) {
+		if (COLUMNS_TARGET_CSV_PAGE != $p_columns_target) {
 			echo '</th>';
 		}
 	} else {
 		$t_plugin_columns = columns_get_plugin_columns();
 
 		$t_function = 'print_column_title_' . $p_column;
-		if( function_exists( $t_function ) ) {
-			$t_function( $t_main_sort_column, $t_main_sort_dir, $p_columns_target );
-
-		} else if( isset( $t_plugin_columns[$p_column] ) ) {
+		if (function_exists($t_function)) {
+			$t_function($t_main_sort_column, $t_main_sort_dir, $p_columns_target);
+		} else if (isset($t_plugin_columns[$p_column])) {
 			$t_column_object = $t_plugin_columns[$p_column];
-			print_column_title_plugin( $p_column, $t_column_object, $t_main_sort_column, $t_main_sort_dir, $p_columns_target );
-
+			print_column_title_plugin($p_column, $t_column_object, $t_main_sort_column, $t_main_sort_dir, $p_columns_target);
 		} else {
 			echo '<th>';
-			print_view_bug_sort_link( column_get_title( $p_column ), $p_column, $t_main_sort_column, $t_main_sort_dir, $p_columns_target );
-			print_sort_icon( $t_main_sort_dir, $t_main_sort_column, $p_column );
+			print_view_bug_sort_link(column_get_title($p_column), $p_column, $t_main_sort_column, $t_main_sort_dir, $p_columns_target);
+			print_sort_icon($t_main_sort_dir, $t_main_sort_column, $p_column);
 			echo '</th>';
 		}
 	}
@@ -395,8 +411,9 @@ function custom_function_default_print_column_title( $p_column, $p_columns_targe
  * @param integer $p_columns_target See COLUMNS_TARGET_* in constant_inc.php.
  * @return void
  */
-function custom_function_default_print_column_value( $p_column, BugData $p_bug, $p_columns_target = COLUMNS_TARGET_VIEW_PAGE ) {
-	if( COLUMNS_TARGET_CSV_PAGE == $p_columns_target ) {
+function custom_function_default_print_column_value($p_column, BugData $p_bug, $p_columns_target = COLUMNS_TARGET_VIEW_PAGE)
+{
+	if (COLUMNS_TARGET_CSV_PAGE == $p_columns_target) {
 		$t_column_start = '';
 		$t_column_end = '';
 		$t_column_empty = '';
@@ -406,20 +423,20 @@ function custom_function_default_print_column_value( $p_column, BugData $p_bug, 
 		$t_column_empty = '&#160;';
 	}
 
-	$t_custom_field = column_get_custom_field_name( $p_column );
-	if( $t_custom_field !== null ) {
-		printf( $t_column_start, custom_field_css_name( $t_custom_field ) );
+	$t_custom_field = column_get_custom_field_name($p_column);
+	if ($t_custom_field !== null) {
+		printf($t_column_start, custom_field_css_name($t_custom_field));
 
-		$t_field_id = custom_field_get_id_from_name( $t_custom_field );
-		if( $t_field_id === false ) {
+		$t_field_id = custom_field_get_id_from_name($t_custom_field);
+		if ($t_field_id === false) {
 			echo '@', $t_custom_field, '@';
 		} else {
 			$t_issue_id = $p_bug->id;
 			$t_project_id = $p_bug->project_id;
 
-			if( custom_field_is_linked( $t_field_id, $t_project_id ) ) {
-				$t_def = custom_field_get_definition( $t_field_id );
-				print_custom_field_value( $t_def, $t_field_id, $t_issue_id );
+			if (custom_field_is_linked($t_field_id, $t_project_id)) {
+				$t_def = custom_field_get_definition($t_field_id);
+				print_custom_field_value($t_def, $t_field_id, $t_issue_id);
 			} else {
 				# field is not linked to project
 				echo $t_column_empty;
@@ -429,27 +446,25 @@ function custom_function_default_print_column_value( $p_column, BugData $p_bug, 
 	} else {
 		$t_plugin_columns = columns_get_plugin_columns();
 
-		if( $p_columns_target != COLUMNS_TARGET_CSV_PAGE ) {
+		if ($p_columns_target != COLUMNS_TARGET_CSV_PAGE) {
 			$t_function = 'print_column_' . $p_column;
 		} else {
 			$t_function = 'csv_format_' . $p_column;
 		}
 
-		if( function_exists( $t_function ) ) {
-			if( $p_columns_target != COLUMNS_TARGET_CSV_PAGE ) {
-				$t_function( $p_bug, $p_columns_target );
+		if (function_exists($t_function)) {
+			if ($p_columns_target != COLUMNS_TARGET_CSV_PAGE) {
+				$t_function($p_bug, $p_columns_target);
 			} else {
-				$t_function( $p_bug );
+				$t_function($p_bug);
 			}
-
-		} else if( isset( $t_plugin_columns[$p_column] ) ) {
+		} else if (isset($t_plugin_columns[$p_column])) {
 			$t_column_object = $t_plugin_columns[$p_column];
-			print_column_plugin( $t_column_object, $p_bug, $p_columns_target );
-
+			print_column_plugin($t_column_object, $p_bug, $p_columns_target);
 		} else {
-			printf( $t_column_start, $p_column );
-			if( isset( $p_bug->$p_column ) ) {
-				echo string_display_line( $p_bug->$p_column ) . $t_column_end;
+			printf($t_column_start, $p_column);
+			if (isset($p_bug->$p_column)) {
+				echo string_display_line($p_bug->$p_column) . $t_column_end;
 			} else {
 				echo '@' . $p_column . '@' . $t_column_end;
 			}
@@ -464,15 +479,16 @@ function custom_function_default_print_column_value( $p_column, BugData $p_bug, 
  * To use this in a custom field type "=versions" in the possible values field.
  * @return string
  */
-function custom_function_default_enum_versions() {
-	$t_versions = version_get_all_rows( helper_get_current_project() );
+function custom_function_default_enum_versions()
+{
+	$t_versions = version_get_all_rows(helper_get_current_project());
 
 	$t_enum = array();
-	foreach( $t_versions as $t_version ) {
+	foreach ($t_versions as $t_version) {
 		$t_enum[] = $t_version['version'];
 	}
 
-	$t_possible_values = implode( '|', $t_enum );
+	$t_possible_values = implode('|', $t_enum);
 
 	return $t_possible_values;
 }
@@ -484,17 +500,18 @@ function custom_function_default_enum_versions() {
  * To use this in a custom field type "=released_versions" in the possible values field.
  * @return string
  */
-function custom_function_default_enum_released_versions() {
-	$t_versions = version_get_all_rows( helper_get_current_project() );
+function custom_function_default_enum_released_versions()
+{
+	$t_versions = version_get_all_rows(helper_get_current_project());
 
 	$t_enum = array();
-	foreach( $t_versions as $t_version ) {
-		if( $t_version['released'] == 1 ) {
+	foreach ($t_versions as $t_version) {
+		if ($t_version['released'] == 1) {
 			$t_enum[] = $t_version['version'];
 		}
 	}
 
-	$t_possible_values = implode( '|', $t_enum );
+	$t_possible_values = implode('|', $t_enum);
 
 	return $t_possible_values;
 }
@@ -506,17 +523,18 @@ function custom_function_default_enum_released_versions() {
  * To use this in a custom field type "=future_versions" in the possible values field.
  * @return string
  */
-function custom_function_default_enum_future_versions() {
-	$t_versions = version_get_all_rows( helper_get_current_project() );
+function custom_function_default_enum_future_versions()
+{
+	$t_versions = version_get_all_rows(helper_get_current_project());
 
 	$t_enum = array();
-	foreach( $t_versions as $t_version ) {
-		if( $t_version['released'] == 0 ) {
+	foreach ($t_versions as $t_version) {
+		if ($t_version['released'] == 0) {
 			$t_enum[] = $t_version['version'];
 		}
 	}
 
-	$t_possible_values = implode( '|', $t_enum );
+	$t_possible_values = implode('|', $t_enum);
 
 	return $t_possible_values;
 }
@@ -528,15 +546,16 @@ function custom_function_default_enum_future_versions() {
  * To use this in a custom field type "=categories" in the possible values field.
  * @return string
  */
-function custom_function_default_enum_categories() {
-	$t_categories = category_get_all_rows( helper_get_current_project() );
+function custom_function_default_enum_categories()
+{
+	$t_categories = category_get_all_rows(helper_get_current_project());
 
 	$t_enum = array();
-	foreach( $t_categories as $t_category ) {
+	foreach ($t_categories as $t_category) {
 		$t_enum[] = $t_category['name'];
 	}
 
-	$t_possible_values = implode( '|', $t_enum );
+	$t_possible_values = implode('|', $t_enum);
 
 	return $t_possible_values;
 }
@@ -549,5 +568,6 @@ function custom_function_default_enum_categories() {
  * @param integer $p_bug_id A bug identifier.
  * @return void
  */
-function custom_function_default_print_bug_view_page_custom_buttons( $p_bug_id ) {
+function custom_function_default_print_bug_view_page_custom_buttons($p_bug_id)
+{
 }

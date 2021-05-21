@@ -109,7 +109,7 @@ if ($t_account_page) {
 											<?php echo lang_get('all_columns_title') ?>
 										</td>
 										<td>
-											<?php # Newline after opening textarea tag is intentional, see #25839 
+											<?php  # Newline after opening textarea tag is intentional, see #25839 
 											?>
 											<textarea class="form-control" id="all-columns" <?php echo helper_get_tab_index() ?> name="all_columns" readonly="readonly" cols="80" rows="5">
 <?php echo $t_all ?>
@@ -121,7 +121,7 @@ if ($t_account_page) {
 											<?php echo lang_get('view_issues_columns_title') ?>
 										</td>
 										<td>
-											<?php # Newline after opening textarea tag is intentional, see #25839 
+											<?php  # Newline after opening textarea tag is intentional, see #25839 
 											?>
 											<textarea class="form-control" id="view-issues-columns" <?php echo helper_get_tab_index() ?> name="view_issues_columns" cols="80" rows="5">
 <?php echo $t_view_issues ?>
@@ -133,7 +133,7 @@ if ($t_account_page) {
 											<?php echo lang_get('print_issues_columns_title') ?>
 										</td>
 										<td>
-											<?php # Newline after opening textarea tag is intentional, see #25839 
+											<?php  # Newline after opening textarea tag is intentional, see #25839 
 											?>
 											<textarea class="form-control" id="print-issues-columns" <?php echo helper_get_tab_index() ?> name="print_issues_columns" cols="80" rows="5">
 <?php echo $t_print_issues ?>
@@ -145,7 +145,7 @@ if ($t_account_page) {
 											<?php echo lang_get('csv_columns_title') ?>
 										</td>
 										<td>
-											<?php # Newline after opening textarea tag is intentional, see #25839 
+											<?php  # Newline after opening textarea tag is intentional, see #25839 
 											?>
 											<textarea class="form-control" id="csv-columns" <?php echo helper_get_tab_index() ?> name="csv_columns" cols="80" rows="5">
 <?php echo $t_csv ?>
@@ -208,7 +208,7 @@ if ($t_account_page) {
 					<?php print_project_option_list(null, true, $t_project_id); ?>
 				</select>
 
-				<?php # Skip "Copy From" if the current project is ALL PROJECTS, the current page is management page, and the user is not administrator
+				<?php  # Skip "Copy From" if the current project is ALL PROJECTS, the current page is management page, and the user is not administrator
 				if (!$t_manage_page || ($t_project_id != ALL_PROJECTS) || current_user_is_administrator()) { ?>
 					<input type="submit" name="copy_from" class="btn btn-primary btn-sm btn-white btn-round" value="<?php echo lang_get('copy_columns_from') ?>" /><?php
 																																								} ?>

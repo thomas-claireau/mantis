@@ -35,38 +35,39 @@
  * @uses utility_api.php
  */
 
-require_api( 'constant_inc.php' );
-require_api( 'utility_api.php' );
+require_api('constant_inc.php');
+require_api('utility_api.php');
 
 # constant(s) defining the output formats supported by dot and neato.
-define( 'GRAPHVIZ_ATTRIBUTED_DOT', 0 );
-define( 'GRAPHVIZ_PS', 1 );
-define( 'GRAPHVIZ_HPGL', 2 );
-define( 'GRAPHVIZ_PCL', 3 );
-define( 'GRAPHVIZ_MIF', 4 );
-define( 'GRAPHVIZ_PLAIN', 6 );
-define( 'GRAPHVIZ_PLAIN_EXT', 7 );
-define( 'GRAPHVIZ_GIF', 11 );
-define( 'GRAPHVIZ_JPEG', 12 );
-define( 'GRAPHVIZ_PNG', 13 );
-define( 'GRAPHVIZ_WBMP', 14 );
-define( 'GRAPHVIZ_XBM', 15 );
-define( 'GRAPHVIZ_ISMAP', 16 );
-define( 'GRAPHVIZ_IMAP', 17 );
-define( 'GRAPHVIZ_CMAP', 18 );
-define( 'GRAPHVIZ_CMAPX', 19 );
-define( 'GRAPHVIZ_VRML', 20 );
-define( 'GRAPHVIZ_SVG', 25 );
-define( 'GRAPHVIZ_SVGZ', 26 );
-define( 'GRAPHVIZ_CANONICAL_DOT', 27 );
-define( 'GRAPHVIZ_PDF', 28 );
+define('GRAPHVIZ_ATTRIBUTED_DOT', 0);
+define('GRAPHVIZ_PS', 1);
+define('GRAPHVIZ_HPGL', 2);
+define('GRAPHVIZ_PCL', 3);
+define('GRAPHVIZ_MIF', 4);
+define('GRAPHVIZ_PLAIN', 6);
+define('GRAPHVIZ_PLAIN_EXT', 7);
+define('GRAPHVIZ_GIF', 11);
+define('GRAPHVIZ_JPEG', 12);
+define('GRAPHVIZ_PNG', 13);
+define('GRAPHVIZ_WBMP', 14);
+define('GRAPHVIZ_XBM', 15);
+define('GRAPHVIZ_ISMAP', 16);
+define('GRAPHVIZ_IMAP', 17);
+define('GRAPHVIZ_CMAP', 18);
+define('GRAPHVIZ_CMAPX', 19);
+define('GRAPHVIZ_VRML', 20);
+define('GRAPHVIZ_SVG', 25);
+define('GRAPHVIZ_SVGZ', 26);
+define('GRAPHVIZ_CANONICAL_DOT', 27);
+define('GRAPHVIZ_PDF', 28);
 
 /**
  * Base class for graph creation and manipulation. By default,
  * undirected graphs are generated. For directed graphs, use Digraph
  * class.
  */
-class Graph {
+class Graph
+{
 	/**
 	 * Name
 	 */
@@ -209,12 +210,13 @@ class Graph {
 	 * @param array  $p_attributes Attributes.
 	 * @param string $p_tool       Graph generation tool.
 	 */
-	function __construct( $p_name = 'G', array $p_attributes = array(), $p_tool = 'neato' ) {
-		if( is_string( $p_name ) ) {
+	function __construct($p_name = 'G', array $p_attributes = array(), $p_tool = 'neato')
+	{
+		if (is_string($p_name)) {
 			$this->name = $p_name;
 		}
 
-		$this->set_attributes( $p_attributes );
+		$this->set_attributes($p_attributes);
 
 		$this->graphviz_tool = $p_tool;
 	}
@@ -224,8 +226,9 @@ class Graph {
 	 * @param array $p_attributes Attributes.
 	 * @return void
 	 */
-	function set_attributes( array $p_attributes ) {
-		if( is_array( $p_attributes ) ) {
+	function set_attributes(array $p_attributes)
+	{
+		if (is_array($p_attributes)) {
 			$this->attributes = $p_attributes;
 		}
 	}
@@ -235,8 +238,9 @@ class Graph {
 	 * @param array $p_attributes Attributes.
 	 * @return void
 	 */
-	function set_default_node_attr( array $p_attributes ) {
-		if( is_array( $p_attributes ) ) {
+	function set_default_node_attr(array $p_attributes)
+	{
+		if (is_array($p_attributes)) {
 			$this->default_node = $p_attributes;
 		}
 	}
@@ -246,8 +250,9 @@ class Graph {
 	 * @param array $p_attributes Attributes.
 	 * @return void
 	 */
-	 function set_default_edge_attr( array $p_attributes ) {
-		if( is_array( $p_attributes ) ) {
+	function set_default_edge_attr(array $p_attributes)
+	{
+		if (is_array($p_attributes)) {
 			$this->default_edge = $p_attributes;
 		}
 	}
@@ -258,8 +263,9 @@ class Graph {
 	 * @param array  $p_attributes Attributes.
 	 * @return void
 	 */
-	 function add_node( $p_name, array $p_attributes = array() ) {
-		if( is_array( $p_attributes ) ) {
+	function add_node($p_name, array $p_attributes = array())
+	{
+		if (is_array($p_attributes)) {
 			$this->nodes[$p_name] = $p_attributes;
 		}
 	}
@@ -271,8 +277,9 @@ class Graph {
 	 * @param array  $p_attributes Attributes.
 	 * @return void
 	 */
-	 function add_edge( $p_src, $p_dst, array $p_attributes = array() ) {
-		if( is_array( $p_attributes ) ) {
+	function add_edge($p_src, $p_dst, array $p_attributes = array())
+	{
+		if (is_array($p_attributes)) {
 			$this->edges[] = array(
 				'src' => $p_src,
 				'dst' => $p_dst,
@@ -287,9 +294,10 @@ class Graph {
 	 * @param string $p_dst Destination.
 	 * @return boolean
 	 */
-	function is_edge_present( $p_src, $p_dst ) {
-		foreach( $this->edges as $t_edge ) {
-			if( $t_edge['src'] == $p_src && $t_edge['dst'] == $p_dst ) {
+	function is_edge_present($p_src, $p_dst)
+	{
+		foreach ($this->edges as $t_edge) {
+			if ($t_edge['src'] == $p_src && $t_edge['dst'] == $p_dst) {
 				return true;
 			}
 		}
@@ -300,22 +308,23 @@ class Graph {
 	 * Generates an undirected graph representation (suitable for neato).
 	 * @return void
 	 */
-	function generate() {
+	function generate()
+	{
 		echo 'graph ' . $this->name . ' {' . "\n";
 
 		$this->_print_graph_defaults();
 
-		foreach( $this->nodes as $t_name => $t_attr ) {
-			$t_name = '"' . addcslashes( $t_name, "\0..\37\"\\" ) . '"';
-			$t_attr = $this->_build_attribute_list( $t_attr );
+		foreach ($this->nodes as $t_name => $t_attr) {
+			$t_name = '"' . addcslashes($t_name, "\0..\37\"\\") . '"';
+			$t_attr = $this->_build_attribute_list($t_attr);
 			echo "\t" . $t_name . ' ' . $t_attr . ";\n";
 		}
 
-		foreach( $this->edges as $t_edge ) {
-			$t_src = '"' . addcslashes( $t_edge['src'], "\0..\37\"\\" ) . '"';
-			$t_dst = '"' . addcslashes( $t_edge['dst'], "\0..\37\"\\" ) . '"';
+		foreach ($this->edges as $t_edge) {
+			$t_src = '"' . addcslashes($t_edge['src'], "\0..\37\"\\") . '"';
+			$t_dst = '"' . addcslashes($t_edge['dst'], "\0..\37\"\\") . '"';
 			$t_attr = $t_edge['attributes'];
-			$t_attr = $this->_build_attribute_list( $t_attr );
+			$t_attr = $this->_build_attribute_list($t_attr);
 			echo "\t" . $t_src . ' -- ' . $t_dst . ' ' . $t_attr . ";\n";
 		}
 
@@ -328,10 +337,11 @@ class Graph {
 	 * @param boolean $p_headers Whether to sent http headers.
 	 * @return void
 	 */
-	function output( $p_format = 'dot', $p_headers = false ) {
+	function output($p_format = 'dot', $p_headers = false)
+	{
 		# Check if it is a recognized format.
-		if( !isset( $this->formats[$p_format] ) ) {
-			trigger_error( ERROR_GENERIC, ERROR );
+		if (!isset($this->formats[$p_format])) {
+			trigger_error(ERROR_GENERIC, ERROR);
 		}
 
 		$t_binary = $this->formats[$p_format]['binary'];
@@ -339,8 +349,8 @@ class Graph {
 		$t_mime = $this->formats[$p_format]['mime'];
 
 		# Send Content-Type header, if requested.
-		if( $p_headers ) {
-			header( 'Content-Type: ' . $t_mime );
+		if ($p_headers) {
+			header('Content-Type: ' . $t_mime);
 		}
 		# Retrieve the source dot document into a buffer
 		ob_start();
@@ -350,39 +360,39 @@ class Graph {
 
 		# Start dot process
 
-		$t_command = escapeshellcmd( $this->graphviz_tool . ' -T' . $p_format );
+		$t_command = escapeshellcmd($this->graphviz_tool . ' -T' . $p_format);
 		$t_descriptors = array(
-			0 => array( 'pipe', 'r', ),
-			1 => array( 'pipe', 'w', ),
-			2 => array( 'file', 'php://stderr', 'w', ),
-			);
+			0 => array('pipe', 'r',),
+			1 => array('pipe', 'w',),
+			2 => array('file', 'php://stderr', 'w',),
+		);
 
 		$t_pipes = array();
-		$t_process = proc_open( $t_command, $t_descriptors, $t_pipes );
+		$t_process = proc_open($t_command, $t_descriptors, $t_pipes);
 
-		if( is_resource( $t_process ) ) {
+		if (is_resource($t_process)) {
 			# Filter generated output through dot
-			fwrite( $t_pipes[0], $t_dot_source );
-			fclose( $t_pipes[0] );
+			fwrite($t_pipes[0], $t_dot_source);
+			fclose($t_pipes[0]);
 
-			if( $p_headers ) {
+			if ($p_headers) {
 				# Headers were requested, use another output buffer to
 				# retrieve the size for Content-Length.
 				ob_start();
-				while( !feof( $t_pipes[1] ) ) {
-					echo fgets( $t_pipes[1], 1024 );
+				while (!feof($t_pipes[1])) {
+					echo fgets($t_pipes[1], 1024);
 				}
-				header( 'Content-Length: ' . ob_get_length() );
+				header('Content-Length: ' . ob_get_length());
 				ob_end_flush();
 			} else {
 				# No need for headers, send output directly.
-				while( !feof( $t_pipes[1] ) ) {
-					print( fgets( $t_pipes[1], 1024 ) );
+				while (!feof($t_pipes[1])) {
+					print(fgets($t_pipes[1], 1024));
 				}
 			}
 
-			fclose( $t_pipes[1] );
-			proc_close( $t_process );
+			fclose($t_pipes[1]);
+			proc_close($t_process);
 		}
 	}
 
@@ -391,21 +401,22 @@ class Graph {
 	 * @param array $p_attributes Attributes.
 	 * @return string
 	 */
-	function _build_attribute_list( array $p_attributes ) {
-		if( empty( $p_attributes ) ) {
+	function _build_attribute_list(array $p_attributes)
+	{
+		if (empty($p_attributes)) {
 			return '';
 		}
 
 		$t_result = array();
 
-		foreach( $p_attributes as $t_name => $t_value ) {
-			if( !preg_match( '/[a-zA-Z]+/', $t_name ) ) {
+		foreach ($p_attributes as $t_name => $t_value) {
+			if (!preg_match('/[a-zA-Z]+/', $t_name)) {
 				continue;
 			}
 
-			if( is_string( $t_value ) ) {
-				$t_value = '"' . addcslashes( $t_value, "\0..\37\"\\" ) . '"';
-			} else if( is_integer( $t_value ) or is_float( $t_value ) ) {
+			if (is_string($t_value)) {
+				$t_value = '"' . addcslashes($t_value, "\0..\37\"\\") . '"';
+			} else if (is_integer($t_value) or is_float($t_value)) {
 				$t_value = (string)$t_value;
 			} else {
 				continue;
@@ -414,22 +425,23 @@ class Graph {
 			$t_result[] = $t_name . '=' . $t_value;
 		}
 
-		return '[ ' . implode( ', ', $t_result ) . ' ]';
+		return '[ ' . implode(', ', $t_result) . ' ]';
 	}
 
 	/**
 	 * PROTECTED function to print graph attributes and defaults.
 	 * @return void
 	 */
-	function _print_graph_defaults() {
-		foreach( $this->attributes as $t_name => $t_value ) {
-			if( !preg_match( '/[a-zA-Z]+/', $t_name ) ) {
+	function _print_graph_defaults()
+	{
+		foreach ($this->attributes as $t_name => $t_value) {
+			if (!preg_match('/[a-zA-Z]+/', $t_name)) {
 				continue;
 			}
 
-			if( is_string( $t_value ) ) {
-				$t_value = '"' . addcslashes( $t_value, "\0..\37\"\\" ) . '"';
-			} else if( is_integer( $t_value ) or is_float( $t_value ) ) {
+			if (is_string($t_value)) {
+				$t_value = '"' . addcslashes($t_value, "\0..\37\"\\") . '"';
+			} else if (is_integer($t_value) or is_float($t_value)) {
 				$t_value = (string)$t_value;
 			} else {
 				continue;
@@ -438,13 +450,13 @@ class Graph {
 			echo "\t" . $t_name . '=' . $t_value . ";\n";
 		}
 
-		if( null !== $this->default_node ) {
-			$t_attr = $this->_build_attribute_list( $this->default_node );
+		if (null !== $this->default_node) {
+			$t_attr = $this->_build_attribute_list($this->default_node);
 			echo "\t" . 'node ' . $t_attr . ";\n";
 		}
 
-		if( null !== $this->default_edge ) {
-			$t_attr = $this->_build_attribute_list( $this->default_edge );
+		if (null !== $this->default_edge) {
+			$t_attr = $this->_build_attribute_list($this->default_edge);
 			echo "\t" . 'edge ' . $t_attr . ";\n";
 		}
 	}
@@ -453,37 +465,40 @@ class Graph {
 /**
  * Directed graph creation and manipulation.
  */
-class Digraph extends Graph {
+class Digraph extends Graph
+{
 	/**
 	 * Constructor for Digraph objects.
 	 * @param string $p_name       Name of the graph.
 	 * @param array  $p_attributes Attributes.
 	 * @param string $p_tool       Graphviz tool.
 	 */
-	function __construct( $p_name = 'G', array $p_attributes = array(), $p_tool = 'dot' ) {
-		parent::__construct( $p_name, $p_attributes, $p_tool );
+	function __construct($p_name = 'G', array $p_attributes = array(), $p_tool = 'dot')
+	{
+		parent::__construct($p_name, $p_attributes, $p_tool);
 	}
 
 	/**
 	 * Generates a directed graph representation (suitable for dot).
 	 * @return void
 	 */
-	function generate() {
+	function generate()
+	{
 		echo 'digraph ' . $this->name . ' {' . "\n";
 
 		$this->_print_graph_defaults();
 
-		foreach( $this->nodes as $t_name => $t_attr ) {
-			$t_name = '"' . addcslashes( $t_name, "\0..\37\"\\" ) . '"';
-			$t_attr = $this->_build_attribute_list( $t_attr );
+		foreach ($this->nodes as $t_name => $t_attr) {
+			$t_name = '"' . addcslashes($t_name, "\0..\37\"\\") . '"';
+			$t_attr = $this->_build_attribute_list($t_attr);
 			echo "\t" . $t_name . ' ' . $t_attr . ";\n";
 		}
 
-		foreach( $this->edges as $t_edge ) {
-			$t_src = '"' . addcslashes( $t_edge['src'], "\0..\37\"\\" ) . '"';
-			$t_dst = '"' . addcslashes( $t_edge['dst'], "\0..\37\"\\" ) . '"';
+		foreach ($this->edges as $t_edge) {
+			$t_src = '"' . addcslashes($t_edge['src'], "\0..\37\"\\") . '"';
+			$t_dst = '"' . addcslashes($t_edge['dst'], "\0..\37\"\\") . '"';
 			$t_attr = $t_edge['attributes'];
-			$t_attr = $this->_build_attribute_list( $t_attr );
+			$t_attr = $this->_build_attribute_list($t_attr);
 			echo "\t" . $t_src . ' -> ' . $t_dst . ' ' . $t_attr . ";\n";
 		}
 

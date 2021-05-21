@@ -29,57 +29,58 @@
  * @uses plugin_api.php
  */
 
-require_api( 'config_api.php' );
-require_api( 'constant_inc.php' );
-require_api( 'event_api.php' );
-require_api( 'plugin_api.php' );
+require_api('config_api.php');
+require_api('constant_inc.php');
+require_api('event_api.php');
+require_api('plugin_api.php');
 
 /**
  * Initialise wiki engine
  * @return void
  * @access public
  */
-function wiki_init() {
-	if( config_get_global( 'wiki_enable' ) == OFF ) {
+function wiki_init()
+{
+	if (config_get_global('wiki_enable') == OFF) {
 		return;
 	}
 
-	$t_wiki_engine = config_get_global( 'wiki_engine' );
+	$t_wiki_engine = config_get_global('wiki_engine');
 
-	if( is_blank( config_get_global( 'wiki_engine_url' ) ) ) {
+	if (is_blank(config_get_global('wiki_engine_url'))) {
 		# Build default Wiki URL root based on MantisBT path
-		$t_url = parse_url( config_get_global( 'path' ) );
+		$t_url = parse_url(config_get_global('path'));
 
 		# Remove unwanted components and set path to Wiki engine name
-		unset( $t_url['query'], $t_url['fragment'] );
+		unset($t_url['query'], $t_url['fragment']);
 		$t_url['path'] = '/' . $t_wiki_engine . '/';
 
-		$t_url = http_build_url( $t_url );
-		config_set_global( 'wiki_engine_url', $t_url );
+		$t_url = http_build_url($t_url);
+		config_set_global('wiki_engine_url', $t_url);
 	}
 
 	# handle legacy style wiki integration
-	require_once( config_get_global( 'class_path' ) . 'MantisCoreWikiPlugin.class.php' );
-	switch( $t_wiki_engine ) {
+	require_once(config_get_global('class_path') . 'MantisCoreWikiPlugin.class.php');
+	switch ($t_wiki_engine) {
 		case 'dokuwiki':
-			plugin_child( 'MantisCoreDokuwiki' );
+			plugin_child('MantisCoreDokuwiki');
 			break;
 		case 'mediawiki':
-			plugin_child( 'MantisCoreMediaWiki' );
+			plugin_child('MantisCoreMediaWiki');
 			break;
 		case 'twiki':
-			plugin_child( 'MantisCoreTwiki' );
+			plugin_child('MantisCoreTwiki');
 			break;
 		case 'WikkaWiki':
-			plugin_child( 'MantisCoreWikkaWiki' );
+			plugin_child('MantisCoreWikkaWiki');
 			break;
 		case 'xwiki':
-			plugin_child( 'MantisCoreXwiki' );
+			plugin_child('MantisCoreXwiki');
 			break;
 	}
 
-	if( is_null( event_signal( 'EVENT_WIKI_INIT' ) ) ) {
-		config_set_global( 'wiki_enable', OFF );
+	if (is_null(event_signal('EVENT_WIKI_INIT'))) {
+		config_set_global('wiki_enable', OFF);
 	}
 }
 
@@ -89,8 +90,9 @@ function wiki_init() {
  * @return string url
  * @access public
  */
-function wiki_link_bug( $p_bug_id ) {
-	return event_signal( 'EVENT_WIKI_LINK_BUG', $p_bug_id );
+function wiki_link_bug($p_bug_id)
+{
+	return event_signal('EVENT_WIKI_LINK_BUG', $p_bug_id);
 }
 
 /**
@@ -99,7 +101,7 @@ function wiki_link_bug( $p_bug_id ) {
  * @return string url
  * @access public
  */
-function wiki_link_project( $p_project_id ) {
-	return event_signal( 'EVENT_WIKI_LINK_PROJECT', $p_project_id );
+function wiki_link_project($p_project_id)
+{
+	return event_signal('EVENT_WIKI_LINK_PROJECT', $p_project_id);
 }
-

@@ -240,7 +240,7 @@ if ($t_sponsor_count === 0) {
 			</tr>
 		</table>
 	</div>
-<?php } # end sponsored issues
+<?php  } # end sponsored issues
 
 $t_query = 'SELECT b.id as bug, s.id as sponsor, s.paid, b.project_id, b.fixed_in_version, b.status
 	FROM {bug} b, {sponsorship} s
@@ -373,7 +373,7 @@ if ($t_sponsor_count === 0) {
 			</table>
 		</form>
 	</div>
-<?php } # end sponsored issues 
+<?php  } # end sponsored issues 
 ?>
 
 <br />

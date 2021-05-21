@@ -86,7 +86,7 @@ if (($t_filter_position & FILTER_POSITION_TOP) == FILTER_POSITION_TOP) {
 <div class="col-md-12 col-xs-12">
 	<div class="space-10"></div>
 	<form id="bug_action" method="post" action="bug_actiongroup_page.php">
-		<?php # CSRF protection not required here - form does not result in modifications 
+		<?php  # CSRF protection not required here - form does not result in modifications 
 		?>
 		<div class="widget-box widget-color-blue2">
 			<div class="widget-header widget-header-small">
@@ -157,7 +157,7 @@ if (($t_filter_position & FILTER_POSITION_TOP) == FILTER_POSITION_TOP) {
 					<div class="table-responsive checkbox-range-selection">
 						<table id="buglist" class="table table-bordered table-condensed table-hover table-striped">
 							<thead>
-								<?php # -- Bug list column header row -- 
+								<?php  # -- Bug list column header row -- 
 								?>
 								<tr class="buglist-headers">
 									<?php
@@ -253,7 +253,7 @@ if (($t_filter_position & FILTER_POSITION_TOP) == FILTER_POSITION_TOP) {
 							print_page_links('view_all_bug_page.php', 1, $t_page_count, (int)$f_page_number, $t_tmp_filter_key);
 							?>
 						</div>
-						<?php # -- ====================== end of MASS BUG MANIPULATION ========================= -- 
+						<?php  # -- ====================== end of MASS BUG MANIPULATION ========================= -- 
 						?>
 					</div>
 

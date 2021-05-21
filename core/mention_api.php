@@ -27,24 +27,26 @@
  * @uses email_api.php
  */
 
-require_api( 'bug_api.php' );
-require_api( 'email_api.php' );
+require_api('bug_api.php');
+require_api('email_api.php');
 
 /**
  * Check if @ mentions feature is enabled or not.
  *
  * @return bool true enabled, false otherwise.
  */
-function mention_enabled() {
-	return config_get( 'mentions_enabled' ) != OFF;
+function mention_enabled()
+{
+	return config_get('mentions_enabled') != OFF;
 }
 
 /**
  * Get the tag to use for mentions.
  * @return string The mentions tag.
  */
-function mentions_tag() {
-	return config_get( 'mentions_tag', null, ALL_USERS, ALL_PROJECTS );
+function mentions_tag()
+{
+	return config_get('mentions_tag', null, ALL_USERS, ALL_PROJECTS);
 }
 
 /**
@@ -57,14 +59,15 @@ function mentions_tag() {
  * @return array of @ mentions without the @ sign.
  * @private
  */
-function mention_get_candidates( $p_text ) {
-	if( is_blank( $p_text ) ) {
+function mention_get_candidates($p_text)
+{
+	if (is_blank($p_text)) {
 		return array();
 	}
 
 	static $s_pattern = null;
-	if( $s_pattern === null ) {
-		$t_quoted_tag = preg_quote( mentions_tag() );
+	if ($s_pattern === null) {
+		$t_quoted_tag = preg_quote(mentions_tag());
 		$s_pattern = '/(?:'
 			# Negative lookbehind to ensure we have whitespace or start of
 			# string before the tag - ensures we don't match a tag in the
@@ -82,9 +85,9 @@ function mention_get_candidates( $p_text ) {
 			. '/';
 	}
 
-	preg_match_all( $s_pattern, $p_text, $t_mentions );
+	preg_match_all($s_pattern, $p_text, $t_mentions);
 
-	return array_unique( $t_mentions[1] );
+	return array_unique($t_mentions[1]);
 }
 
 /**
@@ -95,21 +98,22 @@ function mention_get_candidates( $p_text ) {
  * @param string $p_text The text to process.
  * @return array with valid usernames as keys and their ids as values.
  */
-function mention_get_users( $p_text ) {
-	if ( !mention_enabled() ) {
+function mention_get_users($p_text)
+{
+	if (!mention_enabled()) {
 		return array();
 	}
 
-	$t_matches = mention_get_candidates( $p_text );
-	if( empty( $t_matches )) {
+	$t_matches = mention_get_candidates($p_text);
+	if (empty($t_matches)) {
 		return array();
 	}
 
 	$t_mentioned_users = array();
 
-	foreach( $t_matches as $t_candidate ) {
-		if( $t_user_id = user_get_id_by_name( $t_candidate ) ) {
-			if( false === $t_user_id ) {
+	foreach ($t_matches as $t_candidate) {
+		if ($t_user_id = user_get_id_by_name($t_candidate)) {
+			if (false === $t_user_id) {
 				continue;
 			}
 
@@ -129,8 +133,9 @@ function mention_get_users( $p_text ) {
  * @param array $p_removed_mentions_user_ids The list of ids removed due to lack of access to issue or note.
  * @return array array of user ids actually received mention notifications.
  */
-function mention_process_user_mentions( $p_bug_id, $p_mentioned_user_ids, $p_message, $p_removed_mentions_user_ids ) {
-	return email_user_mention( $p_bug_id, $p_mentioned_user_ids, $p_message, $p_removed_mentions_user_ids );
+function mention_process_user_mentions($p_bug_id, $p_mentioned_user_ids, $p_message, $p_removed_mentions_user_ids)
+{
+	return email_user_mention($p_bug_id, $p_mentioned_user_ids, $p_message, $p_removed_mentions_user_ids);
 }
 
 /**
@@ -140,25 +145,26 @@ function mention_process_user_mentions( $p_bug_id, $p_mentioned_user_ids, $p_mes
  * @param bool $p_html true for html, false otherwise.
  * @return string The processed text.
  */
-function mention_format_text( $p_text, $p_html = true ) {
-	$t_mentioned_users = mention_get_users( $p_text );
-	if( empty( $t_mentioned_users ) ) {
+function mention_format_text($p_text, $p_html = true)
+{
+	$t_mentioned_users = mention_get_users($p_text);
+	if (empty($t_mentioned_users)) {
 		return $p_text;
 	}
 
 	$t_mentions_tag = mentions_tag();
 	$t_formatted_mentions = array();
 
-	foreach( $t_mentioned_users as $t_username => $t_user_id  ) {
+	foreach ($t_mentioned_users as $t_username => $t_user_id) {
 		$t_mention = $t_mentions_tag . $t_username;
 		$t_mention_formatted = $t_mention;
 
-		if( $p_html ) {
-			$t_mention_formatted = string_display_line( $t_mention_formatted );
+		if ($p_html) {
+			$t_mention_formatted = string_display_line($t_mention_formatted);
 
-			$t_mention_formatted = '<a href="' . string_sanitize_url( 'view_user_page.php?id=' . $t_user_id, true ) . '">' . $t_mention_formatted . '</a>';
+			$t_mention_formatted = '<a href="' . string_sanitize_url('view_user_page.php?id=' . $t_user_id, true) . '">' . $t_mention_formatted . '</a>';
 
-			if( !user_is_enabled( $t_user_id ) ) {
+			if (!user_is_enabled($t_user_id)) {
 				$t_mention_formatted = '<s>' . $t_mention_formatted . '</s>';
 			}
 
@@ -173,10 +179,10 @@ function mention_format_text( $p_text, $p_html = true ) {
 	# corrupting the output
 	$t_text = string_process_exclude_anchors(
 		$p_text,
-		function( $p_string ) use ( $t_formatted_mentions ) {
+		function ($p_string) use ($t_formatted_mentions) {
 			return str_replace(
-				array_keys( $t_formatted_mentions ),
-				array_values( $t_formatted_mentions ),
+				array_keys($t_formatted_mentions),
+				array_values($t_formatted_mentions),
 				$p_string
 			);
 		}
@@ -184,4 +190,3 @@ function mention_format_text( $p_text, $p_html = true ) {
 
 	return $t_text;
 }
-

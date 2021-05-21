@@ -1,4 +1,5 @@
 <?php
+
 /**
  * MantisBT - A PHP based bugtracking system
  *
@@ -18,20 +19,22 @@
  * @copyright Copyright 2002  MantisBT Team - mantisbt-dev@lists.sourceforge.net
  */
 
-require_api( 'mention_api.php' );
-require_once( 'core/MantisMarkdown.php' );
+require_api('mention_api.php');
+require_once('core/MantisMarkdown.php');
 
 /**
  * Mantis Core Formatting plugin
  */
-class MantisCoreFormattingPlugin extends MantisFormattingPlugin {
+class MantisCoreFormattingPlugin extends MantisFormattingPlugin
+{
 	/**
 	 * A method that populates the plugin information and minimum requirements.
 	 * @return void
 	 */
-	function register() {
-		$this->name = lang_get( 'plugin_format_title' );
-		$this->description = lang_get( 'plugin_format_description' );
+	function register()
+	{
+		$this->name = lang_get('plugin_format_title');
+		$this->description = lang_get('plugin_format_description');
 		$this->page = 'config';
 
 		$this->version = MANTIS_VERSION;
@@ -48,7 +51,8 @@ class MantisCoreFormattingPlugin extends MantisFormattingPlugin {
 	 * Event hook declaration.
 	 * @return array
 	 */
-	function hooks() {
+	function hooks()
+	{
 		return array(
 			'EVENT_DISPLAY_TEXT'		=> 'text',			# Text String Display
 			'EVENT_DISPLAY_FORMATTED'	=> 'formatted',		# Formatted String Display
@@ -61,7 +65,8 @@ class MantisCoreFormattingPlugin extends MantisFormattingPlugin {
 	 * Default plugin configuration.
 	 * @return array
 	 */
-	function config() {
+	function config()
+	{
 		return array(
 			'process_text'		=> ON,
 			'process_urls'		=> ON,
@@ -79,11 +84,12 @@ class MantisCoreFormattingPlugin extends MantisFormattingPlugin {
 	 *
 	 * @return string valid formatted text
 	 */
-	private function processText( $p_string, $p_multiline = true ){
+	private function processText($p_string, $p_multiline = true)
+	{
 
-		$t_string = string_strip_hrefs( $p_string );
-		$t_string = string_html_specialchars( $t_string );
-		return string_restore_valid_html_tags( $t_string, $p_multiline );
+		$t_string = string_strip_hrefs($p_string);
+		$t_string = string_html_specialchars($t_string);
+		return string_restore_valid_html_tags($t_string, $p_multiline);
 	}
 
 	/**
@@ -92,10 +98,11 @@ class MantisCoreFormattingPlugin extends MantisFormattingPlugin {
 	 *
 	 * @return string Formatted text
 	 */
-	private function processBugAndNoteLinks( $p_string ){
+	private function processBugAndNoteLinks($p_string)
+	{
 
-		$t_string = string_process_bug_link( $p_string );
-		return string_process_bugnote_link( $t_string );
+		$t_string = string_process_bug_link($p_string);
+		return string_process_bugnote_link($t_string);
 	}
 
 	/**
@@ -111,19 +118,20 @@ class MantisCoreFormattingPlugin extends MantisFormattingPlugin {
 	 * @see $g_html_valid_tags
 	 * @see $g_html_valid_tags_single_line
 	 */
-	function text( $p_event, $p_string, $p_multiline = true ) {
+	function text($p_event, $p_string, $p_multiline = true)
+	{
 		static $s_text;
 
-		if( null === $s_text ) {
-			$s_text = plugin_config_get( 'process_text' );
+		if (null === $s_text) {
+			$s_text = plugin_config_get('process_text');
 		}
 
-		if( ON == $s_text ) {
-			$t_string = $this->processText( $p_string, $p_multiline );
+		if (ON == $s_text) {
+			$t_string = $this->processText($p_string, $p_multiline);
 
-			if( $p_multiline ) {
-				$t_string = string_preserve_spaces_at_bol( $t_string );
-				$t_string = string_nl2br( $t_string );
+			if ($p_multiline) {
+				$t_string = string_preserve_spaces_at_bol($t_string);
+				$t_string = string_nl2br($t_string);
 			}
 			return $t_string;
 		} else {
@@ -143,51 +151,52 @@ class MantisCoreFormattingPlugin extends MantisFormattingPlugin {
 	 *
 	 * @return string Formatted text
 	 */
-	function formatted( $p_event, $p_string, $p_multiline = true ) {
+	function formatted($p_event, $p_string, $p_multiline = true)
+	{
 		static $s_text, $s_urls, $s_buglinks, $s_markdown;
 
 		$t_string = $p_string;
 
-		if( null === $s_text ) {
-			$s_text = plugin_config_get( 'process_text' );
+		if (null === $s_text) {
+			$s_text = plugin_config_get('process_text');
 		}
 
-		if( null === $s_urls ) {
-			$s_urls = plugin_config_get( 'process_urls' );
-			$s_buglinks = plugin_config_get( 'process_buglinks' );
+		if (null === $s_urls) {
+			$s_urls = plugin_config_get('process_urls');
+			$s_buglinks = plugin_config_get('process_buglinks');
 		}
 
-		if( null === $s_markdown ) {
-			$s_markdown = plugin_config_get( 'process_markdown' );
+		if (null === $s_markdown) {
+			$s_markdown = plugin_config_get('process_markdown');
 		}
 
-		if( ON == $s_text ) {
-			$t_string = $this->processText( $t_string );
+		if (ON == $s_text) {
+			$t_string = $this->processText($t_string);
 
-			if( $p_multiline && OFF == $s_markdown ) {
-				$t_string = string_preserve_spaces_at_bol( $t_string );
-				$t_string = string_nl2br( $t_string );
+			if ($p_multiline && OFF == $s_markdown) {
+				$t_string = string_preserve_spaces_at_bol($t_string);
+				$t_string = string_nl2br($t_string);
 			}
 		}
 
 		# Process Markdown
-		if( ON == $s_markdown ) {
-			if( $p_multiline ) {
-				$t_string = MantisMarkdown::convert_text( $t_string );
+		if (ON == $s_markdown) {
+			if ($p_multiline) {
+				$t_string = MantisMarkdown::convert_text($t_string);
 			} else {
-				$t_string = MantisMarkdown::convert_line( $t_string );
+				$t_string = MantisMarkdown::convert_line($t_string);
 			}
 		}
 
-		if( ON == $s_urls && OFF == $s_markdown ) {
-			$t_string = string_insert_hrefs( $t_string );
+		if (ON == $s_urls && OFF == $s_markdown) {
+			$t_string = string_insert_hrefs($t_string);
 		}
 
-		if ( ON == $s_buglinks ) {
-			$t_string = $this->processBugAndNoteLinks( $t_string );
+		if (ON == $s_buglinks) {
+			$t_string = $this->processBugAndNoteLinks($t_string);
 		}
 
-		$t_string = mention_format_text( $t_string, /* html */ true );
+		$t_string = mention_format_text($t_string, /* html */ true);
 
 		return $t_string;
 	}
@@ -198,34 +207,35 @@ class MantisCoreFormattingPlugin extends MantisFormattingPlugin {
 	 * @param string $p_string Unformatted text.
 	 * @return string Formatted text
 	 */
-	function rss( $p_event, $p_string ) {
+	function rss($p_event, $p_string)
+	{
 		static $s_text, $s_urls, $s_buglinks;
 
 		$t_string = $p_string;
 
-		if( null === $s_text ) {
-			$s_text = plugin_config_get( 'process_text' );
-			$s_urls = plugin_config_get( 'process_urls' );
-			$s_buglinks = plugin_config_get( 'process_buglinks' );
+		if (null === $s_text) {
+			$s_text = plugin_config_get('process_text');
+			$s_urls = plugin_config_get('process_urls');
+			$s_buglinks = plugin_config_get('process_buglinks');
 		}
 
-		if( ON == $s_text ) {
-			$t_string = string_strip_hrefs( $t_string );
-			$t_string = string_html_specialchars( $t_string );
-			$t_string = string_restore_valid_html_tags( $t_string );
-			$t_string = string_nl2br( $t_string );
+		if (ON == $s_text) {
+			$t_string = string_strip_hrefs($t_string);
+			$t_string = string_html_specialchars($t_string);
+			$t_string = string_restore_valid_html_tags($t_string);
+			$t_string = string_nl2br($t_string);
 		}
 
-		if( ON == $s_urls ) {
-			$t_string = string_insert_hrefs( $t_string );
+		if (ON == $s_urls) {
+			$t_string = string_insert_hrefs($t_string);
 		}
 
-		if( ON == $s_buglinks ) {
-			$t_string = string_process_bug_link( $t_string, true, false, true );
-			$t_string = string_process_bugnote_link( $t_string, true, false, true );
+		if (ON == $s_buglinks) {
+			$t_string = string_process_bug_link($t_string, true, false, true);
+			$t_string = string_process_bugnote_link($t_string, true, false, true);
 		}
 
-		$t_string = mention_format_text( $t_string, /* html */ true );
+		$t_string = mention_format_text($t_string, /* html */ true);
 
 		return $t_string;
 	}
@@ -236,26 +246,27 @@ class MantisCoreFormattingPlugin extends MantisFormattingPlugin {
 	 * @param string $p_string Unformatted text.
 	 * @return string Formatted text
 	 */
-	function email( $p_event, $p_string ) {
+	function email($p_event, $p_string)
+	{
 		static $s_text, $s_buglinks;
 
 		$t_string = $p_string;
 
-		if( null === $s_text ) {
-			$s_text = plugin_config_get( 'process_text' );
-			$s_buglinks = plugin_config_get( 'process_buglinks' );
+		if (null === $s_text) {
+			$s_text = plugin_config_get('process_text');
+			$s_buglinks = plugin_config_get('process_buglinks');
 		}
 
-		if( ON == $s_text ) {
-			$t_string = string_strip_hrefs( $t_string );
+		if (ON == $s_text) {
+			$t_string = string_strip_hrefs($t_string);
 		}
 
-		if( ON == $s_buglinks ) {
-			$t_string = string_process_bug_link( $t_string, false );
-			$t_string = string_process_bugnote_link( $t_string, false );
+		if (ON == $s_buglinks) {
+			$t_string = string_process_bug_link($t_string, false);
+			$t_string = string_process_bugnote_link($t_string, false);
 		}
 
-		$t_string = mention_format_text( $t_string, /* html */ false );
+		$t_string = mention_format_text($t_string, /* html */ false);
 
 		return $t_string;
 	}
