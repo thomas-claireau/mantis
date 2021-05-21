@@ -1,2 +1,2 @@
 #!/bin/sh
-rsync -az -O --force --delete --progress -e "ssh -p $PORT" . "$USERNAME"@"$HOST":"$PROJET_RECETTE"
+rsync -az -O --force --delete --progress --exclude-from=".gitignore" -e "ssh -p $PORT" . "$USERNAME"@"$HOST":"$PROJET_RECETTE"
